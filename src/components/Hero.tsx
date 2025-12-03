@@ -55,7 +55,7 @@ const Hero: React.FC = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </a>
             <a
-              href="./Pham-Van-Son-CV.pdf"
+              href="https://drive.usercontent.google.com/u/0/uc?id=1RCmUUR_dGM_cqi3NtHRvMyeiZ2ytsZ7O&export=download"
               download
               className="inline-flex items-center justify-center px-8 py-3 border border-slate-300 dark:border-slate-700 text-base font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white md:text-lg transition-all backdrop-blur-sm hover:-translate-y-1 "
             >
