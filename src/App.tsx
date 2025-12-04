@@ -1,14 +1,16 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import About from "./components/About";
-import Skills from "./components/Skills";
-import Projects from "./components/Projects";
-import Contact from "./components/Contact";
-import Footer from "./components/Footer";
-import NotFound from "./components/NotFound";
-import ScrollToTop from "./components/UI/ScrollToTop";
+import Navbar from "./components/layout/Navbar";
+import Hero from "./components/home/Hero";
+import About from "./components/home/About";
+import Skills from "./components/home/Skills";
+import Projects from "./components/home/Projects";
+import Contact from "./components/home/Contact";
+import Footer from "./components/layout/Footer";
+import NotFound from "./components/layout/NotFound";
+import ScrollToTop from "./components/ui/ScrollToTop";
+import Login from "./components/Login";
+import Admin from "./components/admin/Admin";
 
 const MainContent: React.FC = () => (
   <main>
@@ -27,6 +29,8 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<MainContent />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
