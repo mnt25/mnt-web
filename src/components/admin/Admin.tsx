@@ -45,7 +45,7 @@ const Admin: React.FC = () => {
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex">
 
       {/* MOBILE HEADER */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-white dark:bg-slate-900 h-16 flex items-center justify-between px-4 shadow z-50">
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-white dark:bg-slate-900 h-16 flex items-center justify-between px-4 shadow z-40">
         <span className="text-lg font-bold text-blue-600">Admin Panel</span>
         <button onClick={() => setSidebarOpen(true)}>
           <Menu className="w-7 h-7 text-slate-700 dark:text-slate-300" />

@@ -8,7 +8,7 @@ const app = express();
 const port = 5000;
 
 // JWT Secret Key
-const SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+const SECRET = process.env.JWT_SECRET ;
 
 // Middleware
 app.use(cors());
@@ -116,7 +116,7 @@ app.get('/api/messages', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/messages', authMiddleware, async (req, res) => {
+app.post('/api/messages', async (req, res) => {
     const { name, email, message } = req.body;
     try {
         const result = await pool.query(

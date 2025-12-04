@@ -32,13 +32,13 @@ const Sidebar: React.FC<Props> = ({
     <>
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 bg-black/40 z-45 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed md:static top-0 left-0 w-64 h-full md:h-screen
+        className={`fixed md:static top-0 left-0 w-64 h-screen
           bg-white dark:bg-slate-900 
           border-r border-slate-200 dark:border-slate-800
           flex flex-col justify-between
