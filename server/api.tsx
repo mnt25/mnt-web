@@ -1,7 +1,7 @@
 import type { Project } from '../src/types/project';
 import type { ContactMessage } from '../src/types/contact';
 
-const API_URL = 'https://localhost:5000/api';
+const API_URL = 'http://localhost:5000/api';
 
 // Lấy token từ localStorage
 const getAuthHeaders = () => {
@@ -31,7 +31,13 @@ export const api = {
   getProjects: async (): Promise<Project[]> => {
     try {
       const res = await fetch(`${API_URL}/projects`);
-      return await res.json();
+      const data = await res.json();
+      // Map backend snake_case to frontend camelCase
+      return data.map((p: any) => ({
+        ...p,
+        liveDemo: p.live_demo,
+        sourceCode: p.source_code,
+      }));
     } catch (error) {
       console.error('Fetch projects error:', error);
       return [];
@@ -40,12 +46,26 @@ export const api = {
 
   createProject: async (project: Omit<Project, 'id'>): Promise<Project | null> => {
     try {
+      // Map frontend camelCase to backend snake_case
+      const payload = {
+        ...project,
+        live_demo: project.liveDemo,
+        source_code: project.sourceCode,
+      };
+
       const res = await fetch(`${API_URL}/projects`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(project),
+        body: JSON.stringify(payload),
       });
-      return await res.json();
+
+      const data = await res.json();
+      // Map response back to camelCase
+      return {
+        ...data,
+        liveDemo: data.live_demo,
+        sourceCode: data.source_code,
+      };
     } catch (error) {
       console.error('Create project error:', error);
       return null;
@@ -54,12 +74,26 @@ export const api = {
 
   updateProject: async (project: Project): Promise<Project | null> => {
     try {
+      // Map frontend camelCase to backend snake_case
+      const payload = {
+        ...project,
+        live_demo: project.liveDemo,
+        source_code: project.sourceCode,
+      };
+
       const res = await fetch(`${API_URL}/projects/${project.id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify(project),
+        body: JSON.stringify(payload),
       });
-      return await res.json();
+
+      const data = await res.json();
+      // Map response back to camelCase
+      return {
+        ...data,
+        liveDemo: data.live_demo,
+        sourceCode: data.source_code,
+      };
     } catch (error) {
       console.error('Update project error:', error);
       return null;
