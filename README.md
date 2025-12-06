@@ -43,7 +43,7 @@ Website portfolio cá nhân hiện đại và dashboard quản trị được x�
 
 ### 1. Clone repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/mnt25/mnt-web.git
 cd mnt-web
 ```
 
