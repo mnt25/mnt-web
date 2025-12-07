@@ -12,6 +12,7 @@ Website portfolio cá nhân hiện đại và dashboard quản trị được x�
 - **Dự án**: Hiển thị các dự án cá nhân với link Demo và Source Code.
 - **Kỹ năng**: Hiển thị trực quan các kỹ năng chuyên môn.
 - **Liên hệ**: Form liên hệ để gửi tin nhắn đến admin.
+- **Thông báo**: Tích hợp Discord Webhook để nhận thông báo tin nhắn mới tức thì.
 
 ### Admin Dashboard (Quản trị)
 - **Xác thực**: Đăng nhập bảo mật cho admin.
@@ -59,6 +60,7 @@ Tạo file `.env` ở thư mục gốc (tùy chọn nhưng khuyến khích):
 PORT=5000
 JWT_SECRET=your_secret_key
 PUBLIC_NEON_URL=postgresql://user:password@host/dbname?sslmode=require
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
 ```
 
 ### 4. Thiết lập Database

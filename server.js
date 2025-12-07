@@ -8,7 +8,7 @@ const app = express();
 const port = 5000;
 
 // JWT Secret Key
-const SECRET = process.env.JWT_SECRET ;
+const SECRET = process.env.JWT_SECRET;
 
 // Middleware
 app.use(cors());
@@ -31,7 +31,7 @@ const authMiddleware = (req, res, next) => {
 
 // Kết nối Neon Database
 const pool = new Pool({
-    connectionString: process.env.PUBLIC_NEON_URL,
+    connectionString: process.env.DATABASE_URL,
 });
 
 // --- API ROUTES ---
@@ -116,6 +116,40 @@ app.get('/api/messages', authMiddleware, async (req, res) => {
     }
 });
 
+//  Discord Webhook
+const sendDiscordMessage = async (data) => {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    if (!webhookUrl) {
+        console.warn("DISCORD_WEBHOOK_URL chưa được thiết lập.");
+        return;
+    }
+
+    const { name, email, message } = data;
+
+    const embed = {
+        title: "📩 Tin nhắn liên hệ mới",
+        color: 0x3498db, // Blue
+        fields: [
+            { name: "Tên", value: name || "N/A", inline: true },
+            { name: "Email", value: email || "N/A", inline: true },
+            { name: "Nội dung", value: message || "No content" }
+        ],
+        timestamp: new Date().toISOString(),
+        footer: { text: "MNT Web" }
+    };
+
+    try {
+        await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ embeds: [embed] })
+        });
+        console.log("Đã gửi thông báo tới Discord.");
+    } catch (error) {
+        console.error("Không gửi được thông báo Discord:", error);
+    }
+};
+
 app.post('/api/messages', async (req, res) => {
     const { name, email, message } = req.body;
     try {
@@ -123,6 +157,10 @@ app.post('/api/messages', async (req, res) => {
             'INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING *',
             [name, email, message]
         );
+
+        // Gửi tới Discord
+        sendDiscordMessage(req.body);
+
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
