@@ -8,7 +8,7 @@ const app = express();
 const port = 5000;
 
 // JWT Secret Key
-const SECRET = 'your-secret-key-change-this-in-production';
+const SECRET = process.env.JWT_SECRET;
 
 // Middleware
 app.use(cors());
@@ -31,7 +31,7 @@ const authMiddleware = (req, res, next) => {
 
 // Kết nối Neon Database
 const pool = new Pool({
-    connectionString: 'postgresql://neondb_owner:npg_WOvrp4gTok8u@ep-tiny-sun-afqzndvi-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require',
+    connectionString: process.env.DATABASE_URL,
 });
 
 // --- API ROUTES ---
@@ -118,7 +118,7 @@ app.get('/api/messages', authMiddleware, async (req, res) => {
 
 //  Discord Webhook
 const sendDiscordMessage = async (data) => {
-    const webhookUrl = 'https://discord.com/api/webhooks/1447128897501003838/7HbcOvLUnu1XszNmvq7dKFbcJND5SdBgs8hKWVEMQlb8Zgw6BDxcJ-OLYvgV9y3gpGzS';
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     if (!webhookUrl) {
         console.warn("DISCORD_WEBHOOK_URL chưa được thiết lập.");
         return;
