@@ -154,22 +154,22 @@ export const api = {
   },
 
 
-  getCVLink: async (): Promise<string> => {
+  getCVLink: async (): Promise<{ link: string; enabled: boolean }> => {
     try {
       const res = await fetch(`${API_URL}/settings/cv`);
       const data = await res.json();
-      return data.link;
+      return { link: data.link, enabled: data.enabled };
     } catch (error) {
-      return '#';
+      return { link: '#', enabled: true };
     }
   },
 
-  updateCVLink: async (link: string): Promise<boolean> => {
+  updateCVLink: async (link: string, enabled: boolean): Promise<boolean> => {
     try {
       await fetch(`${API_URL}/settings/cv`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ link }),
+        body: JSON.stringify({ link, enabled }),
       });
       return true;
     } catch (error) {

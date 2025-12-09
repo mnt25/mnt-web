@@ -14,6 +14,15 @@ const SECRET = process.env.JWT_SECRET;
 app.use(cors());
 app.use(express.json());
 
+// Error Handling
+process.on('uncaughtException', (err) => {
+    console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('UNHANDLED REJECTION:', reason);
+});
+
 // Middleware kiểm tra JWT
 const authMiddleware = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
@@ -31,7 +40,7 @@ const authMiddleware = (req, res, next) => {
 
 // Kết nối Neon Database
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.PUBLIC_NEON_URL,
 });
 
 // --- API ROUTES ---
@@ -177,27 +186,47 @@ app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// 4. Settings (CV Link)
+// 4. Settings (CV Link + Status)
 app.get('/api/settings/cv', async (req, res) => {
     try {
-        const result = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
-        res.json({ link: result.rows.length ? result.rows[0].value : '#' });
+        const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
+        const enabledResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_download_enabled'");
+
+        const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
+        // Default to 'true' if not set
+        const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
+
+        res.json({ link, enabled });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
 app.post('/api/settings/cv', authMiddleware, async (req, res) => {
-    const { link } = req.body;
+    const { link, enabled } = req.body;
     try {
-        // Upsert (Insert or Update)
+        // Upsert Link
         await pool.query("INSERT INTO settings (key, value) VALUES ('cv_link', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [link]);
+
+        // Upsert Enabled Status (save as string 'true'/'false')
+        const enabledStr = String(enabled);
+        await pool.query("INSERT INTO settings (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [enabledStr]);
+
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
+});
+
+server.on('error', (e) => {
+    if (e.code === 'EADDRINUSE') {
+        console.error('ADDRESS IN USE');
+        console.log(`Port ${port} is already in use.`);
+    } else {
+        console.error('SERVER ERROR:', e);
+    }
 });

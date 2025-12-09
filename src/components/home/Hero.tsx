@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Download } from 'lucide-react';
 import { Reveal } from "../ui/Reveal";
+import { Dialog } from "../ui/Dialog";
 import { api } from '../../../server/api';
 
 const Hero: React.FC = () => {
   const [cvLink, setCvLink] = useState<string>('#');
+  const [isCVEnabled, setIsCVEnabled] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
     const fetchCV = async () => {
-      const link = await api.getCVLink();
-      setCvLink(link);
+      const data = await api.getCVLink();
+      setCvLink(data.link);
+      setIsCVEnabled(data.enabled);
     };
     fetchCV();
   }, []);
+
+  const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isCVEnabled) {
+      e.preventDefault();
+      setShowDialog(true);
+    }
+  };
 
   return (
     <section
@@ -66,11 +77,13 @@ const Hero: React.FC = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </a>
             <a
-              href={cvLink}
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-3 border border-slate-300 dark:border-slate-700 text-base font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white md:text-lg transition-all backdrop-blur-sm hover:-translate-y-1 "
+              href={isCVEnabled ? cvLink : undefined}
+              download={isCVEnabled ? true : undefined}
+              target={isCVEnabled ? "_blank" : undefined}
+              rel={isCVEnabled ? "noopener noreferrer" : undefined}
+              onClick={handleDownload}
+              className={`inline-flex items-center justify-center px-8 py-3 border border-slate-300 dark:border-slate-700 text-base font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white md:text-lg transition-all backdrop-blur-sm hover:-translate-y-1 ${!isCVEnabled ? "opacity-75 cursor-not-allowed" : ""
+                }`}
             >
               Tải CV
               <Download className="ml-2 h-5 w-5" />
@@ -78,6 +91,28 @@ const Hero: React.FC = () => {
           </div>
         </Reveal>
       </div>
+
+      <Dialog
+        isOpen={showDialog}
+        onClose={() => setShowDialog(false)}
+        title="Thông báo"
+      >
+        <div className="space-y-4">
+          <p className="text-slate-600 dark:text-slate-300">
+            Phạm Văn Sơn đã tắt tính năng tải xuống CV.
+            <br />
+            Vui lòng liên hệ trực tiếp để biết thêm thông tin.
+          </p>
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowDialog(false)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      </Dialog>
     </section>
   );
 };
