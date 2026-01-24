@@ -12,7 +12,7 @@ const Projects: React.FC = () => {
   useEffect(() => {
     const loadProjects = async () => {
       setLoading(true);
-      const data = await api.getProjects();
+      const data = await api.getProjects(true);
       setProjects(data);
       setLoading(false);
     };

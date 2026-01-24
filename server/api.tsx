@@ -28,15 +28,17 @@ export const api = {
     };
   },
 
-  getProjects: async (): Promise<Project[]> => {
+  getProjects: async (isPublic = false): Promise<Project[]> => {
     try {
-      const res = await fetch(`${API_URL}/projects`);
+      const url = isPublic ? `${API_URL}/projects?public=true` : `${API_URL}/projects`;
+      const res = await fetch(url);
       const data = await res.json();
       // Map backend snake_case to frontend camelCase
       return data.map((p: any) => ({
         ...p,
         liveDemo: p.live_demo,
         sourceCode: p.source_code,
+        isVisible: p.is_visible,
       }));
     } catch (error) {
       console.error('Fetch projects error:', error);
@@ -51,6 +53,7 @@ export const api = {
         ...project,
         live_demo: project.liveDemo,
         source_code: project.sourceCode,
+        is_visible: project.isVisible,
       };
 
       const res = await fetch(`${API_URL}/projects`, {
@@ -65,6 +68,7 @@ export const api = {
         ...data,
         liveDemo: data.live_demo,
         sourceCode: data.source_code,
+        isVisible: data.is_visible,
       };
     } catch (error) {
       console.error('Create project error:', error);
@@ -79,6 +83,7 @@ export const api = {
         ...project,
         live_demo: project.liveDemo,
         source_code: project.sourceCode,
+        is_visible: project.isVisible,
       };
 
       const res = await fetch(`${API_URL}/projects/${project.id}`, {
@@ -93,6 +98,7 @@ export const api = {
         ...data,
         liveDemo: data.live_demo,
         sourceCode: data.source_code,
+        isVisible: data.is_visible,
       };
     } catch (error) {
       console.error('Update project error:', error);
@@ -154,22 +160,59 @@ export const api = {
   },
 
 
-  getCVLink: async (): Promise<{ link: string; enabled: boolean }> => {
+  getAccountStatus: async (): Promise<{ enabled: boolean }> => {
     try {
-      const res = await fetch(`${API_URL}/settings/cv`);
-      const data = await res.json();
-      return { link: data.link, enabled: data.enabled };
+      const res = await fetch(`${API_URL}/account/status`);
+      if (!res.ok) return { enabled: false };
+      return await res.json();
     } catch (error) {
-      return { link: '#', enabled: true };
+      return { enabled: false };
     }
   },
 
-  updateCVLink: async (link: string, enabled: boolean): Promise<boolean> => {
+  updateAccountStatus: async (enabled: boolean): Promise<boolean> => {
+    try {
+      await fetch(`${API_URL}/admin/account/settings`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ enabled }),
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+
+  getCVLink: async (): Promise<{ link: string; enabled: boolean }> => {
+    try {
+      const res = await fetch(`${API_URL}/settings/cv`);
+      if (res.status === 403) {
+        return { link: '#', enabled: false };
+      }
+      const data = await res.json();
+      return { link: data.link, enabled: data.enabled };
+    } catch (error) {
+      return { link: '#', enabled: false };
+    }
+  },
+
+  getAdminCVLink: async (): Promise<{ link: string }> => {
+    try {
+      const res = await fetch(`${API_URL}/admin/settings/cv`, {
+        headers: getAuthHeaders(),
+      });
+      return await res.json();
+    } catch (error) {
+      return { link: '#' };
+    }
+  },
+
+  updateCVLink: async (link: string): Promise<boolean> => {
     try {
       await fetch(`${API_URL}/settings/cv`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ link, enabled }),
+        body: JSON.stringify({ link }),
       });
       return true;
     } catch (error) {

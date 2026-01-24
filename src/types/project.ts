@@ -6,6 +6,7 @@ export interface Project {
   tags: string[];
   liveDemo: string;
   sourceCode: string;
+  isVisible: boolean;
 }
 
 export interface SkillCategory {

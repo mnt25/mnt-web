@@ -4,26 +4,23 @@ import { api } from "../../../server/api";
 
 const CVManager = () => {
   const [cvLink, setCvLink] = useState("");
-  const [isEnabled, setIsEnabled] = useState(true);
   const [message, setMessage] = useState("");
-
   useEffect(() => {
     const fetchCV = async () => {
-      const data = await api.getCVLink();
+      const data = await api.getAdminCVLink();
       setCvLink(data.link);
-      setIsEnabled(data.enabled);
     };
     fetchCV();
   }, []);
 
   const handleSave = async () => {
-    const success = await api.updateCVLink(cvLink, isEnabled);
+    const success = await api.updateCVLink(cvLink);
 
     if (success) {
-      setMessage("Đã lưu cài đặt CV thành công!");
+      setMessage("Đã lưu Link CV mới thành công!");
       setTimeout(() => setMessage(""), 2500);
     } else {
-      setMessage("Lỗi khi lưu CV!");
+      setMessage("Lỗi khi lưu link CV!");
     }
   };
 
@@ -34,23 +31,6 @@ const CVManager = () => {
       </h2>
 
       <div className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow space-y-6">
-        {/* Toggle Switch */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Cho phép tải CV
-          </span>
-          <button
-            onClick={() => setIsEnabled(!isEnabled)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isEnabled ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-700"
-              }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isEnabled ? "translate-x-6" : "translate-x-1"
-                }`}
-            />
-          </button>
-        </div>
-
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Link tải CV (Google Drive, Dropbox…)

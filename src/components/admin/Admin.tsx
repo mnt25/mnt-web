@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Dashboard from "./Dashboard";
 import CVManager from "./CVManager";
+import AccountManager from "./AccountManager";
 import ProjectManager from "./ProjectManager.tsx";
 import MessageManager from "./MessageManager";
 import { Menu } from "lucide-react";
@@ -12,7 +13,7 @@ const Admin: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "cv" | "projects" | "messages"
+    "dashboard" | "cv" | "projects" | "messages" | "account"
   >("dashboard");
 
   useEffect(() => {
@@ -36,6 +37,8 @@ const Admin: React.FC = () => {
         return <ProjectManager />;
       case "messages":
         return <MessageManager />;
+      case "account":
+        return <AccountManager />;
       default:
         return <Dashboard setActiveTab={setActiveTab} />;
     }

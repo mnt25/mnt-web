@@ -10,12 +10,20 @@ const Hero: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
-    const fetchCV = async () => {
-      const data = await api.getCVLink();
-      setCvLink(data.link);
-      setIsCVEnabled(data.enabled);
+    const fetchCVData = async () => {
+      // 1. Check account status first
+      const status = await api.getAccountStatus();
+      setIsCVEnabled(status.enabled);
+
+      // 2. ONLY fetch CV link if it's enabled to avoid exposure in network tab
+      if (status.enabled) {
+        const cvData = await api.getCVLink();
+        setCvLink(cvData.link);
+      } else {
+        setCvLink("#");
+      }
     };
-    fetchCV();
+    fetchCVData();
   }, []);
 
   const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {

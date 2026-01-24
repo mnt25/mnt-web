@@ -6,6 +6,7 @@ import {
   FolderKanban,
   MessageSquare,
   LogOut,
+  UserCog,
 } from "lucide-react";
 import SidebarButton from "./SidebarButton";
 
@@ -43,8 +44,7 @@ const Sidebar: React.FC<Props> = ({
           border-r border-slate-200 dark:border-slate-800
           flex flex-col justify-between
           z-50 transform transition-transform duration-300
-          ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }
         `}
       >
@@ -94,6 +94,15 @@ const Sidebar: React.FC<Props> = ({
             active={activeTab === "messages"}
             onClick={() => {
               setActiveTab("messages");
+              setSidebarOpen(false);
+            }}
+          />
+          <SidebarButton
+            icon={<UserCog className="w-5 h-5" />}
+            text="Tài khoản"
+            active={activeTab === "account"}
+            onClick={() => {
+              setActiveTab("account");
               setSidebarOpen(false);
             }}
           />

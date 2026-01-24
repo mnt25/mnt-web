@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS projects (
     tags TEXT[], 
     live_demo VARCHAR(255),
     source_code VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_visible BOOLEAN DEFAULT TRUE
 );
 
 -- 3. Table: messages
@@ -28,12 +29,18 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Table: settings
+-- 4. Table: settings (Link CV)
 CREATE TABLE IF NOT EXISTS settings (
     key VARCHAR(255) PRIMARY KEY,
     value TEXT
 );
 
+-- 5. Table: account_configs (Quyền hạn/Bật tắt)
+CREATE TABLE IF NOT EXISTS account_configs (
+    key VARCHAR(255) PRIMARY KEY,
+    value VARCHAR(50)
+);
+
 -- Default Settings
-INSERT INTO settings (key, value) VALUES ('cv_download_enabled', 'true') ON CONFLICT (key) DO NOTHING;
 INSERT INTO settings (key, value) VALUES ('cv_link', '#') ON CONFLICT (key) DO NOTHING;
+INSERT INTO account_configs (key, value) VALUES ('cv_download_enabled', 'true') ON CONFLICT (key) DO NOTHING;

@@ -70,8 +70,18 @@ app.post('/api/login', async (req, res) => {
 
 // 2. Projects (CRUD)
 app.get('/api/projects', async (req, res) => {
+    const { public: isPublic } = req.query;
     try {
-        const result = await pool.query('SELECT * FROM projects ORDER BY created_at DESC');
+        let query = 'SELECT * FROM projects';
+        const params = [];
+
+        if (isPublic === 'true') {
+            query += ' WHERE is_visible = true';
+        }
+
+        query += ' ORDER BY created_at DESC';
+
+        const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -79,11 +89,11 @@ app.get('/api/projects', async (req, res) => {
 });
 
 app.post('/api/projects', authMiddleware, async (req, res) => {
-    const { title, description, image, tags, live_demo, source_code } = req.body;
+    const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO projects (title, description, image, tags, live_demo, source_code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [title, description, image, tags, live_demo, source_code]
+            'INSERT INTO projects (title, description, image, tags, live_demo, source_code, is_visible) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible ?? true]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -93,11 +103,11 @@ app.post('/api/projects', authMiddleware, async (req, res) => {
 
 app.put('/api/projects/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
-    const { title, description, image, tags, live_demo, source_code } = req.body;
+    const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6 WHERE id=$7 RETURNING *',
-            [title, description, image, tags, live_demo, source_code, id]
+            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6, is_visible=$7 WHERE id=$8 RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible, id]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -187,31 +197,61 @@ app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
 });
 
 // 4. Settings (CV Link + Status)
+app.get('/api/account/status', async (req, res) => {
+    try {
+        const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
+        const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
+        res.json({ enabled });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admin/account/settings', authMiddleware, async (req, res) => {
+    const { enabled } = req.body;
+    try {
+        const enabledStr = String(enabled);
+        await pool.query("INSERT INTO account_configs (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [enabledStr]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.get('/api/settings/cv', async (req, res) => {
     try {
-        const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
-        const enabledResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_download_enabled'");
-
-        const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
-        // Default to 'true' if not set
+        // Public check: must be enabled to see the link
+        const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
         const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
 
-        res.json({ link, enabled });
+        if (!enabled) {
+            return res.status(403).json({ error: "Tính năng tải CV hiện đang bị tắt." });
+        }
+
+        const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
+        const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
+
+        res.json({ link, enabled: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin endpoint: Always allowed regardless of toggle
+app.get('/api/admin/settings/cv', authMiddleware, async (req, res) => {
+    try {
+        const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
+        const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
+        res.json({ link });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
 app.post('/api/settings/cv', authMiddleware, async (req, res) => {
-    const { link, enabled } = req.body;
+    const { link } = req.body;
     try {
-        // Upsert Link
         await pool.query("INSERT INTO settings (key, value) VALUES ('cv_link', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [link]);
-
-        // Upsert Enabled Status (save as string 'true'/'false')
-        const enabledStr = String(enabled);
-        await pool.query("INSERT INTO settings (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [enabledStr]);
-
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });

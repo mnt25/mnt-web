@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Edit, X } from "lucide-react";
+import { Plus, Trash2, Edit, X, Eye, EyeOff } from "lucide-react";
 import { api } from "../../../server/api";
 import type { Project } from "../../types/project";
 
@@ -16,6 +16,7 @@ const ProjectManager = () => {
     tags: [],
     liveDemo: "",
     sourceCode: "",
+    isVisible: true,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -39,6 +40,7 @@ const ProjectManager = () => {
       tags: [],
       liveDemo: "",
       sourceCode: "",
+      isVisible: true,
     });
     setIsModalOpen(true);
   };
@@ -73,6 +75,12 @@ const ProjectManager = () => {
     } else {
       alert("Lỗi trong quá trình lưu!");
     }
+  };
+
+  const toggleVisibility = async (p: Project) => {
+    const updated = { ...p, isVisible: !p.isVisible };
+    const result = await api.updateProject(updated);
+    if (result) loadProjects();
   };
 
   const addTag = () => {
@@ -116,6 +124,7 @@ const ProjectManager = () => {
             <tr>
               <th className="px-6 py-4 text-sm font-semibold">Tên dự án</th>
               <th className="px-6 py-4 text-sm font-semibold">Mô tả</th>
+              <th className="px-6 py-4 text-sm font-semibold">Trạng thái</th>
               <th className="px-6 py-4 text-sm font-semibold">Thao tác</th>
             </tr>
           </thead>
@@ -126,6 +135,26 @@ const ProjectManager = () => {
                 <td className="px-6 py-4 font-medium">{p.title}</td>
                 <td className="px-6 py-4 text-slate-600 dark:text-slate-400 truncate max-w-md">
                   {p.description}
+                </td>
+
+                <td className="px-6 py-4">
+                  <button
+                    onClick={() => toggleVisibility(p)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${p.isVisible
+                        ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-500/10 dark:text-green-400 dark:hover:bg-green-500/20"
+                        : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+                      }`}
+                  >
+                    {p.isVisible ? (
+                      <>
+                        <Eye className="w-3.5 h-3.5" /> Hiển thị
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5" /> Đã ẩn
+                      </>
+                    )}
+                  </button>
                 </td>
 
                 <td className="px-6 py-4">
@@ -178,6 +207,21 @@ const ProjectManager = () => {
 
             {/* Form */}
             <form onSubmit={submitForm} className="p-6 space-y-4">
+              {/* Visibility Toggle in Form */}
+              <div className="flex items-center gap-2">
+                <label className="flex items-center cursor-pointer gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.isVisible}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isVisible: e.target.checked })
+                    }
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm font-medium">Hiển thị công khai</span>
+                </label>
+              </div>
+
               {/* Title */}
               <input
                 required
