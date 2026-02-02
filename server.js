@@ -46,7 +46,7 @@ const pool = new Pool({
 // --- API ROUTES ---
 
 // 1. Login
-app.post('/api/login', async (req, res) => {
+app.post('/api/_mntphatfixbug6677/nexus/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -69,7 +69,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 // 2. Projects (CRUD)
-app.get('/api/projects', async (req, res) => {
+app.get('/api/_mntphatfixbug6677/nexus/projects', async (req, res) => {
     const { public: isPublic } = req.query;
     try {
         let query = 'SELECT * FROM projects';
@@ -88,12 +88,12 @@ app.get('/api/projects', async (req, res) => {
     }
 });
 
-app.post('/api/projects', authMiddleware, async (req, res) => {
+app.post('/api/_mntphatfixbug6677/nexus/projects', authMiddleware, async (req, res) => {
     const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO projects (title, description, image, tags, live_demo, source_code, is_visible) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-            [title, description, image, tags, live_demo, source_code, is_visible ?? true]
+            'INSERT INTO projects (title, description, image, tags, live_demo, source_code, is_visible, title_en, description_en) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible ?? true, req.body.title_en, req.body.description_en]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -101,13 +101,13 @@ app.post('/api/projects', authMiddleware, async (req, res) => {
     }
 });
 
-app.put('/api/projects/:id', authMiddleware, async (req, res) => {
+app.put('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6, is_visible=$7 WHERE id=$8 RETURNING *',
-            [title, description, image, tags, live_demo, source_code, is_visible, id]
+            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6, is_visible=$7, title_en=$8, description_en=$9 WHERE id=$10 RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible, req.body.title_en, req.body.description_en, id]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -115,7 +115,7 @@ app.put('/api/projects/:id', authMiddleware, async (req, res) => {
     }
 });
 
-app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
+app.delete('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM projects WHERE id = $1', [id]);
@@ -126,7 +126,7 @@ app.delete('/api/projects/:id', authMiddleware, async (req, res) => {
 });
 
 // 3. Messages
-app.get('/api/messages', authMiddleware, async (req, res) => {
+app.get('/api/_mntphatfixbug6677/nexus/messages', authMiddleware, async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
         res.json(result.rows);
@@ -169,7 +169,7 @@ const sendDiscordMessage = async (data) => {
     }
 };
 
-app.post('/api/messages', async (req, res) => {
+app.post('/api/_mntphatfixbug6677/nexus/messages', async (req, res) => {
     const { name, email, message } = req.body;
     try {
         const result = await pool.query(
@@ -186,7 +186,7 @@ app.post('/api/messages', async (req, res) => {
     }
 });
 
-app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
+app.delete('/api/_mntphatfixbug6677/nexus/messages/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM messages WHERE id = $1', [id]);
@@ -197,7 +197,7 @@ app.delete('/api/messages/:id', authMiddleware, async (req, res) => {
 });
 
 // 4. Settings (CV Link + Status)
-app.get('/api/account/status', async (req, res) => {
+app.get('/api/_mntphatfixbug6677/nexus/account/status', async (req, res) => {
     try {
         const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
         const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
@@ -207,7 +207,7 @@ app.get('/api/account/status', async (req, res) => {
     }
 });
 
-app.post('/api/admin/account/settings', authMiddleware, async (req, res) => {
+app.post('/api/_mntphatfixbug6677/nexus/admin/account/settings', authMiddleware, async (req, res) => {
     const { enabled } = req.body;
     try {
         const enabledStr = String(enabled);
@@ -218,7 +218,7 @@ app.post('/api/admin/account/settings', authMiddleware, async (req, res) => {
     }
 });
 
-app.get('/api/settings/cv', async (req, res) => {
+app.get('/api/_mntphatfixbug6677/nexus/settings/cv', async (req, res) => {
     try {
         // Public check: must be enabled to see the link
         const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
@@ -238,7 +238,7 @@ app.get('/api/settings/cv', async (req, res) => {
 });
 
 // Admin endpoint: Always allowed regardless of toggle
-app.get('/api/admin/settings/cv', authMiddleware, async (req, res) => {
+app.get('/api/_mntphatfixbug6677/nexus/admin/settings/cv', authMiddleware, async (req, res) => {
     try {
         const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
         const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
@@ -248,7 +248,7 @@ app.get('/api/admin/settings/cv', authMiddleware, async (req, res) => {
     }
 });
 
-app.post('/api/settings/cv', authMiddleware, async (req, res) => {
+app.post('/api/_mntphatfixbug6677/nexus/settings/cv', authMiddleware, async (req, res) => {
     const { link } = req.body;
     try {
         await pool.query("INSERT INTO settings (key, value) VALUES ('cv_link', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [link]);

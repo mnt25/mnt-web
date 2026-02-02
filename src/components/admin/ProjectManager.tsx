@@ -17,6 +17,8 @@ const ProjectManager = () => {
     liveDemo: "",
     sourceCode: "",
     isVisible: true,
+    titleEn: "",
+    descriptionEn: "",
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -41,6 +43,8 @@ const ProjectManager = () => {
       liveDemo: "",
       sourceCode: "",
       isVisible: true,
+      titleEn: "",
+      descriptionEn: "",
     });
     setIsModalOpen(true);
   };
@@ -141,8 +145,8 @@ const ProjectManager = () => {
                   <button
                     onClick={() => toggleVisibility(p)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${p.isVisible
-                        ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-500/10 dark:text-green-400 dark:hover:bg-green-500/20"
-                        : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
+                      ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-500/10 dark:text-green-400 dark:hover:bg-green-500/20"
+                      : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20"
                       }`}
                   >
                     {p.isVisible ? (
@@ -225,21 +229,38 @@ const ProjectManager = () => {
               {/* Title */}
               <input
                 required
-                placeholder="Tên dự án"
+                placeholder="Tên dự án (Tiếng Việt)"
                 className="w-full px-3 py-2 border rounded-lg bg-transparent"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              />
+
+              <input
+                placeholder="Project Name (English)"
+                className="w-full px-3 py-2 border rounded-lg bg-transparent"
+                value={formData.titleEn || ""}
+                onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
               />
 
               {/* Description */}
               <textarea
                 required
                 rows={3}
-                placeholder="Mô tả..."
+                placeholder="Mô tả (Tiếng Việt)..."
                 className="w-full px-3 py-2 border rounded-lg bg-transparent"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
+                }
+              />
+
+              <textarea
+                rows={3}
+                placeholder="Description (English)..."
+                className="w-full px-3 py-2 border rounded-lg bg-transparent"
+                value={formData.descriptionEn || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, descriptionEn: e.target.value })
                 }
               />
 

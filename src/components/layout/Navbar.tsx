@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, Sun, Moon, Monitor, ChevronDown } from "lucide-react";
-import type { NavItem } from "../../types/navitem";
+import { useLanguage } from "../../context/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const navItems: NavItem[] = [
-  { label: "Giới thiệu", href: "#about" },
-  { label: "Kỹ năng", href: "#skills" },
-  { label: "Dự án", href: "#projects" },
-  { label: "Liên hệ", href: "#contact" },
+const navItems = [
+  { key: "nav.about", href: "#about" },
+  { key: "nav.skills", href: "#skills" },
+  { key: "nav.projects", href: "#projects" },
+  { key: "nav.contact", href: "#contact" },
 ];
 
 type Theme = "light" | "dark" | "system";
 
 const Navbar: React.FC = () => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>("dark"); // Default to dark visually first
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
@@ -111,9 +113,9 @@ const Navbar: React.FC = () => {
   };
 
   const getThemeLabel = () => {
-    if (theme === "light") return "Sáng";
-    if (theme === "dark") return "Tối";
-    return "Hệ thống";
+    if (theme === "light") return t('theme.light');
+    if (theme === "dark") return t('theme.dark');
+    return t('theme.system');
   };
 
   return (
@@ -140,15 +142,18 @@ const Navbar: React.FC = () => {
             <div className="flex items-baseline space-x-6">
               {navItems.map((item) => (
                 <a
-                  key={item.label}
+                  key={item.key}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
                   className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 >
-                  {item.label}
+                  {t(item.key)}
                 </a>
               ))}
             </div>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Theme Toggle Dropdown */}
             <div className="relative">
@@ -170,36 +175,33 @@ const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-40 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 z-20 overflow-hidden py-1 ring-1 ring-black ring-opacity-5">
                     <button
                       onClick={() => handleThemeChange("light")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${
-                        theme === "light"
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      }`}
+                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "light"
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                        }`}
                     >
                       <Sun className="w-4 h-4 mr-3" />
-                      Sáng
+                      {t('theme.light')}
                     </button>
                     <button
                       onClick={() => handleThemeChange("dark")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${
-                        theme === "dark"
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      }`}
+                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "dark"
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                        }`}
                     >
                       <Moon className="w-4 h-4 mr-3" />
-                      Tối
+                      {t('theme.dark')}
                     </button>
                     <button
                       onClick={() => handleThemeChange("system")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${
-                        theme === "system"
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                      }`}
+                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "system"
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+                        }`}
                     >
                       <Monitor className="w-4 h-4 mr-3" />
-                      Theo hệ thống
+                      {t('theme.system_full')}
                     </button>
                   </div>
                 </>
@@ -208,7 +210,8 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="-mr-2 flex md:hidden gap-4">
+          <div className="-mr-2 flex md:hidden gap-4 items-center">
+            <LanguageSwitcher />
             {/* Mobile Theme Toggle (Simple cycle) */}
             <button
               onClick={() => {
@@ -216,8 +219,8 @@ const Navbar: React.FC = () => {
                   theme === "light"
                     ? "dark"
                     : theme === "dark"
-                    ? "system"
-                    : "light";
+                      ? "system"
+                      : "light";
                 handleThemeChange(next);
               }}
               className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -247,12 +250,12 @@ const Navbar: React.FC = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
               <a
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 block px-3 py-2 rounded-md text-base font-medium"
               >
-                {item.label}
+                {t(item.key)}
               </a>
             ))}
           </div>

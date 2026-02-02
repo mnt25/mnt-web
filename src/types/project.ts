@@ -7,6 +7,8 @@ export interface Project {
   liveDemo: string;
   sourceCode: string;
   isVisible: boolean;
+  titleEn?: string;
+  descriptionEn?: string;
 }
 
 export interface SkillCategory {

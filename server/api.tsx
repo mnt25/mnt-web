@@ -1,7 +1,7 @@
 import type { Project } from '../src/types/project';
 import type { ContactMessage } from '../src/types/contact';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://localhost:5000/api/_mntphatfixbug6677/nexus';
 
 // Lấy token từ localStorage
 const getAuthHeaders = () => {
@@ -14,7 +14,7 @@ const getAuthHeaders = () => {
 // api.ts
 export const api = {
   login: async (username: string, password: string) => {
-    const res = await fetch("http://localhost:5000/api/login", {
+    const res = await fetch("http://localhost:5000/api/_mntphatfixbug6677/nexus/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -39,6 +39,8 @@ export const api = {
         liveDemo: p.live_demo,
         sourceCode: p.source_code,
         isVisible: p.is_visible,
+        titleEn: p.title_en,
+        descriptionEn: p.description_en,
       }));
     } catch (error) {
       console.error('Fetch projects error:', error);
@@ -54,6 +56,8 @@ export const api = {
         live_demo: project.liveDemo,
         source_code: project.sourceCode,
         is_visible: project.isVisible,
+        title_en: project.titleEn,
+        description_en: project.descriptionEn,
       };
 
       const res = await fetch(`${API_URL}/projects`, {
@@ -69,6 +73,8 @@ export const api = {
         liveDemo: data.live_demo,
         sourceCode: data.source_code,
         isVisible: data.is_visible,
+        titleEn: data.title_en,
+        descriptionEn: data.description_en,
       };
     } catch (error) {
       console.error('Create project error:', error);
@@ -84,6 +90,8 @@ export const api = {
         live_demo: project.liveDemo,
         source_code: project.sourceCode,
         is_visible: project.isVisible,
+        title_en: project.titleEn,
+        description_en: project.descriptionEn,
       };
 
       const res = await fetch(`${API_URL}/projects/${project.id}`, {
@@ -99,6 +107,8 @@ export const api = {
         liveDemo: data.live_demo,
         sourceCode: data.source_code,
         isVisible: data.is_visible,
+        titleEn: data.title_en,
+        descriptionEn: data.description_en,
       };
     } catch (error) {
       console.error('Update project error:', error);

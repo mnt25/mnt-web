@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, AlertCircle, CheckCircle } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { FaFacebookF, FaTelegramPlane, FaGithub } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { api } from "../../../server/api";
 
 const Contact: React.FC = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -48,10 +50,10 @@ const Contact: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal width="100%">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Liên hệ
+              {t('contact.title')}
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              Tôi luôn sẵn sàng cho các cơ hội mới. Hãy kết nối với tôi!
+              {t('contact.desc')}
             </p>
           </Reveal>
         </div>
@@ -61,7 +63,7 @@ const Contact: React.FC = () => {
           <Reveal width="100%">
             <div className=" rounded-2xl p-8 space-y-8 h-full shadow-lg dark:shadow-none">
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">
-                Thông tin liên lạc
+                {t('contact.infoTitle')}
               </h3>
 
               <div className="flex items-start space-x-4">
@@ -70,7 +72,7 @@ const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                    Email
+                    {t('contact.email')}
                   </p>
                   <a
                     href="mailto:mnt250723@gmail.com"
@@ -87,7 +89,7 @@ const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                    Điện thoại
+                    {t('contact.phone')}
                   </p>
                   <a
                     href="tel:+84377309531"
@@ -104,7 +106,7 @@ const Contact: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                    Địa chỉ
+                    {t('contact.address')}
                   </p>
                   <a
                     href="https://www.google.com/maps/place/Thịnh+Liệt,+Hoàng+Mai,+Hà+Nội"
@@ -112,7 +114,7 @@ const Contact: React.FC = () => {
                     rel="noopener noreferrer"
                     className="text-lg text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
-                    Thịnh Liệt, Hoàng Mai, Hà Nội
+                    {t('contact.addressText')}
                   </a>
                 </div>
               </div>
@@ -149,7 +151,7 @@ const Contact: React.FC = () => {
           <Reveal width="100%">
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 h-full shadow-lg dark:shadow-none">
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">
-                Gửi tin nhắn
+                {t('contact.formTitle')}
               </h3>
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
@@ -157,7 +159,7 @@ const Contact: React.FC = () => {
                     htmlFor="name"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                   >
-                    Họ và tên
+                    {t('contact.formName')}
                   </label>
                   <input
                     type="text"
@@ -165,7 +167,7 @@ const Contact: React.FC = () => {
                     value={formData.name}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Nhập tên của bạn"
+                    placeholder={t('contact.phName')}
                     required
                   />
                 </div>
@@ -174,7 +176,7 @@ const Contact: React.FC = () => {
                     htmlFor="email"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                   >
-                    Email
+                    {t('contact.formEmail')}
                   </label>
                   <input
                     type="email"
@@ -182,7 +184,7 @@ const Contact: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Nhập email của bạn"
+                    placeholder={t('contact.phEmail')}
                     required
                   />
                 </div>
@@ -191,7 +193,7 @@ const Contact: React.FC = () => {
                     htmlFor="message"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                   >
-                    Lời nhắn
+                    {t('contact.formMessage')}
                   </label>
                   <textarea
                     id="message"
@@ -199,7 +201,7 @@ const Contact: React.FC = () => {
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                    placeholder="Bạn muốn trao đổi về vấn đề gì?"
+                    placeholder={t('contact.phMessage')}
                     required
                   ></textarea>
                 </div>
@@ -207,18 +209,18 @@ const Contact: React.FC = () => {
                   type="submit"
                   className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
                 >
-                  Gửi tin nhắn
+                  {t('contact.sendBtn')}
                 </button>
                 {status === "success" && (
                   <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mt-2 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
                     <CheckCircle className="w-5 h-5" />
-                    <span>Tin nhắn đã được gửi thành công!</span>
+                    <span>{t('contact.success')}</span>
                   </div>
                 )}
                 {status === "error" && (
                   <div className="flex items-center gap-2 text-red-600 dark:text-red-400 mt-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
                     <AlertCircle className="w-5 h-5" />
-                    <span>Có lỗi xảy ra, có thể server chưa chạy.</span>
+                    <span>{t('contact.error')}</span>
                   </div>
                 )}
               </form>

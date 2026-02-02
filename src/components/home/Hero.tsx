@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Download } from 'lucide-react';
+import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { Dialog } from "../ui/Dialog";
 import { api } from '../../../server/api';
 
 const Hero: React.FC = () => {
+  const { t } = useLanguage();
   const [cvLink, setCvLink] = useState<string>('#');
   const [isCVEnabled, setIsCVEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
@@ -48,24 +50,23 @@ const Hero: React.FC = () => {
         <Reveal width="fit-content">
           <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 text-sm font-medium mb-6">
             <span className="flex h-2 w-2 rounded-full bg-blue-500 dark:bg-blue-400 mr-2 animate-pulse"></span>
-            Đang tìm kiếm cơ hội thực tập
+            {t('hero.badge')}
           </div>
         </Reveal>
 
         <Reveal>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6">
-            Xin chào, tôi là
+            {t('hero.greeting')}
             <br className="md:hidden" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-500 pl-2">
-              Phạm Văn Sơn
+              {t('common.name')}
             </span>
           </h1>
         </Reveal>
 
         <Reveal>
           <p className="mt-4 max-w-2xl text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed mx-auto">
-            Tốt nghiệp chuyên ngành Công nghệ thông tin, đam mê xây dựng các ứng
-            dụng web hiện đại, tối ưu trải nghiệm người dùng.
+            {t('hero.desc')}
           </p>
         </Reveal>
 
@@ -81,7 +82,7 @@ const Hero: React.FC = () => {
               }}
               className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 md:text-lg transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-1"
             >
-              Xem Dự Án
+              {t('hero.viewProjects')}
               <ArrowRight className="ml-2 h-5 w-5" />
             </a>
             <a
@@ -103,20 +104,18 @@ const Hero: React.FC = () => {
       <Dialog
         isOpen={showDialog}
         onClose={() => setShowDialog(false)}
-        title="Thông báo"
+        title={t('common.notice')}
       >
         <div className="space-y-4">
-          <p className="text-slate-600 dark:text-slate-300">
-            Phạm Văn Sơn đã tắt tính năng tải xuống CV.
-            <br />
-            Vui lòng liên hệ trực tiếp để biết thêm thông tin.
+          <p className="text-slate-600 dark:text-slate-300 whitespace-pre-line">
+            {t('hero.cvDisabled')}
           </p>
           <div className="flex justify-end">
             <button
               onClick={() => setShowDialog(false)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Đóng
+              {t('common.close')}
             </button>
           </div>
         </div>

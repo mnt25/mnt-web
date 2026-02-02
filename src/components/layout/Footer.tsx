@@ -1,6 +1,8 @@
 import React from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const Footer: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <footer className="bg-slate-100 dark:bg-slate-950 py-8 border-t border-slate-200 dark:border-slate-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -12,7 +14,7 @@ const Footer: React.FC = () => {
           >
             MNT
           </a>
-          . All rights reserved.
+          . {t('footer.rights')}
         </p>
       </div>
     </footer>

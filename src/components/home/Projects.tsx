@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 import type { Project } from "../../types/project";
 import { Reveal } from "../ui/Reveal";
 import { FiGithub } from "react-icons/fi";
 import { api } from "../../../server/api";
 
 const Projects: React.FC = () => {
+  const { t, language } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,16 +30,16 @@ const Projects: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal width="100%">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Dự án nổi bật
+              {t('projects.title')}
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              Một số dự án cá nhân mà tôi đã thực hiện để rèn luyện kỹ năng.
+              {t('projects.desc')}
             </p>
           </Reveal>
         </div>
 
         {loading ? (
-          <div className="text-center text-slate-500">Đang tải dự án...</div>
+          <div className="text-center text-slate-500">{t('projects.loading')}</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
@@ -56,10 +58,10 @@ const Projects: React.FC = () => {
                   {/* Content */}
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {project.title}
+                      {language === 'en' && project.titleEn ? project.titleEn : project.title}
                     </h3>
                     <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 line-clamp-3 flex-grow">
-                      {project.description}
+                      {language === 'en' && project.descriptionEn ? project.descriptionEn : project.description}
                     </p>
 
                     {/* Tags */}
@@ -83,7 +85,7 @@ const Projects: React.FC = () => {
                         className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-black dark:hover:text-white transition-colors"
                       >
                         <FiGithub className="w-4 h-4 mr-2" />
-                        Code
+                        {t('projects.code')}
                       </a>
                       <a
                         href={project.liveDemo}
@@ -92,7 +94,7 @@ const Projects: React.FC = () => {
                         className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
                       >
                         <ExternalLink className="w-4 h-4 mr-2" />
-                        Demo
+                        {t('projects.demo')}
                       </a>
                     </div>
                   </div>

@@ -1,51 +1,52 @@
 import React from "react";
 import { FileCode2, Database, Terminal, Cpu } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 
-const skillCards = [
-  {
-    title: "Html5, Css & Javascript",
-    description:
-      "Framework web tôi thường dùng là React hoặc Next.js tùy yêu cầu.",
-    icon: FileCode2,
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-    borderColor: "hover:border-orange-500/50",
-    shadowColor: "hover:shadow-orange-500/20",
-  },
-  {
-    title: ".Net Core, Microservice",
-    description:
-      "Ứng dụng được triển khai trên .NET, container hóa với Docker, định hướng microservice khi phù hợp quy mô.",
-    icon: Cpu,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
-    borderColor: "hover:border-purple-500/50",
-    shadowColor: "hover:shadow-purple-500/20",
-  },
-  {
-    title: "Sql Server, MongoDB, Redis",
-    description:
-      "3 công nghệ này đáp ứng hầu hết bài toán lưu trữ, hiệu năng và bảo mật dữ liệu.",
-    icon: Database,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    borderColor: "hover:border-emerald-500/50",
-    shadowColor: "hover:shadow-emerald-500/20",
-  },
-  {
-    title: "Linux, Windows, Network",
-    description:
-      "Ưu tiên Linux trong triển khai, vẫn hỗ trợ Windows Server miễn có Docker.",
-    icon: Terminal,
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-500/10",
-    borderColor: "hover:border-yellow-500/50",
-    shadowColor: "hover:shadow-yellow-500/20",
-  },
-];
+
 
 const Skills: React.FC = () => {
+  const { t } = useLanguage();
+
+  const skillCards = [
+    {
+      title: t('skills.html'),
+      description: t('skills.htmlDesc'),
+      icon: FileCode2,
+      color: "text-orange-500",
+      bgColor: "bg-orange-500/10",
+      borderColor: "hover:border-orange-500/50",
+      shadowColor: "hover:shadow-orange-500/20",
+    },
+    {
+      title: t('skills.net'),
+      description: t('skills.netDesc'),
+      icon: Cpu,
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
+      borderColor: "hover:border-purple-500/50",
+      shadowColor: "hover:shadow-purple-500/20",
+    },
+    {
+      title: t('skills.db'),
+      description: t('skills.dbDesc'),
+      icon: Database,
+      color: "text-emerald-500",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "hover:border-emerald-500/50",
+      shadowColor: "hover:shadow-emerald-500/20",
+    },
+    {
+      title: t('skills.os'),
+      description: t('skills.osDesc'),
+      icon: Terminal,
+      color: "text-yellow-500",
+      bgColor: "bg-yellow-500/10",
+      borderColor: "hover:border-yellow-500/50",
+      shadowColor: "hover:shadow-yellow-500/20",
+    },
+  ];
+
   return (
     <section
       id="skills"
@@ -55,11 +56,10 @@ const Skills: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal width="100%">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Kỹ năng chuyên môn
+              {t('skills.title')}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-4">
-              Các công nghệ và công cụ tôi sử dụng thường xuyên trong quá trình
-              học tập và làm việc.
+              {t('skills.desc')}
             </p>
             <div className="w-24 h-1.5 bg-blue-600 rounded-full mx-auto"></div>
           </Reveal>

@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
+import { LanguageProvider } from "./context/LanguageContext";
 import Hero from "./components/home/Hero";
 import About from "./components/home/About";
 import Skills from "./components/home/Skills";
@@ -25,14 +26,16 @@ const MainContent: React.FC = () => (
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </BrowserRouter>
   );
 };
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname.startsWith("/admin") ;
+  const isAuthPage = location.pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-200 transition-colors duration-300">

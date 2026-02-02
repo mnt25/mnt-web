@@ -1,11 +1,13 @@
 import React from "react";
 import { User, Terminal, Coffee } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 
 const birthYear = 2003;
 const age = new Date().getFullYear() - birthYear;
 
 const About: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <section
       id="about"
@@ -15,7 +17,7 @@ const About: React.FC = () => {
         <div className="text-center mb-16">
           <Reveal width="100%">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Về bản thân
+              {t('about.title')}
             </h2>
             <div className="w-20 h-1 bg-blue-500 mx-auto rounded-full"></div>
           </Reveal>
@@ -46,7 +48,7 @@ const About: React.FC = () => {
                   <p className="pl-4">
                     name:{" "}
                     <span className="text-green-600 dark:text-green-400">
-                      'Phạm Văn Sơn'
+                      '{t('common.name')}'
                     </span>
                     ,
                   </p>
@@ -93,30 +95,26 @@ const About: React.FC = () => {
           <div className="space-y-6">
             <Reveal>
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
-                Hành trình trở thành Lập trình viên
+                {t('about.journeyTitle')}
               </h3>
             </Reveal>
             <Reveal>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Tôi là sinh viên tốt nghiệp chuyên ngành Công nghệ thông tin tại
+                {t('about.journeyDesc1')}
                 <a
                   href="https://btec.fpt.edu.vn/ve-btec-fpt/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 ml-1 no-underline"
                 >
-                  Cao Đẳng Anh Quốc BTEC FPT
+                  {t('about.journeyDesc1School')}
                 </a>
-                . Với nền tảng kiến thức vững chắc, tôi đã tự học và phát triển
-                kỹ năng trong lĩnh vực phát triển Web.
+                {t('about.journeyDesc1End')}
               </p>
             </Reveal>
             <Reveal>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Mục tiêu của tôi là áp dụng những kiến thức đã học vào thực tế,
-                đóng góp giá trị cho doanh nghiệp và không ngừng nâng cao trình
-                độ chuyên môn. Tôi là người cầu tiến, ham học hỏi và luôn sẵn
-                sàng đối mặt với thử thách mới.
+                {t('about.journeyDesc2')}
               </p>
             </Reveal>
 
