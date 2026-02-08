@@ -30,7 +30,7 @@ const translations: Record<Language, Record<string, string>> = {
         'hero.desc': 'Tốt nghiệp chuyên ngành Công nghệ thông tin, đam mê xây dựng các ứng dụng web hiện đại, tối ưu trải nghiệm người dùng.',
         'hero.viewProjects': 'Xem Dự Án',
         'hero.downloadCV': 'Tải CV',
-        'hero.cvDisabled': 'Phạm Văn Sơn đã tắt tính năng tải xuống CV.\nVui lòng liên hệ trực tiếp để biết thêm thông tin.',
+        'hero.cvDisabled': 'Tính năng tải xuống CV tạm thời không khả dụng.\nVui lòng liên hệ trực tiếp để biết thêm thông tin.',
 
         // About
         'about.title': 'Về bản thân',
@@ -102,7 +102,7 @@ const translations: Record<Language, Record<string, string>> = {
         'hero.desc': 'IT graduate passionate about building modern web applications and optimizing user experiences.',
         'hero.viewProjects': 'View Projects',
         'hero.downloadCV': 'Download CV',
-        'hero.cvDisabled': 'CV download has been disabled by Pham Van Son.\nPlease contact directly for more information.',
+        'hero.cvDisabled': 'The CV download feature is currently disabled.\nPlease contact directly for more information.',
 
         // About
         'about.title': 'About Me',
