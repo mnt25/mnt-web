@@ -55,29 +55,29 @@ const About: React.FC = () => {
                   <p className="pl-4">
                     age:{" "}
                     <span className="text-green-600 dark:text-green-400">
-                      '{age} years old'
+                      '{age} {t('about.ageUnit')}'
                     </span>
                     ,
                   </p>
                   <p className="pl-4">
                     role:{" "}
                     <span className="text-green-600 dark:text-green-400">
-                      'FrontEnd Intern'
+                      '{t('about.roleValue')}'
                     </span>
                     ,
                   </p>
                   <p className="pl-4">
                     passion: [
                     <span className="text-green-600 dark:text-green-400">
-                      'Coding'
+                      '{t('about.passion.coding')}'
                     </span>
                     ,{" "}
                     <span className="text-green-600 dark:text-green-400">
-                      'UI/UX'
+                      '{t('about.passion.uiux')}'
                     </span>
                     ,{" "}
                     <span className="text-green-600 dark:text-green-400">
-                      'Solving'
+                      '{t('about.passion.solving')}'
                     </span>
                     ],
                   </p>
@@ -123,7 +123,7 @@ const About: React.FC = () => {
                 <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
                   <Terminal className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
-                    Clean Code
+                    {t('about.value.cleanCode')}
                   </span>
                 </div>
               </Reveal>
@@ -131,7 +131,7 @@ const About: React.FC = () => {
                 <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
                   <User className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
-                    Teamwork
+                    {t('about.value.teamwork')}
                   </span>
                 </div>
               </Reveal>
@@ -139,7 +139,7 @@ const About: React.FC = () => {
                 <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
                   <Coffee className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
-                    Dedication
+                    {t('about.value.dedication')}
                   </span>
                 </div>
               </Reveal>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
 
 type Language = 'vi' | 'en';
 
@@ -13,6 +13,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 // Simple dictionary for translations
 const translations: Record<Language, Record<string, string>> = {
     vi: {
+        // Meta
+        'meta.title': 'MNT | Lập trình viên Web - Phạm Văn Sơn',
+        'meta.description': 'Phạm Văn Sơn - Fresher phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.',
+
         'nav.about': 'Giới thiệu',
         'nav.skills': 'Kỹ năng',
         'nav.projects': 'Dự án',
@@ -25,9 +29,9 @@ const translations: Record<Language, Record<string, string>> = {
         'lang.en': 'Tiếng Anh',
 
         // Hero
-        'hero.badge': 'Đang tìm kiếm cơ hội thực tập',
+        'hero.badge': 'Đang tìm kiếm cơ hội Fresher',
         'hero.greeting': 'Xin chào, tôi là',
-        'hero.desc': 'Tốt nghiệp chuyên ngành Công nghệ thông tin, đam mê xây dựng các ứng dụng web hiện đại, tối ưu trải nghiệm người dùng.',
+        'hero.desc': 'Tốt nghiệp chuyên ngành Kỹ thuật phần mềm, đam mê xây dựng các ứng dụng web hiện đại, tối ưu trải nghiệm người dùng.',
         'hero.viewProjects': 'Xem Dự Án',
         'hero.downloadCV': 'Tải CV',
         'hero.cvDisabled': 'Tính năng tải xuống CV tạm thời không khả dụng.\nVui lòng liên hệ trực tiếp để biết thêm thông tin.',
@@ -35,10 +39,18 @@ const translations: Record<Language, Record<string, string>> = {
         // About
         'about.title': 'Về bản thân',
         'about.journeyTitle': 'Hành trình trở thành Lập trình viên',
-        'about.journeyDesc1': 'Tôi là sinh viên tốt nghiệp chuyên ngành Công nghệ thông tin tại',
+        'about.journeyDesc1': 'Tôi là sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm tại',
         'about.journeyDesc1School': 'Cao Đẳng Anh Quốc BTEC FPT',
         'about.journeyDesc1End': '. Với nền tảng kiến thức vững chắc, tôi đã tự học và phát triển kỹ năng trong lĩnh vực phát triển Web.',
         'about.journeyDesc2': 'Mục tiêu của tôi là áp dụng những kiến thức đã học vào thực tế, đóng góp giá trị cho doanh nghiệp và không ngừng nâng cao trình độ chuyên môn. Tôi là người cầu tiến, ham học hỏi và luôn sẵn sàng đối mặt với thử thách mới.',
+        'about.ageUnit': 'tuổi',
+        'about.roleValue': 'Frontend Fresher',
+        'about.passion.coding': 'Lập trình',
+        'about.passion.uiux': 'UI/UX',
+        'about.passion.solving': 'Giải quyết vấn đề',
+        'about.value.cleanCode': 'Clean Code',
+        'about.value.teamwork': 'Làm việc nhóm',
+        'about.value.dedication': 'Tận tâm',
 
         // Skills
         'skills.title': 'Kỹ năng chuyên môn',
@@ -83,8 +95,14 @@ const translations: Record<Language, Record<string, string>> = {
         'common.notice': 'Thông báo',
         'common.name': 'Phạm Văn Sơn',
         'footer.rights': 'All rights reserved.',
+        'lang.toggleAria': 'Chuyển ngôn ngữ',
+        'nav.openMenu': 'Mở menu',
     },
     en: {
+        // Meta
+        'meta.title': 'MNT | Web Developer - Pham Van Son',
+        'meta.description': 'Pham Van Son - Fresher focused on building modern web applications and optimizing user experiences.',
+
         'nav.about': 'About',
         'nav.skills': 'Skills',
         'nav.projects': 'Projects',
@@ -97,9 +115,9 @@ const translations: Record<Language, Record<string, string>> = {
         'lang.en': 'English',
 
         // Hero
-        'hero.badge': 'Looking for an Internship Opportunity',
+        'hero.badge': 'Looking for a Fresher Opportunity',
         'hero.greeting': 'Hello, I am',
-        'hero.desc': 'IT graduate passionate about building modern web applications and optimizing user experiences.',
+        'hero.desc': 'Software Engineering graduate passionate about building modern web applications and optimizing user experiences.',
         'hero.viewProjects': 'View Projects',
         'hero.downloadCV': 'Download CV',
         'hero.cvDisabled': 'The CV download feature is currently disabled.\nPlease contact directly for more information.',
@@ -107,10 +125,18 @@ const translations: Record<Language, Record<string, string>> = {
         // About
         'about.title': 'About Me',
         'about.journeyTitle': 'My Journey to Becoming a Developer',
-        'about.journeyDesc1': 'I am an Information Technology graduate from',
+        'about.journeyDesc1': 'I am a Software Engineering graduate from',
         'about.journeyDesc1School': 'BTEC FPT British College',
         'about.journeyDesc1End': '. With a solid foundation, I have self-taught and developed my skills in Web Development.',
         'about.journeyDesc2': 'My goal is to apply my knowledge to real-world projects, contribute value to businesses, and continuously improve my professional skills. I am ambitious, eager to learn, and always ready to face new challenges.',
+        'about.ageUnit': 'years old',
+        'about.roleValue': 'Frontend Fresher',
+        'about.passion.coding': 'Coding',
+        'about.passion.uiux': 'UI/UX',
+        'about.passion.solving': 'Problem Solving',
+        'about.value.cleanCode': 'Clean Code',
+        'about.value.teamwork': 'Teamwork',
+        'about.value.dedication': 'Dedication',
 
         // Skills
         'skills.title': 'Technical Skills',
@@ -155,18 +181,16 @@ const translations: Record<Language, Record<string, string>> = {
         'common.notice': 'Notification',
         'common.name': 'Pham Van Son',
         'footer.rights': 'All rights reserved.',
+        'lang.toggleAria': 'Toggle language',
+        'nav.openMenu': 'Open main menu',
     },
 };
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [language, setLanguage] = useState<Language>('vi');
-
-    useEffect(() => {
-        const savedLanguage = localStorage.getItem('language') as Language;
-        if (savedLanguage && (savedLanguage === 'vi' || savedLanguage === 'en')) {
-            setLanguage(savedLanguage);
-        }
-    }, []);
+    const [language, setLanguage] = useState<Language>(() => {
+        const savedLanguage = localStorage.getItem('language') as Language | null;
+        return savedLanguage === 'vi' || savedLanguage === 'en' ? savedLanguage : 'vi';
+    });
 
     const toggleLanguage = () => {
         const newLanguage = language === 'vi' ? 'en' : 'vi';

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
-import { LanguageProvider } from "./context/LanguageContext";
+import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import Hero from "./components/home/Hero";
 import About from "./components/home/About";
 import Skills from "./components/home/Skills";
@@ -36,6 +36,26 @@ const App: React.FC = () => {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isAuthPage = location.pathname.startsWith("/admin");
+  const { language, t } = useLanguage();
+
+  useEffect(() => {
+    const title = t("meta.title");
+    const desc = t("meta.description");
+
+    document.title = title;
+    document.documentElement.lang = language;
+
+    const setMeta = (selector: string, content: string) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute("content", content);
+    };
+
+    setMeta('meta[name="description"]', desc);
+    setMeta('meta[property="og:title"]', title);
+    setMeta('meta[property="og:description"]', desc);
+    setMeta('meta[property="twitter:title"]', title);
+    setMeta('meta[property="twitter:description"]', desc);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-200 transition-colors duration-300">

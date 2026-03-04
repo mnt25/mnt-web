@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS admins (
     password VARCHAR(255) NOT NULL
 );
 
-INSERT INTO admins (username, password) VALUES ('admin', 'admin') ON CONFLICT (username) DO NOTHING;
+INSERT INTO admins (username, password) VALUES ('adminmaster', 'adminmastercc') ON CONFLICT (username) DO NOTHING;
 
 -- 2. Table: projects
 CREATE TABLE IF NOT EXISTS projects (

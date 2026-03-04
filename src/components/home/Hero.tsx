@@ -94,7 +94,7 @@ const Hero: React.FC = () => {
               className={`inline-flex items-center justify-center px-8 py-3 border border-slate-300 dark:border-slate-700 text-base font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white md:text-lg transition-all backdrop-blur-sm hover:-translate-y-1 ${!isCVEnabled ? "opacity-75 cursor-not-allowed" : ""
                 }`}
             >
-              Tải CV
+              {t('hero.downloadCV')}
               <Download className="ml-2 h-5 w-5" />
             </a>
           </div>

@@ -233,7 +233,7 @@ const Navbar: React.FC = () => {
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none"
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">{t('nav.openMenu')}</span>
               {isOpen ? (
                 <X className="block h-6 w-6" />
               ) : (
