@@ -11,10 +11,10 @@ const getAuthHeaders = () => {
     "Authorization": `Bearer ${token}`,
   };
 };
-// api.ts
+
 export const api = {
   login: async (username: string, password: string) => {
-    const res = await fetch("http://localhost:5000/api/_mntphatfixbug6677/nexus/login", {
+    const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -32,6 +32,12 @@ export const api = {
     try {
       const url = isPublic ? `${API_URL}/projects?public=true` : `${API_URL}/projects`;
       const res = await fetch(url);
+
+      if (!res.ok) {
+        console.error("API ERROR", res.status);
+        return [];
+      }
+
       const data = await res.json();
       // Map backend snake_case to frontend camelCase
       return data.map((p: any) => ({
