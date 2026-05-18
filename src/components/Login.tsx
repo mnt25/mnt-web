@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     const expire = localStorage.getItem("token_expire");
 
     if (token && expire && Date.now() < Number(expire)) {
-      navigate("/admin");
+      navigate("/psmanager");
     }
   }, [navigate]);
   const handleLogin = async (e: React.FormEvent) => {
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
         (Date.now() + 12 * 60 * 60 * 1000).toString()
       );
 
-      navigate("/admin");
+      navigate("/psmanager");
     } else {
       setError("Tên đăng nhập hoặc mật khẩu không đúng!");
     }

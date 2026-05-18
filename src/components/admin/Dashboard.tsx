@@ -23,7 +23,6 @@ const Dashboard = ({
 
     fetchStats();
 
-    // Live clock for high-tech aesthetic
     const updateTime = () => {
       const now = new Date();
       setSystemTime(now.toLocaleTimeString("en-GB") + " // " + now.toLocaleDateString("en-GB"));

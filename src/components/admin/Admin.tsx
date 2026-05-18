@@ -22,7 +22,7 @@ const Admin: React.FC = () => {
     if (!token || !expire || Date.now() > Number(expire)) {
       localStorage.removeItem("token");
       localStorage.removeItem("token_expire");
-      navigate("/login");
+      navigate("/pslogin");
     }
   }, [navigate]);
 

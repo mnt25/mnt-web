@@ -1,7 +1,6 @@
 import type { Project } from '../src/types/project';
 import type { ContactMessage } from '../src/types/contact';
 
-// Decryption vector helper for obfuscated path strings (Base64 decode)
 const _dec = (b64: string): string => {
   try {
     return atob(b64);
@@ -10,10 +9,8 @@ const _dec = (b64: string): string => {
   }
 };
 
-// Obfuscated telemetry base URL
 const API_URL = _dec('aHR0cDovL2xvY2FsaG9zdDo1MDAwL2FwaS92My9zeXMtdGVsZW1ldHJ5');
 
-// Retrieve master token from localStorage
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return {
@@ -23,7 +20,6 @@ const getAuthHeaders = () => {
 };
 
 export const api = {
-  // Session Init endpoint
   login: async (username: string, password: string) => {
     const res = await fetch(`${API_URL}${_dec('L3gtYXV0aC1zZXNzaW9uLWluaXQ=')}`, {
       method: "POST",
@@ -39,7 +35,6 @@ export const api = {
     };
   },
 
-  // Projects Payload endpoint
   getProjects: async (isPublic = false): Promise<Project[]> => {
     try {
       const path = isPublic 
@@ -155,7 +150,6 @@ export const api = {
     }
   },
 
-  // Messages Payload endpoint
   getMessages: async (): Promise<ContactMessage[]> => {
     try {
       const res = await fetch(`${API_URL}${_dec('L21zZy1jaGFubmVsLXNlY3VyZS14Mzk=')}`, {
@@ -195,7 +189,6 @@ export const api = {
     }
   },
 
-  // System Telemetry vectors (CV visibility settings toggle)
   getAccountStatus: async (): Promise<{ enabled: boolean }> => {
     try {
       const res = await fetch(`${API_URL}${_dec('L3N5cy1zdGF0ZS12ZWN0b3ItczE1')}`);
@@ -219,7 +212,6 @@ export const api = {
     }
   },
 
-  // Core encrypted resource endpoints (CV Download link paths)
   getCVLink: async (): Promise<{ link: string; enabled: boolean }> => {
     try {
       const res = await fetch(`${API_URL}${_dec('L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI=')}`);

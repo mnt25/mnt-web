@@ -41,7 +41,7 @@ const App: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname.startsWith("/admin");
+  const isAuthPage = location.pathname.startsWith("/psmanager");
   const { language, t } = useLanguage();
 
   useEffect(() => {
@@ -69,8 +69,8 @@ const AppContent: React.FC = () => {
       {!isAuthPage && <Navbar />}
       <Routes>
         <Route path="/" element={<MainContent />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/pslogin" element={<Login />} />
+        <Route path="/psmanager" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isAuthPage && <Footer />}

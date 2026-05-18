@@ -99,7 +99,7 @@ const CVManager = () => {
         <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-zinc-700" />
 
         <div className="space-y-6">
-          {/* Subsection 1: Link config */}
+          {/* Link config */}
           <div>
             <label className="block font-mono text-[10px] text-zinc-500 uppercase tracking-widest mb-2.5">
               Đường dẫn tải xuống CV (Google Drive, Dropbox, iCloud...)
@@ -137,7 +137,7 @@ const CVManager = () => {
             </div>
           </div>
 
-          {/* Subsection 2: Toggle Switch */}
+          {/* Toggle Switch */}
           <div className="pt-6 border-t border-zinc-900 space-y-3">
             <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-900 rounded-none relative">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500" />

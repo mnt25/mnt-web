@@ -6,7 +6,6 @@ import type { ContactMessage } from "../../types/contact";
 const MessageManager = () => {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
-  // Styled Dialog & Toast States
   const [toasts, setToasts] = useState<{ id: string; type: "success" | "error" | "warning"; text: string }[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;

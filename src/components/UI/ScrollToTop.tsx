@@ -7,14 +7,12 @@ const ScrollToTop: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Tính toán hiển thị
       if (window.scrollY > 300) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
 
-      // Tính toán phần trăm cuộn
       const scrollTop = window.scrollY;
       const docHeight =
         document.documentElement.scrollHeight -
@@ -34,7 +32,6 @@ const ScrollToTop: React.FC = () => {
     });
   };
 
-  // Cấu hình vòng tròn SVG
   const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset =

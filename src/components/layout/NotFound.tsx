@@ -69,7 +69,7 @@ const NotFound: React.FC = () => {
       <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between font-mono text-[9px] text-slate-400 dark:text-zinc-600 pointer-events-none uppercase hidden sm:flex">
         <div className="flex items-center gap-2">
           <Cpu className="w-3.5 h-3.5" />
-          <span>PORT: 5173 // LOCALHOST</span>
+          <span>mnt.id.vn</span>
         </div>
         <span>status: system_listening</span>
       </div>

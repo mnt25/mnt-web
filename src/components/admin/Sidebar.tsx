@@ -27,7 +27,7 @@ const Sidebar: React.FC<Props> = ({
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("token_expire");
-    window.location.href = "/login";
+    window.location.href = "/pslogin";
   };
 
   return (

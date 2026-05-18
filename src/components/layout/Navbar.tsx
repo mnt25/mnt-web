@@ -15,13 +15,12 @@ type Theme = "light" | "dark";
 
 const Navbar: React.FC = () => {
   const { t } = useLanguage();
-  const [theme, setTheme] = useState<Theme>("dark"); // Default to dark visually first
+  const [theme, setTheme] = useState<Theme>("dark"); 
   const [isAvatarVisible, setIsAvatarVisible] = useState(true);
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Khởi tạo theme từ localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
     if (savedTheme === "light" || savedTheme === "dark") {
@@ -33,7 +32,6 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
-  // Intersection Observer for Avatar
   useEffect(() => {
     if (location.pathname !== "/") {
       setIsAvatarVisible(false);
@@ -51,7 +49,7 @@ const Navbar: React.FC = () => {
       },
       {
         threshold: 0,
-        rootMargin: "-80px 0px 0px 0px" // Offset for the navbar height
+        rootMargin: "-80px 0px 0px 0px"
       }
     );
 
@@ -85,10 +83,8 @@ const Navbar: React.FC = () => {
   ) => {
     e.preventDefault();
 
-    // Nếu không phải trang chủ, chuyển về trang chủ trước
     if (location.pathname !== "/") {
       navigate("/");
-      // Đợi navigate xong mới scroll (dùng timeout nhỏ)
       setTimeout(() => {
         const targetId = href.replace("#", "");
         const element = document.getElementById(targetId);
@@ -103,7 +99,6 @@ const Navbar: React.FC = () => {
       return;
     }
 
-    // Logic scroll tại trang chủ
     const targetId = href.replace("#", "");
     const element = document.getElementById(targetId);
 

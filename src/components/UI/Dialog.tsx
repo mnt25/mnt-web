@@ -15,7 +15,6 @@ export const Dialog: React.FC<DialogProps> = ({
     title,
     children,
 }) => {
-    // Prevent scrolling when dialog is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';

@@ -22,7 +22,7 @@ const GrowingRootsBackground: React.FC = () => {
     let steps: Array<() => void> = [];
     let prevSteps: Array<() => void> = [];
     let lastTime = performance.now();
-    const interval = 1000 / 40; // 40fps vẽ mượt mà
+    const interval = 1000 / 40; 
     const MIN_BRANCH = 30;
     const len = 6;
 
@@ -60,7 +60,6 @@ const GrowingRootsBackground: React.FC = () => {
       const rad1 = rad + Math.random() * r15;
       const rad2 = rad - Math.random() * r15;
 
-      // Kiểm tra tràn màn hình
       if (
         nx < -100 ||
         nx > window.innerWidth + 100 ||
@@ -92,7 +91,6 @@ const GrowingRootsBackground: React.FC = () => {
       lastTime = performance.now();
 
       if (prevSteps.length === 0) {
-        // Vẽ xong toàn bộ rễ thì tự động dừng vòng lặp (0% CPU)
         return;
       }
 
@@ -119,7 +117,6 @@ const GrowingRootsBackground: React.FC = () => {
       ctx.clearRect(0, 0, width, height);
       ctx.lineWidth = 1;
       
-      // Màu rễ siêu sang chảnh đồng bộ hoàn hảo theo dark/light theme của hunghg.me
       const isDark = document.documentElement.classList.contains("dark");
       ctx.strokeStyle = isDark ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.08)";
 
@@ -140,7 +137,6 @@ const GrowingRootsBackground: React.FC = () => {
       frame();
     };
 
-    // Theo dõi theme thay đổi
     const observer = new MutationObserver(() => {
       startDrawing();
     });
@@ -167,7 +163,7 @@ const GrowingRootsBackground: React.FC = () => {
 
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 overflow-hidden select-none">
-      {/* Light Theme Background + Grid Line (80x80px) (Pure White) */}
+      {/* Light Theme Background + Grid Line (Pure White) */}
       <div 
         className="absolute inset-0 transition-colors duration-500 bg-[#ffffff] dark:hidden"
         style={{
@@ -182,7 +178,7 @@ const GrowingRootsBackground: React.FC = () => {
         }}
       />
       
-      {/* Dark Theme Background (Pure Cosmic Black) + Grid Line (80x80px) */}
+      {/* Dark Theme Background*/}
       <div 
         className="absolute inset-0 transition-colors duration-500 hidden dark:block bg-[#000000]"
         style={{
@@ -197,12 +193,12 @@ const GrowingRootsBackground: React.FC = () => {
         }}
       />
 
-      {/* Repeating Horizontal Accent Lines (Xọc ngang đậm phân bổ đều giống hunghg.me) */}
+      {/* Repeating Horizontal Accent Lines */}
       <div 
         className="absolute inset-0 opacity-40 dark:opacity-30"
         style={{
           backgroundImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px)",
-          backgroundSize: "100% 160px", // Xọc ngang cách nhau 160px phân bổ nhịp nhàng
+          backgroundSize: "100% 160px",
         }}
       />
       <div 
@@ -213,7 +209,6 @@ const GrowingRootsBackground: React.FC = () => {
         }}
       />
 
-      {/* Canvas vẽ rễ cây hữu cơ sinh trưởng (Plum) y hệt hunghg.me */}
       <div 
         className="absolute inset-0 w-full h-full"
         style={{

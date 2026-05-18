@@ -66,19 +66,22 @@ const Hero: React.FC = () => {
       </div>
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center z-10 w-full overflow-visible">
-        {/* The Premium Profile Card matching the Gia Hùng design */}
+        {/* The Premium Profile Card matching */}
         <Reveal overflow="visible">
           <div className="w-full max-w-2xl relative transition-all duration-300 bg-transparent overflow-visible">
 
-            {/* Row 1: Top Profile Row */}
+            {/* Top Profile Row */}
             <div className="flex w-full relative overflow-visible">
               {/* Top Full-bleed boundary line */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300vw] h-px bg-slate-200/80 dark:bg-zinc-800/80 pointer-events-none" />
 
               {/* Left Column: Avatar Container (Perfectly sized) */}
               <div className="w-[112px] sm:w-[180px] shrink-0 border-l border-r border-slate-200 dark:border-zinc-800/80 p-2 sm:p-4 flex flex-col items-center justify-center bg-transparent relative z-10">
-                <div id="hero-avatar" className="h-24 w-24 sm:h-36 sm:w-36 rounded-full border border-slate-200 dark:border-zinc-800/80 overflow-hidden bg-slate-100 dark:bg-zinc-900 flex items-center justify-center shadow-lg relative flex-shrink-0 group z-10 ring-1 ring-slate-200 dark:ring-zinc-800 ring-offset-2 ring-offset-white dark:ring-offset-black">
-                  <div className="icon-logo h-full w-full p-2 flex items-center justify-center">
+                <div id="hero-avatar" className="h-24 w-24 sm:h-36 sm:w-36 rounded-full border border-slate-200 dark:border-zinc-800/80 overflow-hidden bg-slate-50 dark:bg-zinc-950 flex items-center justify-center shadow-lg relative flex-shrink-0 group z-10 ring-1 ring-slate-200 dark:ring-zinc-800 ring-offset-2 ring-offset-white dark:ring-offset-black">
+                  {/* Liti dot background pattern */}
+                  <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1.5px,transparent_1.5px)] [background-size:8px_8px] pointer-events-none opacity-85 z-0" />
+                  
+                  <div className="icon-logo h-full w-full p-2 flex items-center justify-center relative z-10">
                     <svg viewBox="0 0 304 304" className="w-[85%] h-[85%]" fill="none">
                       <circle
                         cx={152}
@@ -125,16 +128,16 @@ const Hero: React.FC = () => {
               </div>
             </div>
 
-            {/* Row 2: Full-bleed Striped Separator below Role */}
+            {/*  Full-bleed Striped Separator below Role */}
             <div className="relative w-full h-8 sm:h-10 pointer-events-none shrink-0 z-0">
               <Separator className="!max-w-none !px-0 !border-x-0 !mx-0" />
             </div>
 
-            {/* Row 3: Bottom Row */}
+            {/* Bottom Row */}
             <div className="flex w-full relative overflow-visible">
               {/* Left Column: Vertical Typography (Magazine Style) */}
               <div className="w-[112px] sm:w-[180px] shrink-0 px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col items-center justify-end bg-transparent relative z-10 min-h-[140px]">
-                {/* Middle vertical line (Line 2 - Bottom Half) */}
+                {/* Middle vertical line */}
                 <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
 
                 {/* Absolute-aligned vertical typography hugging the middle vertical line */}
@@ -149,9 +152,9 @@ const Hero: React.FC = () => {
 
               {/* Right Column: Contact Details + App Icons */}
               <div className="flex flex-1 flex-col bg-transparent relative">
-                {/* Rightmost vertical line (Line 3 - Bottom Half) */}
+                {/* Rightmost vertical line */}
                 <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
-                {/* 4. Vertical Contact Info Section (exactly like the image) */}
+                {/*  Vertical Contact Info Section (exactly like the image) */}
                 <div className="p-3 sm:p-4.5 space-y-2.5 bg-transparent relative z-10 flex-1 flex flex-col justify-center">
                   {/* Location */}
                   <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
@@ -182,7 +185,7 @@ const Hero: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 5. App Icons Section (Social Media & CV Shortcuts) */}
+                {/*  App Icons Section (Social Media & CV Shortcuts) */}
                 <div className="border-t border-slate-200 dark:border-zinc-800/80 p-2.5 sm:p-3.5 flex items-center gap-3 bg-transparent">
                   <a
                     href="https://www.facebook.com/phammvannsonn"

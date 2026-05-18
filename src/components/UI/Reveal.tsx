@@ -15,10 +15,10 @@ export const Reveal: React.FC<RevealProps> = ({ children, width = "100%", overfl
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect(); // Chỉ chạy animation 1 lần
+          observer.disconnect(); 
         }
       },
-      { threshold: 0.15 } // Hiện khi 15% phần tử xuất hiện
+      { threshold: 0.15 } 
     );
 
     const currentRef = ref.current;
