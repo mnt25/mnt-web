@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS admins (
 );
 
 INSERT INTO admins (username, password) VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918') ON CONFLICT (username) DO NOTHING;
-INSERT INTO admins (username, password) VALUES ('adminmaster', 'a316198bd1863d139727d984b9811339ca37acc3bd6e7c153b308ebc015e1241') ON CONFLICT (username) DO NOTHING;
 
 -- 2. Table: projects
 CREATE TABLE IF NOT EXISTS projects (
