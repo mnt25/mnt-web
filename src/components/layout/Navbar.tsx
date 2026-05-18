@@ -1,45 +1,70 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, Monitor, ChevronDown } from "lucide-react";
+import { Sun, Moon, User, Code, Briefcase, Mail } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
-  { key: "nav.about", href: "#about" },
-  { key: "nav.skills", href: "#skills" },
-  { key: "nav.projects", href: "#projects" },
-  { key: "nav.contact", href: "#contact" },
+  { key: "nav.about", href: "#about", icon: User },
+  { key: "nav.skills", href: "#skills", icon: Code },
+  { key: "nav.projects", href: "#projects", icon: Briefcase },
+  { key: "nav.contact", href: "#contact", icon: Mail },
 ];
 
-type Theme = "light" | "dark" | "system";
+type Theme = "light" | "dark";
 
 const Navbar: React.FC = () => {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>("dark"); // Default to dark visually first
-  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const [isAvatarVisible, setIsAvatarVisible] = useState(true);
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Khởi tạo theme từ localStorage hoặc system
+  // Khởi tạo theme từ localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme) {
+    if (savedTheme === "light" || savedTheme === "dark") {
       setTheme(savedTheme);
       applyTheme(savedTheme);
     } else {
-      setTheme("system");
-      applyTheme("system");
+      setTheme("dark");
+      applyTheme("dark");
     }
   }, []);
 
+  // Intersection Observer for Avatar
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setIsAvatarVisible(false);
+      return;
+    }
+
+    const avatarElement = document.getElementById("hero-avatar");
+    if (!avatarElement) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsAvatarVisible(entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: "-80px 0px 0px 0px" // Offset for the navbar height
+      }
+    );
+
+    observer.observe(avatarElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [location.pathname]);
+
   const applyTheme = (selectedTheme: Theme) => {
     const root = window.document.documentElement;
-    const isDark =
-      selectedTheme === "dark" ||
-      (selectedTheme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const isDark = selectedTheme === "dark";
 
     if (isDark) {
       root.classList.add("dark");
@@ -52,17 +77,13 @@ const Navbar: React.FC = () => {
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
     applyTheme(newTheme);
-    setIsThemeMenuOpen(false);
   };
-
-  const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
     e.preventDefault();
-    setIsOpen(false);
 
     // Nếu không phải trang chủ, chuyển về trang chủ trước
     if (location.pathname !== "/") {
@@ -106,162 +127,139 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const renderThemeIcon = () => {
-    if (theme === "light") return <Sun className="w-5 h-5 text-orange-500" />;
-    if (theme === "dark") return <Moon className="w-5 h-5 text-blue-400" />;
-    return <Monitor className="w-5 h-5 text-slate-500 dark:text-slate-400" />;
-  };
-
-  const getThemeLabel = () => {
-    if (theme === "light") return t('theme.light');
-    if (theme === "dark") return t('theme.dark');
-    return t('theme.system');
-  };
+  const isDarkMode = theme === "dark";
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div
-            className="flex-shrink-0 flex items-center gap-2 cursor-pointer"
-            onClick={scrollToTop}
-          >
-            <img
-              src="/logo.ico"
-              alt="Logo"
-              className="h-8 w-8 grayscale brightness-0 dark:brightness-100 dark:invert"
-            />
-            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-              MNT
-            </span>
-          </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <div className="flex items-baseline space-x-6">
-              {navItems.map((item) => (
-                <a
-                  key={item.key}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
-                  className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  {t(item.key)}
-                </a>
-              ))}
+    <>
+      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-slate-200/80 dark:border-zinc-800/80 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div
+              className={`flex-shrink-0 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
+                isAvatarVisible && location.pathname === "/"
+                  ? "opacity-0 scale-95 pointer-events-none"
+                  : "opacity-100 scale-100"
+              }`}
+              onClick={scrollToTop}
+            >
+              <div className="icon-logo h-12 w-12">
+                <svg viewBox="0 0 304 304" className="w-full h-full" fill="none">
+                  {/* Perfectly Round Circle with Bold Continuous Stroke */}
+                  <circle
+                    cx={152}
+                    cy={152}
+                    r={145}
+                    fill="none"
+                    pathLength={1000}
+                  />
+                  {/* Original bold letter outline paths P and S */}
+                  <path
+                    d="M 90 224 V 80 H 115 C 129 80, 140 96, 140 116 C 140 136, 129 152, 115 152 H 90 M 214 116 C 214 96, 201 80, 187 80 C 173 80, 160 96, 160 116 C 160 136, 173 152, 187 152 C 201 152, 214 168, 214 188 C 214 208, 201 224, 187 224 H 120"
+                    fill="none"
+                    pathLength={1000}
+                  />
+                </svg>
+              </div>
             </div>
 
-            {/* Language Switcher */}
-            <LanguageSwitcher />
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center gap-8">
+              <div className="flex items-baseline space-x-6">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.key}
+                      href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                    >
+                      <Icon className="w-4 h-4" />
+                      {t(item.key)}
+                    </a>
+                  );
+                })}
+              </div>
 
-            {/* Theme Toggle Dropdown */}
-            <div className="relative">
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+
+              {/* Theme Toggle Switch */}
               <button
-                onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm font-medium text-slate-700 dark:text-slate-200"
+                onClick={() => handleThemeChange(isDarkMode ? "light" : "dark")}
+                className="relative inline-flex items-center h-8 w-16 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none border border-slate-300 dark:border-slate-600 shrink-0"
+                aria-label="Toggle theme"
               >
-                {renderThemeIcon()}
-                <span className="w-20 inline-block">{getThemeLabel()}</span>
-                <ChevronDown className="w-4 h-4 opacity-50" />
+                <span className="sr-only">Toggle theme</span>
+                <div className="absolute w-full flex justify-between px-1.5 pointer-events-none">
+                  <Sun className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                  <Moon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                </div>
+                <span
+                  className={`relative inline-flex items-center justify-center w-6 h-6 transform rounded-full bg-white dark:bg-slate-800 shadow-md transition-transform duration-300 ease-in-out z-10 ${isDarkMode ? 'translate-x-9' : 'translate-x-1'
+                    }`}
+                >
+                  {isDarkMode ? (
+                    <Moon className="w-4 h-4 text-blue-400" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-orange-500" />
+                  )}
+                </span>
               </button>
-
-              {isThemeMenuOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsThemeMenuOpen(false)}
-                  ></div>
-                  <div className="absolute right-0 mt-2 w-40 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 z-20 overflow-hidden py-1 ring-1 ring-black ring-opacity-5">
-                    <button
-                      onClick={() => handleThemeChange("light")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "light"
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        }`}
-                    >
-                      <Sun className="w-4 h-4 mr-3" />
-                      {t('theme.light')}
-                    </button>
-                    <button
-                      onClick={() => handleThemeChange("dark")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "dark"
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        }`}
-                    >
-                      <Moon className="w-4 h-4 mr-3" />
-                      {t('theme.dark')}
-                    </button>
-                    <button
-                      onClick={() => handleThemeChange("system")}
-                      className={`flex items-center w-full px-4 py-2 text-sm ${theme === "system"
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
-                        }`}
-                    >
-                      <Monitor className="w-4 h-4 mr-3" />
-                      {t('theme.system_full')}
-                    </button>
-                  </div>
-                </>
-              )}
             </div>
-          </div>
 
-          {/* Mobile menu button */}
-          <div className="-mr-2 flex md:hidden gap-4 items-center">
-            <LanguageSwitcher />
-            {/* Mobile Theme Toggle (Simple cycle) */}
-            <button
-              onClick={() => {
-                const next =
-                  theme === "light"
-                    ? "dark"
-                    : theme === "dark"
-                      ? "system"
-                      : "light";
-                handleThemeChange(next);
-              }}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              {renderThemeIcon()}
-            </button>
-
-            <button
-              onClick={toggleMenu}
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none"
-            >
-              <span className="sr-only">{t('nav.openMenu')}</span>
-              {isOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
-            </button>
+            {/* Mobile menu button */}
+            <div className="-mr-2 flex md:hidden gap-4 items-center">
+              <LanguageSwitcher />
+              {/* Mobile Theme Toggle Switch */}
+              <button
+                onClick={() => handleThemeChange(isDarkMode ? "light" : "dark")}
+                className="relative inline-flex items-center h-8 w-16 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none border border-slate-300 dark:border-slate-600 shrink-0"
+                aria-label="Toggle theme"
+              >
+                <span className="sr-only">Toggle theme</span>
+                <div className="absolute w-full flex justify-between px-1.5 pointer-events-none">
+                  <Sun className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                  <Moon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                </div>
+                <span
+                  className={`relative inline-flex items-center justify-center w-6 h-6 transform rounded-full bg-white dark:bg-slate-800 shadow-md transition-transform duration-300 ease-in-out z-10 ${isDarkMode ? 'translate-x-9' : 'translate-x-1'
+                    }`}
+                >
+                  {isDarkMode ? (
+                    <Moon className="w-4 h-4 text-blue-400" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-orange-500" />
+                  )}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
+      </nav>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-lg border-t border-slate-200/80 dark:border-zinc-800/80 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_10px_rgba(0,0,0,0.2)]">
+        <div className="flex justify-around items-center h-16 px-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
               <a
                 key={item.key}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 block px-3 py-2 rounded-md text-base font-medium"
+                className="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 transition-all duration-200"
               >
-                {t(item.key)}
+                <Icon className="w-5 h-5 mb-1" />
+                <span className="text-[10px] font-medium">{t(item.key)}</span>
               </a>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      )}
-    </nav>
+      </div>
+    </>
   );
 };
 

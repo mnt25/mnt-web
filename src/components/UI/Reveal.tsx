@@ -3,9 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 interface RevealProps {
   children: React.ReactNode;
   width?: "fit-content" | "100%";
+  overflow?: "hidden" | "visible";
 }
 
-export const Reveal: React.FC<RevealProps> = ({ children, width = "100%" }) => {
+export const Reveal: React.FC<RevealProps> = ({ children, width = "100%", overflow = "hidden" }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -37,7 +38,7 @@ export const Reveal: React.FC<RevealProps> = ({ children, width = "100%" }) => {
         width,
         height: "100%",
         position: "relative",
-        overflow: "hidden",
+        overflow,
       }}
     >
       <div

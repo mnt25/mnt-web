@@ -1,23 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Download } from 'lucide-react';
+import { Download, Mail, MapPin, Globe } from 'lucide-react';
+import { FaFacebookF, FaTelegramPlane, FaGithub } from "react-icons/fa";
+import { SiZalo } from "react-icons/si";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { Dialog } from "../ui/Dialog";
+import { Separator } from "../ui/Separator";
 import { api } from '../../../server/api';
 
 const Hero: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [cvLink, setCvLink] = useState<string>('#');
   const [isCVEnabled, setIsCVEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+
+  const roles = language === 'vi' ? [
+    "Tốt nghiệp chuyên ngành Kỹ thuật phần mềm",
+    "Đam mê xây dựng các ứng dụng web hiện đại",
+    "Tối ưu trải nghiệm người dùng",
+  ] : [
+    "Computer Science Graduate",
+    "Passionate in building modern web applications",
+    "Enthusiastic about optimizing user experience",
+  ];
 
   useEffect(() => {
     const fetchCVData = async () => {
-      // 1. Check account status first
       const status = await api.getAccountStatus();
       setIsCVEnabled(status.enabled);
 
-      // 2. ONLY fetch CV link if it's enabled to avoid exposure in network tab
       if (status.enabled) {
         const cvData = await api.getCVLink();
         setCvLink(cvData.link);
@@ -27,6 +39,13 @@ const Hero: React.FC = () => {
     };
     fetchCVData();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [roles.length]);
 
   const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!isCVEnabled) {
@@ -38,65 +57,187 @@ const Hero: React.FC = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300"
+      className="relative min-h-[70vh] flex flex-col items-center justify-start overflow-visible bg-transparent transition-colors duration-300 pt-24 sm:pt-36 pb-12"
     >
-      {/* Background gradient effects */}
-      <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-normal"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-normal"></div>
+      {/* Background gradient effects - Hidden in dark mode for pure pitch black theme */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none dark:hidden">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] mix-blend-multiply"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] mix-blend-multiply"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center z-10">
-        <Reveal width="fit-content">
-          <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 text-sm font-medium mb-6">
-            <span className="flex h-2 w-2 rounded-full bg-blue-500 dark:bg-blue-400 mr-2 animate-pulse"></span>
-            {t('hero.badge')}
-          </div>
-        </Reveal>
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center z-10 w-full overflow-visible">
+        {/* The Premium Profile Card matching the Gia Hùng design */}
+        <Reveal overflow="visible">
+          <div className="w-full max-w-2xl relative transition-all duration-300 bg-transparent overflow-visible">
 
-        <Reveal>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-6">
-            {t('hero.greeting')}
-            <br className="md:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-500 pl-2">
-              {t('common.name')}
-            </span>
-          </h1>
-        </Reveal>
+            {/* Row 1: Top Profile Row */}
+            <div className="flex w-full relative overflow-visible">
+              {/* Top Full-bleed boundary line */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300vw] h-px bg-slate-200/80 dark:bg-zinc-800/80 pointer-events-none" />
 
-        <Reveal>
-          <p className="mt-4 max-w-2xl text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed mx-auto">
-            {t('hero.desc')}
-          </p>
-        </Reveal>
+              {/* Left Column: Avatar Container (Perfectly sized) */}
+              <div className="w-[112px] sm:w-[180px] shrink-0 border-l border-r border-slate-200 dark:border-zinc-800/80 p-2 sm:p-4 flex flex-col items-center justify-center bg-transparent relative z-10">
+                <div id="hero-avatar" className="h-24 w-24 sm:h-36 sm:w-36 rounded-full border border-slate-200 dark:border-zinc-800/80 overflow-hidden bg-slate-100 dark:bg-zinc-900 flex items-center justify-center shadow-lg relative flex-shrink-0 group z-10 ring-1 ring-slate-200 dark:ring-zinc-800 ring-offset-2 ring-offset-white dark:ring-offset-black">
+                  <div className="icon-logo h-full w-full p-2 flex items-center justify-center">
+                    <svg viewBox="0 0 304 304" className="w-[85%] h-[85%]" fill="none">
+                      <circle
+                        cx={152}
+                        cy={152}
+                        r={142}
+                        fill="none"
+                        pathLength={1000}
+                      />
+                      <path
+                        d="M 90 224 V 80 H 115 C 129 80, 140 96, 140 116 C 140 136, 129 152, 115 152 H 90 M 214 116 C 214 96, 201 80, 187 80 C 173 80, 160 96, 160 116 C 160 136, 173 152, 187 152 C 201 152, 214 168, 214 188 C 214 208, 201 224, 187 224 H 120"
+                        fill="none"
+                        pathLength={1000}
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
 
-        <Reveal width="fit-content">
-          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center mt-1">
-            <a
-              href="#projects"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .getElementById("projects")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 md:text-lg transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-1"
-            >
-              {t('hero.viewProjects')}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
-            <a
-              href={isCVEnabled ? cvLink : undefined}
-              download={isCVEnabled ? true : undefined}
-              target={isCVEnabled ? "_blank" : undefined}
-              rel={isCVEnabled ? "noopener noreferrer" : undefined}
-              onClick={handleDownload}
-              className={`inline-flex items-center justify-center px-8 py-3 border border-slate-300 dark:border-slate-700 text-base font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-white md:text-lg transition-all backdrop-blur-sm hover:-translate-y-1 ${!isCVEnabled ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-            >
-              {t('hero.downloadCV')}
-              <Download className="ml-2 h-5 w-5" />
-            </a>
+              {/* Right Column: Split into Top (stripes), Middle (Name), Bottom (Roles) */}
+              <div className="flex flex-1 flex-col border-r border-slate-200 dark:border-zinc-800/80">
+                {/* Top Section with Stripes Pattern */}
+                <div className="h-10 sm:h-14 relative overflow-hidden bg-transparent w-full">
+                  <div className="absolute inset-0 bg-[repeating-linear-gradient(315deg,#e2e8f0,#e2e8f0_1px,transparent_0,transparent_50%)] dark:bg-[repeating-linear-gradient(315deg,#27272a,#27272a_1px,transparent_0,transparent_50%)] bg-[length:10px_10px] opacity-80 dark:opacity-[0.56]" />
+                </div>
+
+                {/* Middle Section with Name */}
+                <div className="border-t border-slate-200 dark:border-zinc-800/80 py-2 sm:py-3.5 pl-4 sm:pl-6 flex items-center bg-transparent flex-1">
+                  <h1 className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
+                    {t('common.name')}
+                  </h1>
+                </div>
+
+                {/* Bottom Section with Role Text */}
+                <div className="border-t border-slate-200 dark:border-zinc-800/80 h-10 sm:h-12 py-1 pl-4 sm:pl-6 flex items-center bg-transparent">
+                  <div className="h-6 sm:h-7 overflow-hidden relative w-full flex items-center">
+                    <div
+                      key={currentRoleIndex}
+                      className="animate-slide-up-fade text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-mono flex items-center gap-1.5"
+                    >
+                      {roles[currentRoleIndex]}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Full-bleed Striped Separator below Role */}
+            <div className="relative w-full h-8 sm:h-10 pointer-events-none shrink-0 z-0">
+              <Separator className="!max-w-none !px-0 !border-x-0 !mx-0" />
+            </div>
+
+            {/* Row 3: Bottom Row */}
+            <div className="flex w-full relative overflow-visible">
+              {/* Left Column: Vertical Typography (Magazine Style) */}
+              <div className="w-[112px] sm:w-[180px] shrink-0 px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col items-center justify-end bg-transparent relative z-10 min-h-[140px]">
+                {/* Middle vertical line (Line 2 - Bottom Half) */}
+                <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
+
+                {/* Absolute-aligned vertical typography hugging the middle vertical line */}
+                <div className="absolute right-2.5 sm:right-4 bottom-4 sm:bottom-6 opacity-30 hover:opacity-100 transition-opacity duration-500 select-none z-20">
+                  <div className="transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
+                    <span className="font-mono text-[8px] sm:text-[12px] tracking-[0.2em] text-slate-500 dark:text-zinc-400 uppercase font-bold whitespace-nowrap">
+                      Frontend Developer
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Contact Details + App Icons */}
+              <div className="flex flex-1 flex-col bg-transparent relative">
+                {/* Rightmost vertical line (Line 3 - Bottom Half) */}
+                <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
+                {/* 4. Vertical Contact Info Section (exactly like the image) */}
+                <div className="p-3 sm:p-4.5 space-y-2.5 bg-transparent relative z-10 flex-1 flex flex-col justify-center">
+                  {/* Location */}
+                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
+                      <MapPin className="size-3.5 text-slate-500 dark:text-zinc-400" />
+                    </div>
+                    <span className="font-sans font-medium text-balance">{t('contact.addressText')}</span>
+                  </div>
+
+                  {/* Email */}
+                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
+                      <Mail className="size-3.5 text-slate-500 dark:text-zinc-400" />
+                    </div>
+                    <a href="mailto:mnt250723@gmail.com" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors font-mono underline-offset-4 hover:underline">
+                      mnt250723@gmail.com
+                    </a>
+                  </div>
+
+                  {/* Website / Github */}
+                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
+                      <Globe className="size-3.5 text-slate-500 dark:text-zinc-400" />
+                    </div>
+                    <a href="https://mnt.id.vn" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors font-mono underline-offset-4 hover:underline">
+                      mnt.id.vn
+                    </a>
+                  </div>
+                </div>
+
+                {/* 5. App Icons Section (Social Media & CV Shortcuts) */}
+                <div className="border-t border-slate-200 dark:border-zinc-800/80 p-2.5 sm:p-3.5 flex items-center gap-3 bg-transparent">
+                  <a
+                    href="https://www.facebook.com/phammvannsonn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105"
+                    title="Facebook"
+                  >
+                    <FaFacebookF className="size-4" />
+                  </a>
+                  <a
+                    href="https://github.com/mnt25"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all hover:scale-105"
+                    title="GitHub"
+                  >
+                    <FaGithub className="size-4" />
+                  </a>
+                  <a
+                    href="https://t.me/pvson03"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-500 dark:hover:text-cyan-400 transition-all hover:scale-105"
+                    title="Telegram"
+                  >
+                    <FaTelegramPlane className="size-4" />
+                  </a>
+                  <a
+                    href="https://zalo.me/0377309531"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105"
+                    title="Zalo"
+                  >
+                    <SiZalo className="size-4" />
+                  </a>
+                  <a
+                    href={isCVEnabled ? cvLink : undefined}
+                    download={isCVEnabled ? true : undefined}
+                    target={isCVEnabled ? "_blank" : undefined}
+                    rel={isCVEnabled ? "noopener noreferrer" : undefined}
+                    onClick={handleDownload}
+                    className={`flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105 ${!isCVEnabled ? "opacity-75 cursor-not-allowed" : ""}`}
+                    title={t('hero.downloadCV')}
+                  >
+                    <Download className="size-4" />
+                    <span className="ml-2 text-xs sm:text-sm">{t('hero.downloadCV')}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Full-bleed line at the bottom of the profile container */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300vw] h-px bg-slate-200/80 dark:bg-zinc-800/80 pointer-events-none" />
           </div>
         </Reveal>
       </div>
@@ -106,14 +247,20 @@ const Hero: React.FC = () => {
         onClose={() => setShowDialog(false)}
         title={t('common.notice')}
       >
-        <div className="space-y-4">
-          <p className="text-slate-600 dark:text-slate-300 whitespace-pre-line">
+        <div className="space-y-5">
+          <div className="p-4 bg-slate-50 dark:bg-[#030304]/60 border border-slate-200/50 dark:border-zinc-900/60 relative font-mono text-xs md:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line rounded-none">
+            {/* Technical indicators on corners */}
+            <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-slate-350 dark:border-zinc-700" />
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-slate-350 dark:border-zinc-700" />
+            <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-slate-350 dark:border-zinc-700" />
+            <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-slate-350 dark:border-zinc-700" />
             {t('hero.cvDisabled')}
-          </p>
+          </div>
+          
           <div className="flex justify-end">
             <button
               onClick={() => setShowDialog(false)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-5 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-700 dark:text-cyan-400 border border-slate-200 dark:border-cyan-500/20 hover:border-blue-500 dark:hover:border-cyan-400 hover:shadow-[0_0_12px_rgba(34,211,238,0.25)] font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 rounded-none"
             >
               {t('common.close')}
             </button>

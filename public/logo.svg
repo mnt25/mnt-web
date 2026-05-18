@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 304" fill="none">
+  <!-- Red Border -->
+  <circle cx="152" cy="152" r="145" stroke="#ef4444" stroke-width="12" fill="none" />
+  <!-- Red Letters P and S -->
+  <path d="M 90 224 V 80 H 115 C 129 80, 140 96, 140 116 C 140 136, 129 152, 115 152 H 90 M 214 116 C 214 96, 201 80, 187 80 C 173 80, 160 96, 160 116 C 160 136, 173 152, 187 152 C 201 152, 214 168, 214 188 C 214 208, 201 224, 187 224 H 120" stroke="#ef4444" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>

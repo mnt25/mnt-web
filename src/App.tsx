@@ -10,15 +10,21 @@ import Contact from "./components/home/Contact";
 import Footer from "./components/layout/Footer";
 import NotFound from "./components/layout/NotFound";
 import ScrollToTop from "./components/ui/ScrollToTop";
+import GrowingRootsBackground from "./components/ui/GrowingRootsBackground";
 import Login from "./components/Login";
 import Admin from "./components/admin/Admin";
+import { Separator } from "./components/ui/Separator";
 
 const MainContent: React.FC = () => (
-  <main>
+  <main className="overflow-x-hidden">
     <Hero />
+    <Separator />
     <About />
+    <Separator />
     <Skills />
+    <Separator />
     <Projects />
+    <Separator />
     <Contact />
   </main>
 );
@@ -58,7 +64,8 @@ const AppContent: React.FC = () => {
   }, [language]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-200 transition-colors duration-300">
+    <div className="relative min-h-screen bg-transparent text-slate-900 dark:text-slate-50 selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-200 transition-colors duration-300">
+      <GrowingRootsBackground />
       {!isAuthPage && <Navbar />}
       <Routes>
         <Route path="/" element={<MainContent />} />

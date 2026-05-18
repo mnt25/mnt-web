@@ -97,4 +97,4 @@ App chạy tại: `http://localhost:5173`
 | `GET` | `/api/messages` | Lấy danh sách tin nhắn | Có |
 
 
-Được phát triển bởi MNT.
+Được phát triển bởi Phạm Sơn.

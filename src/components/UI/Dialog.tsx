@@ -33,28 +33,31 @@ export const Dialog: React.FC<DialogProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
                 onClick={onClose}
                 aria-hidden="true"
             />
 
-            {/* Dialog Panel */}
+            {/* Dialog Panel with Glowing Cyber Accents */}
             <div
-                className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 p-6 text-left align-middle shadow-xl transition-all border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200"
+                className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-zinc-950 p-6 text-left align-middle shadow-[0_0_50px_rgba(0,0,0,0.8)] dark:shadow-[0_0_50px_rgba(6,182,212,0.05)] transition-all border border-slate-200 dark:border-cyan-500/20 animate-in fade-in zoom-in-95 duration-200"
                 role="dialog"
                 aria-modal="true"
             >
-                <div className="flex items-center justify-between mb-4">
+                {/* Visual Neon Top Border */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500" />
+
+                <div className="flex items-center justify-between mb-4 mt-1">
                     {title && (
-                        <h3 className="text-lg font-semibold leading-6 text-slate-900 dark:text-white">
+                        <h3 className="text-sm font-mono font-bold tracking-wider uppercase text-slate-800 dark:text-cyan-400">
                             {title}
                         </h3>
                     )}
                     <button
                         onClick={onClose}
-                        className="rounded-full p-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                        className="rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-zinc-900/60 text-slate-500 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-cyan-400 border border-transparent dark:hover:border-zinc-800/80 transition-all"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 

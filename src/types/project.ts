@@ -9,6 +9,8 @@ export interface Project {
   isVisible: boolean;
   titleEn?: string;
   descriptionEn?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface SkillCategory {

@@ -11,7 +11,7 @@ const About: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300"
+      className="py-20 bg-transparent transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -27,12 +27,17 @@ const About: React.FC = () => {
           {/* Image/Visual column */}
           <div className="relative">
             <Reveal width="100%">
-              <div className="absolute inset-0 bg-blue-500 rounded-2xl rotate-6 opacity-10 blur-sm"></div>
-              <div className="relative bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 shadow-xl dark:shadow-2xl">
+              <div className="relative bg-slate-50/10 dark:bg-zinc-900/10 p-8 border border-slate-200/80 dark:border-zinc-800/80 backdrop-blur-sm relative overflow-visible">
+                {/* Corner grid bracket marks */}
+                <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+                <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+                <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+                <div className="absolute -bottom-px -right-px w-2 h-2 translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+                
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="w-3 h-3 bg-red-500"></div>
+                  <div className="w-3 h-3 bg-yellow-500"></div>
+                  <div className="w-3 h-3 bg-green-500"></div>
                 </div>
                 <div className="font-mono text-sm text-slate-700 dark:text-slate-300 space-y-2">
                   <p>
@@ -120,7 +125,12 @@ const About: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                  {/* Decorative corner accents */}
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <Terminal className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
                     {t('about.value.cleanCode')}
@@ -128,7 +138,12 @@ const About: React.FC = () => {
                 </div>
               </Reveal>
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                  {/* Decorative corner accents */}
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <User className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
                     {t('about.value.teamwork')}
@@ -136,7 +151,12 @@ const About: React.FC = () => {
                 </div>
               </Reveal>
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 transition-colors shadow-sm">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                  {/* Decorative corner accents */}
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <Coffee className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
                   <span className="text-slate-800 dark:text-white font-medium">
                     {t('about.value.dedication')}

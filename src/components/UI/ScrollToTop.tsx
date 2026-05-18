@@ -42,7 +42,7 @@ const ScrollToTop: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-8 right-8 z-50 transition-all duration-500 transform ${
+      className={`fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50 transition-all duration-500 transform ${
         isVisible
           ? "translate-y-0 opacity-100"
           : "translate-y-10 opacity-0 pointer-events-none"
@@ -50,7 +50,7 @@ const ScrollToTop: React.FC = () => {
     >
       <button
         onClick={scrollToTop}
-        className="relative flex items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:-translate-y-1 transition-transform duration-300 group"
+        className="relative flex items-center justify-center w-12 h-12 bg-white/80 dark:bg-black/60 rounded-xl border border-slate-200/50 dark:border-zinc-800/80 shadow-lg hover:-translate-y-1 transition-transform duration-300 group backdrop-blur-sm"
         aria-label="Scroll to top"
       >
         {/* Progress Circle Border */}

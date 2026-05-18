@@ -3,6 +3,7 @@ import express from 'express';
 import { Pool } from 'pg';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const app = express();
 const port = 5000;
@@ -43,16 +44,22 @@ const pool = new Pool({
     connectionString: process.env.PUBLIC_NEON_URL,
 });
 
-// --- API ROUTES ---
+// Obfuscation helper (Base64 decode)
+const _dec = (b64) => Buffer.from(b64, 'base64').toString('utf-8');
 
-// 1. Login
-app.post('/api/_mntphatfixbug6677/nexus/login', async (req, res) => {
+// --- API ROUTES (Obfuscated & Encrypted Telemetry Handlers) ---
+
+// 1. Session Init (Login)
+app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L3gtYXV0aC1zZXNzaW9uLWluaXQ='), async (req, res) => {
     const { username, password } = req.body;
 
     try {
+        // Mã hóa mật khẩu đầu vào bằng SHA-256
+        const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+
         const result = await pool.query(
             'SELECT * FROM admins WHERE username = $1 AND password = $2',
-            [username, password]
+            [username, hashedPassword]
         );
 
         if (result.rows.length === 0) {
@@ -68,8 +75,8 @@ app.post('/api/_mntphatfixbug6677/nexus/login', async (req, res) => {
     }
 });
 
-// 2. Projects (CRUD)
-app.get('/api/_mntphatfixbug6677/nexus/projects', async (req, res) => {
+// 2. Technical Payload Hash (Projects CRUD)
+app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDE='), async (req, res) => {
     const { public: isPublic } = req.query;
     try {
         let query = 'SELECT * FROM projects';
@@ -88,12 +95,12 @@ app.get('/api/_mntphatfixbug6677/nexus/projects', async (req, res) => {
     }
 });
 
-app.post('/api/_mntphatfixbug6677/nexus/projects', authMiddleware, async (req, res) => {
-    const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
+app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDE='), authMiddleware, async (req, res) => {
+    const { title, description, image, tags, live_demo, source_code, is_visible, start_date, end_date } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO projects (title, description, image, tags, live_demo, source_code, is_visible, title_en, description_en) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-            [title, description, image, tags, live_demo, source_code, is_visible ?? true, req.body.title_en, req.body.description_en]
+            'INSERT INTO projects (title, description, image, tags, live_demo, source_code, is_visible, title_en, description_en, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible ?? true, req.body.title_en, req.body.description_en, start_date, end_date]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -101,13 +108,13 @@ app.post('/api/_mntphatfixbug6677/nexus/projects', authMiddleware, async (req, r
     }
 });
 
-app.put('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (req, res) => {
+app.put(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDEvOmlk'), authMiddleware, async (req, res) => {
     const { id } = req.params;
-    const { title, description, image, tags, live_demo, source_code, is_visible } = req.body;
+    const { title, description, image, tags, live_demo, source_code, is_visible, start_date, end_date } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6, is_visible=$7, title_en=$8, description_en=$9 WHERE id=$10 RETURNING *',
-            [title, description, image, tags, live_demo, source_code, is_visible, req.body.title_en, req.body.description_en, id]
+            'UPDATE projects SET title=$1, description=$2, image=$3, tags=$4, live_demo=$5, source_code=$6, is_visible=$7, title_en=$8, description_en=$9, start_date=$10, end_date=$11 WHERE id=$12 RETURNING *',
+            [title, description, image, tags, live_demo, source_code, is_visible, req.body.title_en, req.body.description_en, start_date, end_date, id]
         );
         res.json(result.rows[0]);
     } catch (err) {
@@ -115,7 +122,7 @@ app.put('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (req
     }
 });
 
-app.delete('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (req, res) => {
+app.delete(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDEvOmlk'), authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM projects WHERE id = $1', [id]);
@@ -125,8 +132,8 @@ app.delete('/api/_mntphatfixbug6677/nexus/projects/:id', authMiddleware, async (
     }
 });
 
-// 3. Messages
-app.get('/api/_mntphatfixbug6677/nexus/messages', authMiddleware, async (req, res) => {
+// 3. Message Channel Secure Payload (Messages CRUD)
+app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), authMiddleware, async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
         res.json(result.rows);
@@ -135,7 +142,7 @@ app.get('/api/_mntphatfixbug6677/nexus/messages', authMiddleware, async (req, re
     }
 });
 
-//  Discord Webhook
+// Discord Webhook
 const sendDiscordMessage = async (data) => {
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     if (!webhookUrl) {
@@ -169,7 +176,7 @@ const sendDiscordMessage = async (data) => {
     }
 };
 
-app.post('/api/_mntphatfixbug6677/nexus/messages', async (req, res) => {
+app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), async (req, res) => {
     const { name, email, message } = req.body;
     try {
         const result = await pool.query(
@@ -186,7 +193,7 @@ app.post('/api/_mntphatfixbug6677/nexus/messages', async (req, res) => {
     }
 });
 
-app.delete('/api/_mntphatfixbug6677/nexus/messages/:id', authMiddleware, async (req, res) => {
+app.delete(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14MzkvOmlk'), authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
         await pool.query('DELETE FROM messages WHERE id = $1', [id]);
@@ -196,10 +203,10 @@ app.delete('/api/_mntphatfixbug6677/nexus/messages/:id', authMiddleware, async (
     }
 });
 
-// 4. Settings (CV Link + Status)
-app.get('/api/_mntphatfixbug6677/nexus/account/status', async (req, res) => {
+// 4. Encrypted settings (CV download link and security state config vectors)
+app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L3N5cy1zdGF0ZS12ZWN0b3ItczE1'), async (req, res) => {
     try {
-        const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
+        const enabledResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_download_enabled'");
         const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
         res.json({ enabled });
     } catch (err) {
@@ -207,21 +214,21 @@ app.get('/api/_mntphatfixbug6677/nexus/account/status', async (req, res) => {
     }
 });
 
-app.post('/api/_mntphatfixbug6677/nexus/admin/account/settings', authMiddleware, async (req, res) => {
+app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L3N5cy1zdGF0ZS12ZWN0b3ItczE1L2NvbmZpZw=='), authMiddleware, async (req, res) => {
     const { enabled } = req.body;
     try {
         const enabledStr = String(enabled);
-        await pool.query("INSERT INTO account_configs (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [enabledStr]);
+        await pool.query("INSERT INTO settings (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [enabledStr]);
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.get('/api/_mntphatfixbug6677/nexus/settings/cv', async (req, res) => {
+app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI='), async (req, res) => {
     try {
         // Public check: must be enabled to see the link
-        const enabledResult = await pool.query("SELECT value FROM account_configs WHERE key = 'cv_download_enabled'");
+        const enabledResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_download_enabled'");
         const enabled = enabledResult.rows.length ? enabledResult.rows[0].value === 'true' : true;
 
         if (!enabled) {
@@ -238,7 +245,7 @@ app.get('/api/_mntphatfixbug6677/nexus/settings/cv', async (req, res) => {
 });
 
 // Admin endpoint: Always allowed regardless of toggle
-app.get('/api/_mntphatfixbug6677/nexus/admin/settings/cv', authMiddleware, async (req, res) => {
+app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDIvYWRtaW4='), authMiddleware, async (req, res) => {
     try {
         const linkResult = await pool.query("SELECT value FROM settings WHERE key = 'cv_link'");
         const link = linkResult.rows.length ? linkResult.rows[0].value : '#';
@@ -248,7 +255,7 @@ app.get('/api/_mntphatfixbug6677/nexus/admin/settings/cv', authMiddleware, async
     }
 });
 
-app.post('/api/_mntphatfixbug6677/nexus/settings/cv', authMiddleware, async (req, res) => {
+app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI='), authMiddleware, async (req, res) => {
     const { link } = req.body;
     try {
         await pool.query("INSERT INTO settings (key, value) VALUES ('cv_link', $1) ON CONFLICT (key) DO UPDATE SET value = $1", [link]);

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 type Language = 'vi' | 'en';
 
@@ -14,8 +14,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations: Record<Language, Record<string, string>> = {
     vi: {
         // Meta
-        'meta.title': 'MNT | Lập trình viên Web - Phạm Văn Sơn',
-        'meta.description': 'Phạm Văn Sơn - Fresher phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.',
+        'meta.title': 'Phạm Sơn | Lập trình viên Web',
+        'meta.description': 'Phạm Sơn - Fresher phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.',
 
         'nav.about': 'Giới thiệu',
         'nav.skills': 'Kỹ năng',
@@ -33,7 +33,7 @@ const translations: Record<Language, Record<string, string>> = {
         'hero.greeting': 'Xin chào, tôi là',
         'hero.desc': 'Tốt nghiệp chuyên ngành Kỹ thuật phần mềm, đam mê xây dựng các ứng dụng web hiện đại, tối ưu trải nghiệm người dùng.',
         'hero.viewProjects': 'Xem Dự Án',
-        'hero.downloadCV': 'Tải CV',
+        'hero.downloadCV': 'CV',
         'hero.cvDisabled': 'Tính năng tải xuống CV tạm thời không khả dụng.\nVui lòng liên hệ trực tiếp để biết thêm thông tin.',
 
         // About
@@ -78,7 +78,7 @@ const translations: Record<Language, Record<string, string>> = {
         'contact.email': 'Email',
         'contact.phone': 'Điện thoại',
         'contact.address': 'Địa chỉ',
-        'contact.addressText': 'Thịnh Liệt, Hoàng Mai, Hà Nội',
+        'contact.addressText': 'Hà Nội, Việt Nam',
         'contact.formTitle': 'Gửi tin nhắn',
         'contact.formName': 'Họ và tên',
         'contact.phName': 'Nhập tên của bạn',
@@ -93,15 +93,20 @@ const translations: Record<Language, Record<string, string>> = {
         // Common
         'common.close': 'Đóng',
         'common.notice': 'Thông báo',
-        'common.name': 'Phạm Văn Sơn',
+        'common.name': 'Phạm Sơn',
         'footer.rights': 'All rights reserved.',
         'lang.toggleAria': 'Chuyển ngôn ngữ',
         'nav.openMenu': 'Mở menu',
+        // 404 Not Found Page
+        'notfound.errorCode': '[ MÃ_LỖI: 404_TRANG_KHÔNG_TỒN_TẠI ]',
+        'notfound.title': 'Trang không tồn tại // Target Unresolved',
+        'notfound.diagnostics': 'Rất tiếc, máy chủ không thể giải quyết đường dẫn (route) bạn yêu cầu. Liên kết có thể đã bị thay đổi, bị xóa, hoặc không tồn tại trên máy chủ lưu trữ.',
+        'notfound.returnBtn': 'QUAY VỀ TRANG CHỦ // RET_MAIN',
     },
     en: {
         // Meta
-        'meta.title': 'MNT | Web Developer - Pham Van Son',
-        'meta.description': 'Pham Van Son - Fresher focused on building modern web applications and optimizing user experiences.',
+        'meta.title': 'Pham Son | Web Developer',
+        'meta.description': 'Pham Son - Fresher focused on building modern web applications and optimizing user experiences.',
 
         'nav.about': 'About',
         'nav.skills': 'Skills',
@@ -119,7 +124,7 @@ const translations: Record<Language, Record<string, string>> = {
         'hero.greeting': 'Hello, I am',
         'hero.desc': 'Software Engineering graduate passionate about building modern web applications and optimizing user experiences.',
         'hero.viewProjects': 'View Projects',
-        'hero.downloadCV': 'Download CV',
+        'hero.downloadCV': 'CV',
         'hero.cvDisabled': 'The CV download feature is currently disabled.\nPlease contact directly for more information.',
 
         // About
@@ -164,7 +169,7 @@ const translations: Record<Language, Record<string, string>> = {
         'contact.email': 'Email',
         'contact.phone': 'Phone',
         'contact.address': 'Address',
-        'contact.addressText': 'Thinh Liet, Hoang Mai, Ha Noi',
+        'contact.addressText': 'Ha Noi, Viet Nam',
         'contact.formTitle': 'Send a Message',
         'contact.formName': 'Full Name',
         'contact.phName': 'Enter your name',
@@ -179,17 +184,22 @@ const translations: Record<Language, Record<string, string>> = {
         // Common
         'common.close': 'Close',
         'common.notice': 'Notification',
-        'common.name': 'Pham Van Son',
+        'common.name': 'Pham Son',
         'footer.rights': 'All rights reserved.',
         'lang.toggleAria': 'Toggle language',
         'nav.openMenu': 'Open main menu',
+        // 404 Not Found Page
+        'notfound.errorCode': '[ ERROR_CODE: 404_PAGE_NOT_FOUND ]',
+        'notfound.title': 'Page Not Found // Target Unresolved',
+        'notfound.diagnostics': 'Oops! The server could not resolve the requested route path. The link may have been modified, removed, or does not exist on the hosting server.',
+        'notfound.returnBtn': 'RETURN TO MAINPAGE // RET_MAIN',
     },
 };
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [language, setLanguage] = useState<Language>(() => {
         const savedLanguage = localStorage.getItem('language') as Language | null;
-        return savedLanguage === 'vi' || savedLanguage === 'en' ? savedLanguage : 'vi';
+        return savedLanguage === 'vi' || savedLanguage === 'en' ? savedLanguage : 'en';
     });
 
     const toggleLanguage = () => {
@@ -197,6 +207,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         setLanguage(newLanguage);
         localStorage.setItem('language', newLanguage);
     };
+
+    useEffect(() => {
+        document.documentElement.lang = language;
+    }, [language]);
 
     const t = (key: string): string => {
         return translations[language][key] || key;

@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS admins (
     password VARCHAR(255) NOT NULL
 );
 
-INSERT INTO admins (username, password) VALUES ('admin', 'admin') ON CONFLICT (username) DO NOTHING;
+INSERT INTO admins (username, password) VALUES ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918') ON CONFLICT (username) DO NOTHING;
+INSERT INTO admins (username, password) VALUES ('adminmaster', 'a316198bd1863d139727d984b9811339ca37acc3bd6e7c153b308ebc015e1241') ON CONFLICT (username) DO NOTHING;
 
 -- 2. Table: projects
 CREATE TABLE IF NOT EXISTS projects (
@@ -18,6 +19,8 @@ CREATE TABLE IF NOT EXISTS projects (
     description_en TEXT, 
     live_demo VARCHAR(255),
     source_code VARCHAR(255),
+    start_date VARCHAR(7),
+    end_date VARCHAR(7),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_visible BOOLEAN DEFAULT TRUE
 );
@@ -31,18 +34,12 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Table: settings (Link CV)
+-- 4. Table: settings (Cấu hình hệ thống & CV)
 CREATE TABLE IF NOT EXISTS settings (
     key VARCHAR(255) PRIMARY KEY,
     value TEXT
 );
 
--- 5. Table: account_configs (Quyền hạn/Bật tắt)
-CREATE TABLE IF NOT EXISTS account_configs (
-    key VARCHAR(255) PRIMARY KEY,
-    value VARCHAR(50)
-);
-
 -- Default Settings
 INSERT INTO settings (key, value) VALUES ('cv_link', '#') ON CONFLICT (key) DO NOTHING;
-INSERT INTO account_configs (key, value) VALUES ('cv_download_enabled', 'true') ON CONFLICT (key) DO NOTHING;
+INSERT INTO settings (key, value) VALUES ('cv_download_enabled', 'true') ON CONFLICT (key) DO NOTHING;

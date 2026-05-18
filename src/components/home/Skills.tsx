@@ -1,101 +1,101 @@
 import React from "react";
-import { FileCode2, Database, Terminal, Cpu } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
-
-
 
 const Skills: React.FC = () => {
   const { t } = useLanguage();
 
-  const skillCards = [
+  const categories = [
     {
-      title: t('skills.html'),
-      description: t('skills.htmlDesc'),
-      icon: FileCode2,
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-      borderColor: "hover:border-orange-500/50",
-      shadowColor: "hover:shadow-orange-500/20",
+      title: "Languages",
+      badges: [
+        { name: "html5", src: "https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white&labelColor=%23E34F26" },
+        { name: "css3", src: "https://img.shields.io/badge/css3-%231572B6.svg?style=flat&logo=css3&logoColor=white&labelColor=%231572B6" },
+        { name: "SASS", src: "https://img.shields.io/badge/SASS-%23CC6699.svg?style=flat&logo=sass&logoColor=white&labelColor=%23CC6699" },
+        { name: "Javascript", src: "https://img.shields.io/badge/Javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E&labelColor=%23323330" },
+        { name: "Python", src: "https://img.shields.io/badge/Python-%233776AB.svg?style=flat&logo=python&logoColor=white&labelColor=%233776AB" },
+        { name: "Typescript", src: "https://img.shields.io/badge/Typescript-%233178C6.svg?style=flat&logo=typescript&logoColor=white&labelColor=%233178C6" },
+      ],
     },
     {
-      title: t('skills.net'),
-      description: t('skills.netDesc'),
-      icon: Cpu,
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-      borderColor: "hover:border-purple-500/50",
-      shadowColor: "hover:shadow-purple-500/20",
+      title: "Frameworks & Runtimes",
+      badges: [
+        { name: "Reactjs", src: "https://img.shields.io/badge/Reactjs-%2320232A.svg?style=flat&logo=react&logoColor=%2361DAFB&labelColor=%2320232A" },
+        { name: "Nextjs", src: "https://img.shields.io/badge/Nextjs-%23000000.svg?style=flat&logo=nextdotjs&logoColor=white&labelColor=%23000000" },
+        { name: "Nodejs", src: "https://img.shields.io/badge/Nodejs-%23339933.svg?style=flat&logo=nodedotjs&logoColor=white&labelColor=%23339933" },
+        { name: "Expressjs", src: "https://img.shields.io/badge/Expressjs-%23339933.svg?style=flat&logo=express&logoColor=white&labelColor=%23339933" },
+      ],
     },
     {
-      title: t('skills.db'),
-      description: t('skills.dbDesc'),
-      icon: Database,
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
-      borderColor: "hover:border-emerald-500/50",
-      shadowColor: "hover:shadow-emerald-500/20",
-    },
-    {
-      title: t('skills.os'),
-      description: t('skills.osDesc'),
-      icon: Terminal,
-      color: "text-yellow-500",
-      bgColor: "bg-yellow-500/10",
-      borderColor: "hover:border-yellow-500/50",
-      shadowColor: "hover:shadow-yellow-500/20",
+      title: "Tools & Databases",
+      badges: [
+        { name: "SQL Server", src: "https://img.shields.io/badge/SQL_Server-%23CC2927.svg?style=flat&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDQuMjQgMiA3djEwYzAgMi43NiA0LjQ4IDUgMTAgNXMxMC0yLjI0IDEwLTVWN2MwLTIuNzYtNC40OC01LTEwLTV6bTAgMThjLTQuNDEgMC04LTEuNzktOC00di0xLjEyYzIuMDYgMS40NSA1LjI4IDIuMTIgOCAyLjEyczUuOTQtLjY3IDgtMi4xMlYxNmMwIDIuMjEtMy41OSA0LTggNHptMC02Yy00LjQxIDAtOC0xLjc5LTgtNHYxLjEyQzYuMDYgMTAuMzMgOS4yOCAxMSAxMiAxMXM1Ljk0LS42NyA4LTIuMTJWMTBjMCAyLjIxLTMuNTkgNC04IDR6bTAtNmMtNC40MSAwLTgtMS43OS04LTRzMy41OS00IDgtNCA4IDEuNzkgOCA0LTMuNTkgNC04IDR6Ii8+PC9zdmc+&logoColor=white&labelColor=%23CC2927" },
+        { name: "MongoDB", src: "https://img.shields.io/badge/MongoDB-%2347A248.svg?style=flat&logo=mongodb&logoColor=white&labelColor=%2347A248" },
+        { name: "Docker", src: "https://img.shields.io/badge/Docker-%232496ED.svg?style=flat&logo=docker&logoColor=white&labelColor=%232496ED" },
+        { name: "Nginx", src: "https://img.shields.io/badge/Nginx-%23009639.svg?style=flat&logo=nginx&logoColor=white&labelColor=%23009639" },
+        { name: "Git", src: "https://img.shields.io/badge/Git-%23F05032.svg?style=flat&logo=git&logoColor=white&labelColor=%23F05032" },
+      ],
     },
   ];
 
   return (
     <section
       id="skills"
-      className="py-24 bg-slate-50 dark:bg-slate-950 transition-colors duration-300"
+      className="py-24 bg-transparent transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <Reveal width="100%">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              {t('skills.title')}
+              {t("skills.title")}
             </h2>
             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-4">
-              {t('skills.desc')}
+              {t("skills.desc")}
             </p>
             <div className="w-24 h-1.5 bg-blue-600 rounded-full mx-auto"></div>
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {skillCards.map((skill, index) => (
-            <Reveal key={index} width="100%">
-              <div
-                className={`group h-full p-8 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${skill.borderColor} ${skill.shadowColor}`}
-              >
-                <div className="flex flex-col h-full">
-                  {/* Icon Header */}
-                  <div className="mb-6 inline-block">
-                    <div className={`p-4 rounded-2xl ${skill.bgColor} w-fit`}>
-                      <skill.icon
-                        className={`w-10 h-10 ${skill.color}`}
-                        strokeWidth={1.5}
-                      />
-                    </div>
+        <Reveal width="100%">
+          <div className="p-6 md:p-10 border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/10 dark:bg-zinc-900/10 backdrop-blur-sm relative overflow-visible">
+            {/* Corner grid bracket marks */}
+            <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+            <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+            <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+            <div className="absolute -bottom-px -right-px w-2 h-2 translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
+            <div className="space-y-6 md:space-y-8 max-w-4xl mx-auto">
+              {categories.map((category, catIndex) => (
+                <div
+                  key={catIndex}
+                  className="flex flex-col gap-4 pb-8 border-b border-slate-100 dark:border-slate-800 last:border-b-0 last:pb-0"
+                >
+                  {/* Category Title Label */}
+                  <div className="shrink-0">
+                    <span className="text-xs font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">
+                      {category.title}
+                    </span>
                   </div>
-
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {skill.title}
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                      {skill.description}
-                    </p>
+                  {/* Badge List */}
+                  <div className="flex flex-wrap gap-2 md:gap-2.5">
+                    {category.badges.map((badge, index) => (
+                      <div
+                        key={index}
+                        className="hover:scale-105 transition-transform duration-200 select-none shadow-sm hover:shadow rounded overflow-hidden shrink-0"
+                      >
+                        <img
+                          src={badge.src}
+                          alt={badge.name}
+                          className="h-[22px] md:h-[26px] block"
+                          loading="lazy"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

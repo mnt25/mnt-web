@@ -1,35 +1,47 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.classList.add(t);
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Phạm Văn Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
-    <meta name="keywords" content="phạm văn sơn, fresher, kỹ thuật phần mềm, web developer, frontend, backend, react, nextjs, .net core, fullstack">
-    <meta name="author" content="Phạm Văn Sơn">
+    <meta name="description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
+    <meta name="keywords" content="Phạm Sơn, fresher, kỹ thuật phần mềm, web developer, frontend, backend, react, nextjs, .net core, fullstack">
+    <meta name="author" content="Phạm Sơn">
     <meta name="robots" content="index, follow">
-    <meta name="copyright" content="©2026 Phạm Văn Sơn">
+    <meta name="copyright" content="©2026 Phạm Sơn">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="MNT">
+    <meta property="og:site_name" content="Phạm Sơn">
     <meta property="og:url" content="%VITE_SITE_URL%/">
-    <meta property="og:title" content="MNT | Lập trình viên Web - Phạm Văn Sơn">
-    <meta property="og:description" content="Phạm Văn Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
+    <meta property="og:title" content="Phạm Sơn | Lập trình viên Web">
+    <meta property="og:description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
     <meta property="og:image" content="%VITE_SITE_URL%/logo.ico">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="%VITE_SITE_URL%/">
-    <meta property="twitter:title" content="MNT | Lập trình viên Web - Phạm Văn Sơn">
-    <meta property="twitter:description" content="Phạm Văn Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
+    <meta property="twitter:title" content="Phạm Sơn | Lập trình viên Web">
+    <meta property="twitter:description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
     <meta property="twitter:image" content="%VITE_SITE_URL%/logo.ico">
 
     <!-- Connect -->
     <link rel="canonical" href="%VITE_SITE_URL%/">
-    <title>MNT | Lập trình viên Web - Phạm Văn Sơn</title>
+    <title>Phạm Sơn | Lập trình viên Web</title>
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
@@ -40,13 +52,13 @@
             "@type": "WebSite",
             "@id": "%VITE_SITE_URL%/#website",
             "url": "%VITE_SITE_URL%/",
-            "name": "MNT",
+            "name": "Phạm Sơn",
             "inLanguage": "vi-VN"
           },
           {
             "@type": "Person",
             "@id": "%VITE_SITE_URL%/#person",
-            "name": "Phạm Văn Sơn",
+            "name": "Phạm Sơn",
             "url": "%VITE_SITE_URL%/",
             "jobTitle": "Frontend Fresher"
           }
@@ -71,7 +83,8 @@
         gtag('config', 'G-XZ2TX9EEG7');
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/x-icon" href="/logo.ico" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="alternate icon" type="image/x-icon" href="/logo.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
@@ -111,10 +124,161 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #94a3b8;
       }
+
+      /* Premium continuous drawing and breathing neon logo animation */
+      .icon-logo circle,
+      .icon-logo path {
+        fill: none !important;
+        stroke: #00d9ff;
+        stroke-dasharray: 1000px;
+        stroke-dashoffset: 1000px;
+        animation: 
+          logoContinuousDraw 12s cubic-bezier(0.4, 0, 0.2, 1) infinite,
+          logoColorStroke 12s linear infinite,
+          logoBreathe 3s ease-in-out infinite;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke 350ms, stroke-width 350ms;
+      }
+
+      .icon-logo circle {
+        stroke-width: 10px; /* Sleeker, elegant outline for the circle */
+      }
+
+      .icon-logo path {
+        stroke-width: 8px; /* Sleeker, elegant outline for the letters P and S */
+      }
+
+      @keyframes logoContinuousDraw {
+        0% {
+          stroke-dashoffset: 1000px;
+        }
+        10% {
+          stroke-dashoffset: 0px;
+        }
+        90% {
+          stroke-dashoffset: 0px;
+        }
+        100% {
+          stroke-dashoffset: -1000px;
+        }
+      }
+
+      @keyframes logoBreathe {
+        0%, 100% {
+          opacity: 0.65;
+          filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.15));
+        }
+        50% {
+          opacity: 1;
+          filter: drop-shadow(0 0 10px currentColor);
+        }
+      }
+      
+      @keyframes logoColorStroke {
+        0% { stroke: #00d9ff; } /* Neon blue */
+        15% { stroke: #0077ff; }       /* Deep blue */
+        30% { stroke: #7700ff; }       /* Neon purple */
+        45% { stroke: #ff0077; }       /* Pink/Red */
+        60% { stroke: #ff7700; }       /* Neon orange */
+        75% { stroke: #ffdd00; }       /* Neon yellow */
+        90% { stroke: #00ff77; }       /* Neon green */
+        100% { stroke: #00d9ff; }      /* Loop back */
+      }
+
+      @keyframes slideUpFade {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        8%, 92% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+
+      .animate-slide-up-fade {
+        animation: slideUpFade 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+
+      /* Premium Stripe Separator */
+      .stripe-separator {
+        position: relative;
+        display: flex;
+        height: 32px; /* h-8 */
+        width: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+      
+      .stripe-separator::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+        bottom: 0;
+        width: 200vw;
+        background: repeating-linear-gradient(
+          315deg,
+          #e2e8f0 0,
+          #e2e8f0 1px,
+          transparent 0,
+          transparent 50%
+        );
+        background-size: 10px 10px;
+        opacity: 0.8;
+      }
+
+      .dark .stripe-separator::before {
+        background: repeating-linear-gradient(
+          315deg,
+          #27272a 0,
+          #27272a 1px,
+          transparent 0,
+          transparent 50%
+        );
+        background-size: 10px 10px;
+        opacity: 0.56;
+      }
+
+      /* Horizontal borders on top and bottom of the stripe pattern */
+      .stripe-separator::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+        width: 200vw;
+        height: 1px;
+        background-color: rgba(226, 232, 240, 0.8);
+      }
+
+      .dark .stripe-separator::after {
+        background-color: rgba(39, 39, 42, 0.8);
+      }
+
+      .stripe-separator-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200vw;
+        height: 1px;
+        background-color: rgba(226, 232, 240, 0.8);
+      }
+
+      .dark .stripe-separator-bottom {
+        background-color: rgba(39, 39, 42, 0.8);
+      }
     </style>
 
 </head>
-  <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300">
+  <body class="bg-slate-50 text-slate-900 dark:bg-black dark:text-slate-50 transition-colors duration-300 overflow-x-hidden">
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

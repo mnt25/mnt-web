@@ -7,6 +7,7 @@ import {
   MessageSquare,
   LogOut,
   UserCog,
+  Terminal,
 } from "lucide-react";
 import SidebarButton from "./SidebarButton";
 
@@ -26,43 +27,65 @@ const Sidebar: React.FC<Props> = ({
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("token_expire");
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   return (
     <>
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-45 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-45 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
         className={`fixed md:static top-0 left-0 w-64 h-screen
-          bg-white dark:bg-slate-900 
-          border-r border-slate-200 dark:border-slate-800
+          bg-[#070708]/85 backdrop-blur-md 
+          border-r border-zinc-800/80
           flex flex-col justify-between
-          z-50 transform transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-          }
+          z-50 transform transition-all duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
-        {/* HEADER */}
-        <div className="h-16 flex items-center px-6 justify-between border-b border-slate-200 dark:border-slate-800">
-          <span className="text-xl font-bold text-blue-600">Admin Panel</span>
+        {/* HEADER BRANDING */}
+        <div className="h-16 flex items-center px-6 justify-between border-b border-zinc-800/80 relative">
+          <div className="flex items-center gap-3">
+            <Terminal className="w-5 h-5 text-blue-500" />
+            <span className="font-mono text-sm tracking-wider font-extrabold text-zinc-100 uppercase">
+              PS // Console
+            </span>
+          </div>
           <button
-            className="md:hidden text-slate-500"
+            className="md:hidden text-zinc-400 hover:text-zinc-200"
             onClick={() => setSidebarOpen(false)}
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
+          {/* Subtle neon light ray below header */}
+          <div className="absolute bottom-[-1px] left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
         </div>
 
-        {/* NAV */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {/* LOGGED IN USER CONSOLE CARD */}
+        <div className="px-5 py-4 border-b border-zinc-800/40 bg-zinc-950/20">
+          <div className="flex items-center gap-3.5 p-3 border border-zinc-800/50 bg-zinc-950/50 rounded-none relative">
+            <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-blue-500 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-blue-500 pointer-events-none" />
+            <div className="w-8 h-8 rounded-none border border-zinc-800 flex items-center justify-center bg-zinc-900/50 relative">
+              <span className="text-[10px] font-mono text-zinc-400">SYS</span>
+              <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 rounded-full border border-zinc-950" />
+            </div>
+            <div className="min-w-0">
+              <span className="block font-mono text-[10px] text-zinc-500 tracking-wider">USER_ROOT</span>
+              <span className="block font-mono text-xs font-bold text-zinc-300 truncate">adminmaster</span>
+            </div>
+          </div>
+        </div>
+
+        {/* NAVIGATION LIST */}
+        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto mt-2">
           <SidebarButton
-            icon={<LayoutDashboard className="w-5 h-5" />}
+            icon={<LayoutDashboard className="w-4 h-4" />}
             text="Tổng quan"
             active={activeTab === "dashboard"}
             onClick={() => {
@@ -71,7 +94,7 @@ const Sidebar: React.FC<Props> = ({
             }}
           />
           <SidebarButton
-            icon={<FileText className="w-5 h-5" />}
+            icon={<FileText className="w-4 h-4" />}
             text="Quản lý CV"
             active={activeTab === "cv"}
             onClick={() => {
@@ -80,7 +103,7 @@ const Sidebar: React.FC<Props> = ({
             }}
           />
           <SidebarButton
-            icon={<FolderKanban className="w-5 h-5" />}
+            icon={<FolderKanban className="w-4 h-4" />}
             text="Dự án"
             active={activeTab === "projects"}
             onClick={() => {
@@ -89,7 +112,7 @@ const Sidebar: React.FC<Props> = ({
             }}
           />
           <SidebarButton
-            icon={<MessageSquare className="w-5 h-5" />}
+            icon={<MessageSquare className="w-4 h-4" />}
             text="Tin nhắn"
             active={activeTab === "messages"}
             onClick={() => {
@@ -98,8 +121,8 @@ const Sidebar: React.FC<Props> = ({
             }}
           />
           <SidebarButton
-            icon={<UserCog className="w-5 h-5" />}
-            text="Tài khoản"
+            icon={<UserCog className="w-4 h-4" />}
+            text="Hệ thống"
             active={activeTab === "account"}
             onClick={() => {
               setActiveTab("account");
@@ -108,13 +131,13 @@ const Sidebar: React.FC<Props> = ({
           />
         </nav>
 
-        {/* LOGOUT */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+        {/* LOGOUT BUTTON */}
+        <div className="p-4 border-t border-zinc-800/80 bg-zinc-950/20">
           <button
             onClick={handleLogout}
-            className="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+            className="flex items-center w-full px-4 py-3 text-red-400 hover:text-red-300 border border-red-500/10 hover:border-red-500/30 bg-red-950/5 hover:bg-red-950/20 rounded-none transition-all duration-300 font-mono tracking-wider text-xs uppercase"
           >
-            <LogOut className="w-5 h-5 mr-3" />
+            <LogOut className="w-4 h-4 mr-3 transition-transform group-hover:translate-x-1" />
             Đăng xuất
           </button>
         </div>

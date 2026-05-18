@@ -1,9 +1,19 @@
 import type { Project } from '../src/types/project';
 import type { ContactMessage } from '../src/types/contact';
 
-const API_URL = 'http://localhost:5000/api/_mntphatfixbug6677/nexus';
+// Decryption vector helper for obfuscated path strings (Base64 decode)
+const _dec = (b64: string): string => {
+  try {
+    return atob(b64);
+  } catch {
+    return b64;
+  }
+};
 
-// Lấy token từ localStorage
+// Obfuscated telemetry base URL
+const API_URL = _dec('aHR0cDovL2xvY2FsaG9zdDo1MDAwL2FwaS92My9zeXMtdGVsZW1ldHJ5');
+
+// Retrieve master token from localStorage
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return {
@@ -13,8 +23,9 @@ const getAuthHeaders = () => {
 };
 
 export const api = {
+  // Session Init endpoint
   login: async (username: string, password: string) => {
-    const res = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${API_URL}${_dec('L3gtYXV0aC1zZXNzaW9uLWluaXQ=')}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
@@ -28,9 +39,13 @@ export const api = {
     };
   },
 
+  // Projects Payload endpoint
   getProjects: async (isPublic = false): Promise<Project[]> => {
     try {
-      const url = isPublic ? `${API_URL}/projects?public=true` : `${API_URL}/projects`;
+      const path = isPublic 
+        ? _dec('L2QtcGF5bG9hZC1oYXNoLXA5MDE/cHVibGljPXRydWU=') 
+        : _dec('L2QtcGF5bG9hZC1oYXNoLXA5MDE=');
+      const url = `${API_URL}${path}`;
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -39,7 +54,6 @@ export const api = {
       }
 
       const data = await res.json();
-      // Map backend snake_case to frontend camelCase
       return data.map((p: any) => ({
         ...p,
         liveDemo: p.live_demo,
@@ -47,6 +61,8 @@ export const api = {
         isVisible: p.is_visible,
         titleEn: p.title_en,
         descriptionEn: p.description_en,
+        startDate: p.start_date,
+        endDate: p.end_date,
       }));
     } catch (error) {
       console.error('Fetch projects error:', error);
@@ -56,7 +72,6 @@ export const api = {
 
   createProject: async (project: Omit<Project, 'id'>): Promise<Project | null> => {
     try {
-      // Map frontend camelCase to backend snake_case
       const payload = {
         ...project,
         live_demo: project.liveDemo,
@@ -64,16 +79,17 @@ export const api = {
         is_visible: project.isVisible,
         title_en: project.titleEn,
         description_en: project.descriptionEn,
+        start_date: project.startDate,
+        end_date: project.endDate,
       };
 
-      const res = await fetch(`${API_URL}/projects`, {
+      const res = await fetch(`${API_URL}${_dec('L2QtcGF5bG9hZC1oYXNoLXA5MDE=')}`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      // Map response back to camelCase
       return {
         ...data,
         liveDemo: data.live_demo,
@@ -81,6 +97,8 @@ export const api = {
         isVisible: data.is_visible,
         titleEn: data.title_en,
         descriptionEn: data.description_en,
+        startDate: data.start_date,
+        endDate: data.end_date,
       };
     } catch (error) {
       console.error('Create project error:', error);
@@ -90,7 +108,6 @@ export const api = {
 
   updateProject: async (project: Project): Promise<Project | null> => {
     try {
-      // Map frontend camelCase to backend snake_case
       const payload = {
         ...project,
         live_demo: project.liveDemo,
@@ -98,16 +115,17 @@ export const api = {
         is_visible: project.isVisible,
         title_en: project.titleEn,
         description_en: project.descriptionEn,
+        start_date: project.startDate,
+        end_date: project.endDate,
       };
 
-      const res = await fetch(`${API_URL}/projects/${project.id}`, {
+      const res = await fetch(`${API_URL}${_dec('L2QtcGF5bG9hZC1oYXNoLXA5MDEv')}${project.id}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      // Map response back to camelCase
       return {
         ...data,
         liveDemo: data.live_demo,
@@ -115,6 +133,8 @@ export const api = {
         isVisible: data.is_visible,
         titleEn: data.title_en,
         descriptionEn: data.description_en,
+        startDate: data.start_date,
+        endDate: data.end_date,
       };
     } catch (error) {
       console.error('Update project error:', error);
@@ -124,7 +144,7 @@ export const api = {
 
   deleteProject: async (id: string): Promise<boolean> => {
     try {
-      await fetch(`${API_URL}/projects/${id}`, {
+      await fetch(`${API_URL}${_dec('L2QtcGF5bG9hZC1oYXNoLXA5MDEv')}${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -135,10 +155,10 @@ export const api = {
     }
   },
 
-
+  // Messages Payload endpoint
   getMessages: async (): Promise<ContactMessage[]> => {
     try {
-      const res = await fetch(`${API_URL}/messages`, {
+      const res = await fetch(`${API_URL}${_dec('L21zZy1jaGFubmVsLXNlY3VyZS14Mzk=')}`, {
         headers: getAuthHeaders(),
       });
       return await res.json();
@@ -150,7 +170,7 @@ export const api = {
 
   sendMessage: async (data: { name: string; email: string; message: string }): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_URL}/messages`, {
+      const res = await fetch(`${API_URL}${_dec('L21zZy1jaGFubmVsLXNlY3VyZS14Mzk=')}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -164,7 +184,7 @@ export const api = {
 
   deleteMessage: async (id: string): Promise<boolean> => {
     try {
-      await fetch(`${API_URL}/messages/${id}`, {
+      await fetch(`${API_URL}${_dec('L21zZy1jaGFubmVsLXNlY3VyZS14Mzkv')}${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
       });
@@ -175,10 +195,10 @@ export const api = {
     }
   },
 
-
+  // System Telemetry vectors (CV visibility settings toggle)
   getAccountStatus: async (): Promise<{ enabled: boolean }> => {
     try {
-      const res = await fetch(`${API_URL}/account/status`);
+      const res = await fetch(`${API_URL}${_dec('L3N5cy1zdGF0ZS12ZWN0b3ItczE1')}`);
       if (!res.ok) return { enabled: false };
       return await res.json();
     } catch (error) {
@@ -188,7 +208,7 @@ export const api = {
 
   updateAccountStatus: async (enabled: boolean): Promise<boolean> => {
     try {
-      await fetch(`${API_URL}/admin/account/settings`, {
+      await fetch(`${API_URL}${_dec('L3N5cy1zdGF0ZS12ZWN0b3ItczE1L2NvbmZpZw==')}`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ enabled }),
@@ -199,9 +219,10 @@ export const api = {
     }
   },
 
+  // Core encrypted resource endpoints (CV Download link paths)
   getCVLink: async (): Promise<{ link: string; enabled: boolean }> => {
     try {
-      const res = await fetch(`${API_URL}/settings/cv`);
+      const res = await fetch(`${API_URL}${_dec('L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI=')}`);
       if (res.status === 403) {
         return { link: '#', enabled: false };
       }
@@ -214,7 +235,7 @@ export const api = {
 
   getAdminCVLink: async (): Promise<{ link: string }> => {
     try {
-      const res = await fetch(`${API_URL}/admin/settings/cv`, {
+      const res = await fetch(`${API_URL}${_dec('L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDIvYWRtaW4=')}`, {
         headers: getAuthHeaders(),
       });
       return await res.json();
@@ -225,7 +246,7 @@ export const api = {
 
   updateCVLink: async (link: string): Promise<boolean> => {
     try {
-      await fetch(`${API_URL}/settings/cv`, {
+      await fetch(`${API_URL}${_dec('L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI=')}`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ link }),
