@@ -3,6 +3,7 @@ import { User, Terminal, Coffee } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 
+// Tự động tính toán tuổi dựa trên năm sinh và năm hiện tại
 const birthYear = 2003;
 const age = new Date().getFullYear() - birthYear;
 
@@ -24,11 +25,10 @@ const About: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Image/Visual column */}
           <div className="relative">
             <Reveal width="100%">
               <div className="relative bg-slate-50/10 dark:bg-zinc-900/10 p-8 border border-slate-200/80 dark:border-zinc-800/80 backdrop-blur-sm relative overflow-visible">
-                {/* Corner grid bracket marks */}
+                {/* Họa tiết trang trí góc giả lập lưới thiết kế (Grid brackets) */}
                 <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
                 <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
                 <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
@@ -96,7 +96,6 @@ const About: React.FC = () => {
             </Reveal>
           </div>
 
-          {/* Content column */}
           <div className="space-y-6">
             <Reveal>
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -126,7 +125,6 @@ const About: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               <Reveal width="100%">
                 <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
-                  {/* Decorative corner accents */}
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
@@ -139,7 +137,6 @@ const About: React.FC = () => {
               </Reveal>
               <Reveal width="100%">
                 <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
-                  {/* Decorative corner accents */}
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
@@ -152,7 +149,6 @@ const About: React.FC = () => {
               </Reveal>
               <Reveal width="100%">
                 <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
-                  {/* Decorative corner accents */}
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />

@@ -12,6 +12,7 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
+    // Tự động kiểm tra token phiên làm việc hiện tại và chuyển hướng sang trang quản trị nếu còn hạn
     const token = localStorage.getItem("token");
     const expire = localStorage.getItem("token_expire");
 
@@ -19,7 +20,9 @@ const Login: React.FC = () => {
       navigate("/psmanager");
     }
   }, [navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
+    // Xử lý xác thực đăng nhập qua API, lưu giữ phiên hoạt động (12 giờ) trong localStorage nếu thành công
     e.preventDefault();
 
     const response = await api.login(username, password);
@@ -39,14 +42,13 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-transparent transition-colors duration-300 relative overflow-hidden">
-      {/* Background gradients */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none dark:opacity-40">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 dark:bg-cyan-500/5 rounded-full blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative bg-white/60 dark:bg-zinc-900/10 backdrop-blur-md p-8 w-full max-w-md border border-slate-200/80 dark:border-zinc-800/80 z-10">
-        {/* Corner Grid Decorations */}
+        {/* Họa tiết trang trí góc vuông phong cách kỹ thuật */}
         <div className="absolute -top-px -left-px w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-600 pointer-events-none" />
         <div className="absolute -top-px -right-px w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-600 pointer-events-none" />
         <div className="absolute -bottom-px -left-px w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-600 pointer-events-none" />

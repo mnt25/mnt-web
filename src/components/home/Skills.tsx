@@ -58,7 +58,7 @@ const Skills: React.FC = () => {
 
         <Reveal width="100%">
           <div className="p-6 md:p-10 border border-slate-200/80 dark:border-zinc-800/80 bg-slate-50/10 dark:bg-zinc-900/10 backdrop-blur-sm relative overflow-visible">
-            {/* Corner grid bracket marks */}
+            {/* Họa tiết trang trí góc vuông */}
             <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
             <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
             <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
@@ -69,13 +69,11 @@ const Skills: React.FC = () => {
                   key={catIndex}
                   className="flex flex-col gap-4 pb-8 border-b border-slate-100 dark:border-slate-800 last:border-b-0 last:pb-0"
                 >
-                  {/* Category Title Label */}
                   <div className="shrink-0">
                     <span className="text-xs font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">
                       {category.title}
                     </span>
                   </div>
-                  {/* Badge List */}
                   <div className="flex flex-wrap gap-2 md:gap-2.5">
                     {category.badges.map((badge, index) => (
                       <div

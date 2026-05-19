@@ -25,6 +25,7 @@ const Contact: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // Xử lý gửi tin nhắn liên hệ thông qua API và cập nhật trạng thái hiển thị của form
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       return;
@@ -59,10 +60,9 @@ const Contact: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto">
-          {/* Contact Info */}
           <Reveal width="100%">
             <div className="bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/80 dark:border-zinc-800/80 p-8 h-full backdrop-blur-sm relative overflow-visible">
-              {/* Corner grid bracket marks */}
+              {/* Họa tiết trang trí góc vuông */}
               <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
               <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
               <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
@@ -116,7 +116,7 @@ const Contact: React.FC = () => {
                       {t('contact.address')}
                     </p>
                     <a
-                      href="https://www.google.com/maps/place/Thịnh+Liệt,+Hoàng+Mai,+Hà+Nội"
+                      href="https://www.google.com/maps/place/+Hà+Nội,+Việt+Nam"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-lg text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -128,7 +128,7 @@ const Contact: React.FC = () => {
                 
                 <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex gap-4 mt-auto">
                   <a
-                    href="https://www.facebook.com/phammvannsonn"
+                    href="https://www.facebook.com/phamson.25723"
                     className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-facebook dark:hover:bg-facebook transition-all"
                   >
                     <FaFacebookF className="w-6 h-6" />
@@ -156,10 +156,9 @@ const Contact: React.FC = () => {
             </div>
           </Reveal>
 
-          {/* Contact Form */}
           <Reveal width="100%">
             <div className="bg-slate-50/10 dark:bg-zinc-900/10 p-8 border border-slate-200/80 dark:border-zinc-800/80 h-full backdrop-blur-sm relative overflow-visible">
-              {/* Corner grid bracket marks */}
+              {/* Họa tiết trang trí góc vuông */}
               <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
               <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
               <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />

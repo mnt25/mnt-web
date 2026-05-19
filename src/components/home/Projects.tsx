@@ -16,6 +16,7 @@ const Projects: React.FC = () => {
   ];
 
   useEffect(() => {
+    // Truy xuất danh sách dự án từ API; tự động chuyển sang fallback mặc định nếu gặp lỗi hoặc dữ liệu trống
     const loadProjects = async () => {
       setLoading(true);
       try {
@@ -44,7 +45,7 @@ const Projects: React.FC = () => {
       }
       const parts = dateStr.split("-");
       if (parts.length === 2) {
-        return `${parts[1]}/${parts[0]}`; // MM/YYYY
+        return `${parts[1]}/${parts[0]}`; // Trả về định dạng tháng/năm (MM/YYYY)
       }
       return dateStr;
     };
@@ -85,13 +86,12 @@ const Projects: React.FC = () => {
             {projects.map((project: Project) => (
               <Reveal key={project.id} width="100%">
                 <div className="group bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/80 dark:border-zinc-800/80 hover:border-blue-500/50 transition-all duration-300 flex flex-col h-full backdrop-blur-sm relative overflow-visible">
-                  {/* Corner grid bracket marks */}
+                  {/* Họa tiết góc trang trí các thẻ */}
                   <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900 z-10" />
                   <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900 z-10" />
                   <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900 z-10" />
                   <div className="absolute -bottom-px -right-px w-2 h-2 translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900 z-10" />
 
-                  {/* Image Container */}
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={project.image}
@@ -101,7 +101,6 @@ const Projects: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent opacity-60"></div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {language === 'en' && project.titleEn ? project.titleEn : project.title}
@@ -117,7 +116,6 @@ const Projects: React.FC = () => {
                       {language === 'en' && project.descriptionEn ? project.descriptionEn : project.description}
                     </p>
 
-                    {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-6">
                       {project.tags.map((tag: string, idx: number) => (
                         <span
@@ -129,7 +127,6 @@ const Projects: React.FC = () => {
                       ))}
                     </div>
 
-                    {/* Actions */}
                     <div className="flex items-center gap-4 mt-auto">
                       <a
                         href={project.sourceCode}

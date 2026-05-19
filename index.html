@@ -16,7 +16,7 @@
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- SEO Meta Tags -->
+    <!-- Thẻ Meta hỗ trợ SEO -->
     <meta name="description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
     <meta name="keywords" content="Phạm Sơn, fresher, kỹ thuật phần mềm, web developer, frontend, backend, react, nextjs, .net core, fullstack">
     <meta name="author" content="Phạm Sơn">
@@ -24,7 +24,7 @@
     <meta name="copyright" content="©2026 Phạm Sơn">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Cấu hình Open Graph hiển thị khi chia sẻ (Facebook) -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Phạm Sơn">
     <meta property="og:url" content="%VITE_SITE_URL%/">
@@ -32,18 +32,18 @@
     <meta property="og:description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
     <meta property="og:image" content="%VITE_SITE_URL%/logo.ico">
 
-    <!-- Twitter -->
+    <!-- Cấu hình hiển thị khi chia sẻ trên Twitter/X -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="%VITE_SITE_URL%/">
     <meta property="twitter:title" content="Phạm Sơn | Lập trình viên Web">
     <meta property="twitter:description" content="Phạm Sơn - Fresher Kỹ thuật phần mềm, tập trung phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.">
     <meta property="twitter:image" content="%VITE_SITE_URL%/logo.ico">
 
-    <!-- Connect -->
+    <!-- Thẻ liên kết canonical -->
     <link rel="canonical" href="%VITE_SITE_URL%/">
     <title>Phạm Sơn | Lập trình viên Web</title>
 
-    <!-- Structured Data (JSON-LD) -->
+    <!-- Dữ liệu cấu trúc Schema (JSON-LD) cho công cụ tìm kiếm -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -66,7 +66,7 @@
       }
     </script>
     
-    <!-- Analytics (from example) -->
+    <!-- Tích hợp công cụ phân tích truy cập (Clarity & Google Analytics) -->
     <script type="text/javascript">
         (function (c, l, a, r, i, t, y) {
             c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
@@ -88,7 +88,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
-        darkMode: 'class', // Kích hoạt chế độ tối bằng class
+        darkMode: 'class', 
         theme: {
           extend: {
             fontFamily: {
@@ -104,7 +104,6 @@
       }
     </script>
     <style>
-      /* Tùy chỉnh thanh cuộn */
       ::-webkit-scrollbar {
         width: 10px;
       }
@@ -125,7 +124,7 @@
         background: #94a3b8;
       }
 
-      /* Premium continuous drawing and breathing neon logo animation */
+      /* Hiệu ứng vẽ liên tục và nhấp nháy phát sáng (neon breathe) cho Logo */
       .icon-logo circle,
       .icon-logo path {
         fill: none !important;
@@ -140,13 +139,15 @@
         stroke-linejoin: round;
         transition: stroke 350ms, stroke-width 350ms;
       }
-
+ 
       .icon-logo circle {
-        stroke-width: 10px; /* Sleeker, elegant outline for the circle */
+        /* Viền nét mảnh thanh lịch cho hình tròn ngoài */
+        stroke-width: 10px;
       }
-
+ 
       .icon-logo path {
-        stroke-width: 8px; /* Sleeker, elegant outline for the letters P and S */
+        /* Viền nét mảnh thanh lịch cho chữ P & S cách điệu bên trong */
+        stroke-width: 8px;
       }
 
       @keyframes logoContinuousDraw {
@@ -176,14 +177,14 @@
       }
       
       @keyframes logoColorStroke {
-        0% { stroke: #00d9ff; } /* Neon blue */
-        15% { stroke: #0077ff; }       /* Deep blue */
-        30% { stroke: #7700ff; }       /* Neon purple */
-        45% { stroke: #ff0077; }       /* Pink/Red */
-        60% { stroke: #ff7700; }       /* Neon orange */
-        75% { stroke: #ffdd00; }       /* Neon yellow */
-        90% { stroke: #00ff77; }       /* Neon green */
-        100% { stroke: #00d9ff; }      /* Loop back */
+        0% { stroke: #00d9ff; }
+        15% { stroke: #0077ff; }
+        30% { stroke: #7700ff; }
+        45% { stroke: #ff0077; }
+        60% { stroke: #ff7700; }
+        75% { stroke: #ffdd00; }
+        90% { stroke: #00ff77; }
+        100% { stroke: #00d9ff; }
       }
 
       @keyframes slideUpFade {
@@ -205,7 +206,7 @@
         animation: slideUpFade 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       }
 
-      /* Premium Stripe Separator */
+      /* Họa tiết đường phân tách sọc chéo cao cấp */
       .stripe-separator {
         position: relative;
         display: flex;
@@ -246,7 +247,7 @@
         opacity: 0.56;
       }
 
-      /* Horizontal borders on top and bottom of the stripe pattern */
+      /* Đường kẻ biên ngang ở trên và dưới của họa tiết sọc chéo */
       .stripe-separator::after {
         content: "";
         position: absolute;
