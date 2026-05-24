@@ -195,7 +195,6 @@ const CVManager = () => {
         </div>
         <p>// 1. Hãy đảm bảo link CV ở trạng thái "Bất kỳ ai có liên kết đều có thể truy cập" (Anyone with the link can view).</p>
         <p>// 2. Tránh sử dụng liên kết rút gọn để tăng tính ổn định của đường dẫn tải xuống.</p>
-        <p>// 3. Bạn có thể tạm thời vô hiệu hóa nút tải xuống trực tiếp tại đây bằng công tắc phân quyền.</p>
       </div>
 
       {/* Floating Cyber Toasts Container */}

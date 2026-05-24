@@ -15,7 +15,7 @@ type Theme = "light" | "dark";
 
 const Navbar: React.FC = () => {
   const { t } = useLanguage();
-  const [theme, setTheme] = useState<Theme>("dark"); 
+  const [theme, setTheme] = useState<Theme>("dark");
   const [isAvatarVisible, setIsAvatarVisible] = useState(true);
 
   const location = useLocation();
@@ -131,11 +131,10 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div
-              className={`flex-shrink-0 flex items-center gap-2 cursor-pointer transition-all duration-300 ${
-                isAvatarVisible && location.pathname === "/"
+              className={`flex-shrink-0 flex items-center gap-2 cursor-pointer transition-all duration-300 ${isAvatarVisible && location.pathname === "/"
                   ? "opacity-0 scale-95 pointer-events-none"
                   : "opacity-100 scale-100"
-              }`}
+                }`}
               onClick={scrollToTop}
             >
               <div className="icon-logo h-12 w-12">
@@ -150,7 +149,7 @@ const Navbar: React.FC = () => {
                   />
                   {/* Original bold letter outline paths P and S */}
                   <path
-                    d="M 90 224 V 80 H 115 C 129 80, 140 96, 140 116 C 140 136, 129 152, 115 152 H 105 M 214 116 C 214 96, 201 80, 187 80 C 173 80, 160 96, 160 116 C 160 136, 173 152, 187 152 C 201 152, 214 168, 214 188 C 214 208, 201 224, 187 224 H 120"
+                    d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 244 157 L 232 153 M 250 200 L 243 208M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220 M 239 156 L 232 153 M 249 201 L 237 213"
                     fill="none"
                     pathLength={1000}
                   />

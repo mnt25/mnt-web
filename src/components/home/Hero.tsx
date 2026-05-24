@@ -80,7 +80,7 @@ const Hero: React.FC = () => {
                 <div id="hero-avatar" className="h-24 w-24 sm:h-36 sm:w-36 rounded-full border border-slate-200 dark:border-zinc-800/80 overflow-hidden bg-slate-50 dark:bg-zinc-950 flex items-center justify-center shadow-lg relative flex-shrink-0 group z-10 ring-1 ring-slate-200 dark:ring-zinc-800 ring-offset-2 ring-offset-white dark:ring-offset-black">
                   {/* Họa tiết chấm bi liti làm nền cho khung chứa Avatar */}
                   <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1.5px,transparent_1.5px)] [background-size:8px_8px] pointer-events-none opacity-85 z-0" />
-                  
+
                   <div className="icon-logo h-full w-full p-2 flex items-center justify-center relative z-10">
                     <svg viewBox="0 0 304 304" className="w-[85%] h-[85%]" fill="none">
                       <circle
@@ -91,7 +91,7 @@ const Hero: React.FC = () => {
                         pathLength={1000}
                       />
                       <path
-                        d="M 90 224 V 80 H 115 C 129 80, 140 96, 140 116 C 140 136, 129 152, 115 152 H 105 M 214 116 C 214 96, 201 80, 187 80 C 173 80, 160 96, 160 116 C 160 136, 173 152, 187 152 C 201 152, 214 168, 214 188 C 214 208, 201 224, 187 224 H 120"
+                        d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 244 157 L 232 153 M 250 200 L 243 208M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220 M 239 156 L 232 153 M 249 201 L 237 213"
                         fill="none"
                         pathLength={1000}
                       />
@@ -242,7 +242,7 @@ const Hero: React.FC = () => {
             <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-slate-350 dark:border-zinc-700" />
             {t('hero.cvDisabled')}
           </div>
-          
+
           <div className="flex justify-end">
             <button
               onClick={() => setShowDialog(false)}
