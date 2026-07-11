@@ -1,0 +1,12 @@
+name = "mnt-server-worker"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Khai báo tên biến (giá trị thật điền trong Dashboard hoặc wrangler secret)
+# PUBLIC_NEON_URL = ""
+# JWT_SECRET = ""
+# TELEGRAM_BOT_TOKEN = ""
+# TELEGRAM_CHAT_ID = ""
+# TELEGRAM_WEBHOOK_SECRET = ""
