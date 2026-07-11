@@ -7,32 +7,37 @@ const Skills: React.FC = () => {
 
   const categories = [
     {
-      title: "Languages",
+      title: "AI Applications & Models",
       badges: [
-        { name: "html5", src: "https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white&labelColor=%23E34F26" },
-        { name: "css3", src: "https://img.shields.io/badge/css3-%231572B6.svg?style=flat&logo=css3&logoColor=white&labelColor=%231572B6" },
-        { name: "SASS", src: "https://img.shields.io/badge/SASS-%23CC6699.svg?style=flat&logo=sass&logoColor=white&labelColor=%23CC6699" },
-        { name: "Javascript", src: "https://img.shields.io/badge/Javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E&labelColor=%23323330" },
+        { name: "FastAPI", src: "https://img.shields.io/badge/FastAPI-%23009688.svg?style=flat&logo=fastapi&logoColor=white&labelColor=%23009688" },
+        { name: "OpenAI", src: "https://img.shields.io/badge/OpenAI-%23412991.svg?style=flat&logo=openai&logoColor=white" },
+        { name: "Prompt Engineering", src: "https://img.shields.io/badge/Prompt_Engineering-%230052FF.svg?style=flat" },
+        { name: "AI Agents", src: "https://img.shields.io/badge/AI_Agents-%23FF6F61.svg?style=flat" },
+        { name: "RAG & Vector Search", src: "https://img.shields.io/badge/RAG_&_Vector_Search-%234F46E5.svg?style=flat" },
+      ],
+    },
+    {
+      title: "Programming & Web Development",
+      badges: [
+        { name: "React", src: "https://img.shields.io/badge/React-%2320232A.svg?style=flat&logo=react&logoColor=%2361DAFB&labelColor=%2320232A" },
+        { name: "Next.js", src: "https://img.shields.io/badge/Next.js-%23000000.svg?style=flat&logo=nextdotjs&logoColor=white&labelColor=%23000000" },
+        { name: "Node.js", src: "https://img.shields.io/badge/Node.js-%23339933.svg?style=flat&logo=nodedotjs&logoColor=white&labelColor=%23339933" },
         { name: "Python", src: "https://img.shields.io/badge/Python-%233776AB.svg?style=flat&logo=python&logoColor=white&labelColor=%233776AB" },
+        { name: "PHP", src: "https://img.shields.io/badge/PHP-%23777BB4.svg?style=flat&logo=php&logoColor=white&labelColor=%23777BB4" },
+        { name: "Javascript", src: "https://img.shields.io/badge/Javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E&labelColor=%23323330" },
         { name: "Typescript", src: "https://img.shields.io/badge/Typescript-%233178C6.svg?style=flat&logo=typescript&logoColor=white&labelColor=%233178C6" },
       ],
     },
     {
-      title: "Frameworks & Runtimes",
+      title: "Databases & OS / DevOps",
       badges: [
-        { name: "Reactjs", src: "https://img.shields.io/badge/Reactjs-%2320232A.svg?style=flat&logo=react&logoColor=%2361DAFB&labelColor=%2320232A" },
-        { name: "Nextjs", src: "https://img.shields.io/badge/Nextjs-%23000000.svg?style=flat&logo=nextdotjs&logoColor=white&labelColor=%23000000" },
-        { name: "Nodejs", src: "https://img.shields.io/badge/Nodejs-%23339933.svg?style=flat&logo=nodedotjs&logoColor=white&labelColor=%23339933" },
-        { name: "Expressjs", src: "https://img.shields.io/badge/Expressjs-%23339933.svg?style=flat&logo=express&logoColor=white&labelColor=%23339933" },
-      ],
-    },
-    {
-      title: "Tools & Databases",
-      badges: [
-        { name: "SQL Server", src: "https://img.shields.io/badge/SQL_Server-%23CC2927.svg?style=flat&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDQuMjQgMiA3djEwYzAgMi43NiA0LjQ4IDUgMTAgNXMxMC0yLjI0IDEwLTVWN2MwLTIuNzYtNC40OC01LTEwLTV6bTAgMThjLTQuNDEgMC04LTEuNzktOC00di0xLjEyYzIuMDYgMS40NSA1LjI4IDIuMTIgOCAyLjEyczUuOTQtLjY3IDgtMi4xMlYxNmMwIDIuMjEtMy41OSA0LTggNHptMC02Yy00LjQxIDAtOC0xLjc5LTgtNHYxLjEyQzYuMDYgMTAuMzMgOS4yOCAxMSAxMiAxMXM1Ljk0LS42NyA4LTIuMTJWMTBjMCAyLjIxLTMuNTkgNC04IDR6bTAtNmMtNC40MSAwLTgtMS43OS04LTRzMy41OS00IDgtNCA4IDEuNzkgOCA0LTMuNTkgNC04IDR6Ii8+PC9zdmc+&logoColor=white&labelColor=%23CC2927" },
+        { name: "MySQL", src: "https://img.shields.io/badge/MySQL-%234479A1.svg?style=flat&logo=mysql&logoColor=white&labelColor=%234479A1" },
         { name: "MongoDB", src: "https://img.shields.io/badge/MongoDB-%2347A248.svg?style=flat&logo=mongodb&logoColor=white&labelColor=%2347A248" },
+        { name: "SQL Server", src: "https://img.shields.io/badge/SQL_Server-%23CC2927.svg?style=flat&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDQuMjQgMiA3djEwYzAgMi43NiA0LjQ4IDUgMTAgNXMxMC0yLjI0IDEwLTVWN2MwLTIuNzYtNC40OC01LTEwLTV6bTAgMThjLTQuNDEgMC04LTEuNzktOC00di0xLjEyYzIuMDYgMS40NSA1LjI8IDIuMTIgOCAyLjEyczUuOTQtLjY3IDgtMi4xMlYxNmMwIDIuMjEtMy41OSA0LTggNHptMC02Yy00LjQxIDAtOC0xLjc5LTgtNHYxLjEyQzYuMDYgMTAuMzMgOS4yOCAxMSAxMiAxMXM1Ljk0LS42NyA4LTIuMTJWMTBjMCAyLjIxLTMuNTkgNC04IDR6bTAtNmMtNC40MSAwLTgtMS43OS04LTRzMy41OS00IDgtNCA4IDEuNzkgOCA0LTMuNTkgNC04IDR6Ii8+PC9zdmc+&logoColor=white&labelColor=%23CC2927" },
+        { name: "Neon Tech DB", src: "https://img.shields.io/badge/Neon_Tech_DB-%2300E599.svg?style=flat" },
         { name: "Docker", src: "https://img.shields.io/badge/Docker-%232496ED.svg?style=flat&logo=docker&logoColor=white&labelColor=%232496ED" },
         { name: "Nginx", src: "https://img.shields.io/badge/Nginx-%23009639.svg?style=flat&logo=nginx&logoColor=white&labelColor=%23009639" },
+        { name: "Linux", src: "https://img.shields.io/badge/Linux-%23FCC624.svg?style=flat&logo=linux&logoColor=black&labelColor=%23FCC624" },
         { name: "Git", src: "https://img.shields.io/badge/Git-%23F05032.svg?style=flat&logo=git&logoColor=white&labelColor=%23F05032" },
       ],
     },

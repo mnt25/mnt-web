@@ -14,8 +14,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations: Record<Language, Record<string, string>> = {
     vi: {
         // Meta
-        'meta.title': 'Phạm Sơn | Lập trình viên Web',
-        'meta.description': 'Phạm Sơn - Fresher phát triển ứng dụng web hiện đại và tối ưu trải nghiệm người dùng.',
+        'meta.title': 'Phạm Sơn | Lập trình viên Software & AI',
+        'meta.description': 'Phạm Sơn - Lập trình viên Software & AI, chuyên phát triển hệ thống web hiện đại và tích hợp các mô hình AI.',
 
         'nav.about': 'Giới thiệu',
         'nav.skills': 'Kỹ năng',
@@ -29,22 +29,22 @@ const translations: Record<Language, Record<string, string>> = {
         'lang.en': 'Tiếng Anh',
 
         // Hero
-        'hero.badge': 'Đang tìm kiếm cơ hội Fresher',
+        'hero.badge': 'Đang tìm kiếm cơ hội Software & AI Engineer',
         'hero.greeting': 'Xin chào, tôi là',
-        'hero.desc': 'Tốt nghiệp chuyên ngành Kỹ thuật phần mềm, đam mê xây dựng các ứng dụng web hiện đại, tối ưu trải nghiệm người dùng.',
+        'hero.desc': 'Được đào tạo chuyên sâu về Kỹ thuật phần mềm và Ứng dụng AI, đam mê xây dựng hệ thống web hiện đại, tích hợp giải pháp AI vào thực tiễn.',
         'hero.viewProjects': 'Xem Dự Án',
         'hero.downloadCV': 'CV',
         'hero.cvDisabled': 'Tính năng tải xuống CV tạm thời không khả dụng.\nVui lòng liên hệ trực tiếp để biết thêm thông tin.',
 
         // About
         'about.title': 'Về bản thân',
-        'about.journeyTitle': 'Hành trình trở thành Lập trình viên',
-        'about.journeyDesc1': 'Tôi là sinh viên tốt nghiệp chuyên ngành Kỹ thuật phần mềm tại',
+        'about.journeyTitle': 'Hành trình phát triển',
+        'about.journeyDesc1': 'Tôi đã tốt nghiệp chuyên ngành Kỹ thuật phần mềm tại',
         'about.journeyDesc1School': 'Cao Đẳng Anh Quốc BTEC FPT',
-        'about.journeyDesc1End': '. Với nền tảng kiến thức vững chắc, tôi đã tự học và phát triển kỹ năng trong lĩnh vực phát triển Web.',
-        'about.journeyDesc2': 'Mục tiêu của tôi là áp dụng những kiến thức đã học vào thực tế, đóng góp giá trị cho doanh nghiệp và không ngừng nâng cao trình độ chuyên môn. Tôi là người cầu tiến, ham học hỏi và luôn sẵn sàng đối mặt với thử thách mới.',
+        'about.journeyDesc1End': ' và hiện đang theo học chuyên sâu Track AI Applications tại Chương trình Đào tạo Nhân tài AI Thực chiến (VinUni & Vingroup).',
+        'about.journeyDesc2': 'Mục tiêu của tôi là phát triển phần mềm toàn diện, ứng dụng các giải pháp AI tiên tiến để giải quyết các bài toán thực tế của doanh nghiệp. Tôi là người cầu tiến, ham học hỏi và luôn sẵn sàng đối mặt với thử thách mới.',
         'about.ageUnit': 'tuổi',
-        'about.roleValue': 'Frontend Fresher',
+        'about.roleValue': 'Software & AI Engineer',
         'about.passion.coding': 'Lập trình',
         'about.passion.uiux': 'UI/UX',
         'about.passion.solving': 'Giải quyết vấn đề',
@@ -105,8 +105,8 @@ const translations: Record<Language, Record<string, string>> = {
     },
     en: {
         // Meta
-        'meta.title': 'Pham Son | Web Developer',
-        'meta.description': 'Pham Son - Fresher focused on building modern web applications and optimizing user experiences.',
+        'meta.title': 'Pham Son | Software & AI Engineer',
+        'meta.description': 'Pham Son - Software & AI Engineer focused on building modern web applications and integrating AI models.',
 
         'nav.about': 'About',
         'nav.skills': 'Skills',
@@ -120,22 +120,22 @@ const translations: Record<Language, Record<string, string>> = {
         'lang.en': 'English',
 
         // Hero
-        'hero.badge': 'Looking for a Fresher Opportunity',
+        'hero.badge': 'Looking for a Software & AI Engineer Opportunity',
         'hero.greeting': 'Hello, I am',
-        'hero.desc': 'Software Engineering graduate passionate about building modern web applications and optimizing user experiences.',
+        'hero.desc': 'Trained in Software Engineering and AI Applications, passionate about building modern web systems and integrating AI solutions into practice.',
         'hero.viewProjects': 'View Projects',
         'hero.downloadCV': 'CV',
         'hero.cvDisabled': 'The CV download feature is currently disabled.\nPlease contact directly for more information.',
 
         // About
         'about.title': 'About Me',
-        'about.journeyTitle': 'My Journey to Becoming a Developer',
-        'about.journeyDesc1': 'I am a Software Engineering graduate from',
+        'about.journeyTitle': 'My Journey',
+        'about.journeyDesc1': 'I graduated with a Software Engineering degree from',
         'about.journeyDesc1School': 'BTEC FPT British College',
-        'about.journeyDesc1End': '. With a solid foundation, I have self-taught and developed my skills in Web Development.',
-        'about.journeyDesc2': 'My goal is to apply my knowledge to real-world projects, contribute value to businesses, and continuously improve my professional skills. I am ambitious, eager to learn, and always ready to face new challenges.',
+        'about.journeyDesc1End': ' and am currently pursuing the AI Applications Track at the AI Elite Program (VinUni & Vingroup).',
+        'about.journeyDesc2': 'My goal is to develop comprehensive software, applying advanced AI solutions to solve real-world business challenges. I am ambitious, eager to learn, and always ready to face new challenges.',
         'about.ageUnit': 'years old',
-        'about.roleValue': 'Frontend Fresher',
+        'about.roleValue': 'Software & AI Engineer',
         'about.passion.coding': 'Coding',
         'about.passion.uiux': 'UI/UX',
         'about.passion.solving': 'Problem Solving',

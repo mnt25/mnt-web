@@ -129,13 +129,13 @@ const Hero: React.FC = () => {
             </div>
 
             <div className="flex w-full relative overflow-visible">
-              <div className="w-[112px] sm:w-[180px] shrink-0 px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col items-center justify-end bg-transparent relative z-10 min-h-[140px]">
+              <div className="w-[112px] sm:w-[180px] shrink-0 px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col items-center justify-end bg-transparent relative z-10 min-h-[160px] sm:min-h-[200px]">
                 <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
 
-                <div className="absolute right-2.5 sm:right-4 bottom-4 sm:bottom-6 opacity-30 hover:opacity-100 transition-opacity duration-500 select-none z-20">
+                <div className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 opacity-30 hover:opacity-100 transition-opacity duration-500 select-none z-20">
                   <div className="transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
-                    <span className="font-mono text-[8px] sm:text-[12px] tracking-[0.2em] text-slate-500 dark:text-zinc-400 uppercase font-bold whitespace-nowrap">
-                      Frontend Developer
+                    <span className="font-mono text-[8px] sm:text-[12px] tracking-[0.16em] text-slate-500 dark:text-zinc-400 uppercase font-bold whitespace-nowrap">
+                      Software & AI Engineer
                     </span>
                   </div>
                 </div>
@@ -143,7 +143,7 @@ const Hero: React.FC = () => {
 
               <div className="flex flex-1 flex-col bg-transparent relative">
                 <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
-                <div className="p-3 sm:p-4.5 space-y-2.5 bg-transparent relative z-10 flex-1 flex flex-col justify-center">
+                <div className="p-4 sm:p-5.5 space-y-3 sm:space-y-4 bg-transparent relative z-10 flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
                     <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
                       <MapPin className="size-3.5 text-slate-500 dark:text-zinc-400" />
@@ -170,7 +170,7 @@ const Hero: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-200 dark:border-zinc-800/80 p-2.5 sm:p-3.5 flex items-center gap-3 bg-transparent">
+                <div className="border-t border-slate-200 dark:border-zinc-800/80 p-3 sm:p-4 flex items-center gap-3 bg-transparent">
                   <a
                     href="https://www.facebook.com/phamson.25723"
                     target="_blank"

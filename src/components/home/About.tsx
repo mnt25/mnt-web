@@ -8,7 +8,7 @@ const birthYear = 2003;
 const age = new Date().getFullYear() - birthYear;
 
 const About: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   return (
     <section
       id="about"
@@ -160,6 +160,74 @@ const About: React.FC = () => {
                 </div>
               </Reveal>
             </div>
+          </div>
+        </div>
+
+        {/* Timeline Học vấn & Kinh nghiệm */}
+        <div className="mt-20 pt-16 border-t border-slate-200/80 dark:border-zinc-800/80 max-w-4xl mx-auto">
+          <Reveal width="100%">
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-12 text-center">
+              {language === 'vi' ? 'Học vấn & Kinh nghiệm' : 'Education & Experience'}
+            </h3>
+          </Reveal>
+
+          <div className="relative pl-6 md:pl-8 border-l-2 border-slate-200 dark:border-zinc-800 space-y-12">
+            {[
+              {
+                year: "2026 - Hiện tại",
+                yearEn: "2026 - Present",
+                title: "AI Applications / AI Engineer",
+                titleEn: "AI Applications / AI Engineer",
+                institution: "VinUni & Tập đoàn Vingroup",
+                institutionEn: "VinUni & Vingroup Group",
+                description: "Chuyên ngành chuyên sâu (Track): AI Applications (Ứng dụng AI). Đã hoàn thành 6 tuần đào tạo nền tảng & mô phỏng thực chiến; chuẩn bị bước vào giai đoạn thực tập 6 tuần tại doanh nghiệp. Làm chủ tư duy AI, đạo đức AI và thiết lập luồng xử lý AI Agents, tích hợp LLMs.",
+                descriptionEn: "Specialized Track: AI Applications. Completed 6 weeks of foundational & simulated hands-on training; preparing for a 6-week corporate internship. Mastered AI thinking, ethics, and designing AI Agent workflows integrated with LLMs."
+              },
+              {
+                year: "2025 - 2025",
+                yearEn: "2025 - 2025",
+                title: "Thực tập sinh Lập trình phần mềm",
+                titleEn: "Software Development Intern",
+                institution: "Công ty CP Công nghệ Quảng Ích",
+                institutionEn: "Quang Ich Technology Joint Stock Company",
+                description: "Đơn vị phát triển hệ thống eNetViet & Phần mềm Giáo dục. Tham gia phát triển tính năng cho hệ thống eNetViet (Ứng dụng kết nối giáo dục) và Hệ thống Thư viện Điện tử. Sử dụng Next.js và Material UI (MUI) để xây dựng CMS quản lý và liên lạc trường học; viết các hàm xử lý logic nghiệp vụ, đồng bộ Client-Server.",
+                descriptionEn: "Developer of eNetViet & Education Systems. Developed features for eNetViet (school-parent communication app) and the Digital Library CMS. Used Next.js and Material UI (MUI) for library management, designed search filters, wrote API logic, and synchronized Client-Server data."
+              },
+              {
+                year: "2021 - 2024",
+                yearEn: "2021 - 2024",
+                title: "Sinh viên Kỹ thuật phần mềm",
+                titleEn: "Software Engineering Student",
+                institution: "Cao đẳng Anh Quốc BTEC FPT",
+                institutionEn: "BTEC FPT British College",
+                description: "Chuyên ngành: Kỹ thuật phần mềm. Xếp loại tốt nghiệp: Pass (Hoàn thành chương trình đào tạo chuẩn Anh Quốc).",
+                descriptionEn: "Major: Software Engineering. Graduation grade: Pass (Completed the UK-standard curriculum)."
+              }
+            ].map((item, idx) => (
+              <Reveal key={idx} width="100%">
+                <div className="relative">
+                  {/* Timeline Node Dot */}
+                  <div className="absolute -left-[31px] md:-left-[39px] top-1.5 flex size-4 sm:size-5 items-center justify-center rounded-full bg-blue-600 border-4 border-slate-50 dark:border-zinc-950" />
+                  
+                  <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6 mb-2">
+                    <span className="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 shrink-0 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded">
+                      {language === 'en' ? item.yearEn : item.year}
+                    </span>
+                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+                      {language === 'en' ? item.titleEn : item.title}
+                    </h4>
+                  </div>
+                  
+                  <div className="text-sm font-semibold text-slate-500 dark:text-zinc-400 mb-3">
+                    {language === 'en' ? item.institutionEn : item.institution}
+                  </div>
+                  
+                  <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed">
+                    {language === 'en' ? item.descriptionEn : item.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </div>

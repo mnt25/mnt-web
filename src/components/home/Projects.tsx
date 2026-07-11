@@ -12,7 +12,62 @@ const Projects: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const fallbackProjects: Project[] = [
-
+    {
+      id: "p1",
+      title: "AI Scene Understanding for Mobile Robots",
+      titleEn: "AI Scene Understanding for Mobile Robots",
+      startDate: "2026-01",
+      endDate: "Present",
+      description: "Hệ thống giám sát thời gian thực giúp người vận hành hiểu ngữ cảnh xung quanh robot di động trong nhà (kho hàng, nhà máy). AI tích hợp (Qwen2.5-VL + 3D-R1 chạy trên đám mây RunPod GPU Cloud) tự động phân tích mức độ nguy hiểm, giải thích lý do và đề xuất robot giảm tốc/dừng lại.",
+      descriptionEn: "Real-time monitoring system helping operators understand mobile robot surroundings in indoor environments. Integrates Qwen2.5-VL and 3D-R1 models on RunPod GPU Cloud to analyze danger levels, output reasoning steps, and suggest safety commands.",
+      image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+      tags: ["React", "Tailwind CSS v4", "FastAPI", "MongoDB", "RunPod GPU", "Qwen2.5-VL"],
+      liveDemo: "https://c2-app-137.io.vn/",
+      sourceCode: "https://github.com/mnt25/",
+      isVisible: true
+    },
+    {
+      id: "p2",
+      title: "MNT Web - Portfolio & Admin Dashboard",
+      titleEn: "MNT Web - Portfolio & Admin Dashboard",
+      startDate: "2025-01",
+      endDate: "2025-12",
+      description: "Website Portfolio tích hợp hệ thống Dashboard quản trị bảo mật để quản trị dữ liệu động và luồng thông tin của hệ thống. Xây dựng Admin Dashboard phân quyền và xác thực (Authentication) phục vụ CRUD dự án, tích hợp contact form với Discord Webhook.",
+      descriptionEn: "Personal portfolio website integrated with a secure Admin Dashboard for dynamic data and system flow management. Features authentication, role-based access control, and a contact form integrated with Discord Webhook.",
+      image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+      tags: ["React", "TypeScript", "Node.js", "TailwindCSS", "Neon Tech DB", "Express"],
+      liveDemo: "https://mnt.id.vn",
+      sourceCode: "https://github.com/mnt25/mnt-web",
+      isVisible: true
+    },
+    {
+      id: "p3",
+      title: "Weather Dashboard & Analytics",
+      titleEn: "Weather Dashboard & Analytics",
+      startDate: "2025-01",
+      endDate: "2025-12",
+      description: "Ứng dụng theo dõi, phân tích trực quan dữ liệu thời tiết và chất lượng môi trường thời gian thực trên toàn cầu. Tích hợp API thời tiết quốc tế, trực quan hóa dữ liệu chỉ số AQI, chu kỳ mặt trời qua thư viện Recharts.",
+      descriptionEn: "Global real-time weather and environmental quality tracking application. Integrates international weather APIs and visualizes AQI index, solar cycles, and temperatures using advanced Recharts components.",
+      image: "https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&w=800&q=80",
+      tags: ["React", "TypeScript", "Bootstrap 5", "Recharts API"],
+      liveDemo: "https://mnt-weather-dashboard.vercel.app",
+      sourceCode: "https://github.com/mnt25/Weather-Dashboard",
+      isVisible: true
+    },
+    {
+      id: "p4",
+      title: "Hệ thống đặt phòng trực tuyến",
+      titleEn: "Online Booking Room System",
+      startDate: "2023-01",
+      endDate: "2024-12",
+      description: "Hệ thống đặt phòng trực tuyến tích hợp cơ chế quản lý phòng, kiểm soát trạng thái đơn hàng cho admin và luồng đặt phòng cho khách hàng. Đóng góp thiết kế cơ sở dữ liệu SQL Server, lập trình API logic nghiệp vụ và xây dựng Admin Dashboard.",
+      descriptionEn: "Online room booking system with room management and order status tracking. Features SQL Server database design, business logic APIs, and an intuitive Admin Dashboard for room lifecycle management.",
+      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+      tags: ["HTML/CSS", "PHP", "JavaScript", "SQL Server"],
+      liveDemo: "#",
+      sourceCode: "https://github.com/mnt25",
+      isVisible: true
+    }
   ];
 
   useEffect(() => {

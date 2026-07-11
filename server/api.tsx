@@ -9,7 +9,7 @@ const _dec = (b64: string): string => {
   }
 };
 
-const API_URL = _dec('aHR0cDovL2xvY2FsaG9zdDo1MDAwL2FwaS92My9zeXMtdGVsZW1ldHJ5');
+const API_URL = _dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5'); // /api/v3/sys-telemetry
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
