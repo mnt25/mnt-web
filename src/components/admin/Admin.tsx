@@ -10,6 +10,7 @@ import { Menu } from "lucide-react";
 const Admin: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "cv" | "projects" | "messages"
   >("dashboard");
@@ -71,15 +72,17 @@ const Admin: React.FC = () => {
         setActiveTab={setActiveTab}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
       />
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-6 md:p-10 mt-16 md:mt-0 z-10 flex flex-col relative overflow-y-auto max-h-screen">
+      <main className={`flex-1 p-6 md:p-10 mt-16 md:mt-0 z-10 flex flex-col relative overflow-y-auto max-h-screen transition-all duration-300`}>
         {/* Decorative corner brackets for main dashboard frame */}
-        <div className="absolute top-10 left-10 w-3 h-3 border-t-2 border-l-2 border-zinc-800 pointer-events-none hidden md:block" />
-        <div className="absolute top-10 right-10 w-3 h-3 border-t-2 border-r-2 border-zinc-800 pointer-events-none hidden md:block" />
-        <div className="absolute bottom-10 left-10 w-3 h-3 border-b-2 border-l-2 border-zinc-800 pointer-events-none hidden md:block" />
-        <div className="absolute bottom-10 right-10 w-3 h-3 border-b-2 border-r-2 border-zinc-800 pointer-events-none hidden md:block" />
+        <div className="absolute top-10 left-10 w-3 h-3 border-t-2 border-l-2 border-slate-300 dark:border-zinc-800 pointer-events-none hidden md:block" />
+        <div className="absolute top-10 right-10 w-3 h-3 border-t-2 border-r-2 border-slate-300 dark:border-zinc-800 pointer-events-none hidden md:block" />
+        <div className="absolute bottom-10 left-10 w-3 h-3 border-b-2 border-l-2 border-slate-300 dark:border-zinc-800 pointer-events-none hidden md:block" />
+        <div className="absolute bottom-10 right-10 w-3 h-3 border-b-2 border-r-2 border-slate-300 dark:border-zinc-800 pointer-events-none hidden md:block" />
 
         <div className="flex-1 w-full max-w-7xl mx-auto py-2">
           {renderContent()}

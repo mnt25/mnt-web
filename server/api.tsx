@@ -150,6 +150,21 @@ export const api = {
     }
   },
 
+  reorderProjects: async (order: { id: string; sort_order: number }[]): Promise<boolean> => {
+    try {
+      const res = await fetch(`${API_URL}${_dec('L2QtcGF5bG9hZC1oYXNoLXA5MDEvcmVvcmRlcg==')}`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ order }),
+      });
+      const data = await res.json();
+      return data.success === true;
+    } catch (error) {
+      console.error('Reorder projects error:', error);
+      return false;
+    }
+  },
+
   getMessages: async (): Promise<ContactMessage[]> => {
     try {
       const res = await fetch(`${API_URL}${_dec('L21zZy1jaGFubmVsLXNlY3VyZS14Mzk=')}`, {

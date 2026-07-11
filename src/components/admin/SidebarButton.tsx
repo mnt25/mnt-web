@@ -5,19 +5,24 @@ const SidebarButton = ({
   text,
   active,
   onClick,
+  collapsed = false,
 }: {
   icon: React.ReactNode;
   text: string;
   active: boolean;
   onClick: () => void;
+  collapsed?: boolean;
 }) => (
   <button
     onClick={onClick}
-    className={`flex items-center w-full px-4 py-3.5 transition-all duration-300 relative rounded-none select-none outline-none group ${
-      active
-        ? "bg-gradient-to-r from-blue-500/10 to-transparent text-blue-400 font-bold"
-        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/30"
-    }`}
+    title={collapsed ? text : undefined}
+    className={`flex items-center w-full transition-all duration-300 relative rounded-none select-none outline-none group
+      ${collapsed ? "px-0 py-3.5 justify-center" : "px-4 py-3.5"}
+      ${
+        active
+          ? "bg-gradient-to-r from-blue-500/10 to-transparent text-blue-600 dark:text-blue-400 font-bold"
+          : "text-slate-500 dark:text-zinc-400 hover:text-slate-800 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-900/30"
+      }`}
   >
     {/* Active left neon border */}
     {active && (
@@ -26,18 +31,28 @@ const SidebarButton = ({
 
     {/* Hover subtle line indicator */}
     {!active && (
-      <span className="absolute left-0 top-0 bottom-0 w-0 bg-zinc-700 transition-all duration-300 group-hover:w-0.5" />
+      <span className="absolute left-0 top-0 bottom-0 w-0 bg-slate-300 dark:bg-zinc-700 transition-all duration-300 group-hover:w-0.5" />
     )}
 
     {/* Icon with glowing active state */}
-    <div className={`transition-transform duration-300 group-hover:scale-110 ${active ? "text-blue-400 filter drop-shadow-[0_0_4px_rgba(59,130,246,0.4)]" : "text-zinc-400 group-hover:text-zinc-200"}`}>
+    <div
+      className={`transition-transform duration-300 group-hover:scale-110 shrink-0 ${
+        active
+          ? "text-blue-500 dark:text-blue-400 filter drop-shadow-[0_0_4px_rgba(59,130,246,0.4)]"
+          : "text-slate-400 dark:text-zinc-400 group-hover:text-slate-700 dark:group-hover:text-zinc-200"
+      }`}
+    >
       {icon}
     </div>
 
-    <span className="ml-4 font-mono tracking-wider text-xs uppercase">{text}</span>
+    {!collapsed && (
+      <span className="ml-4 font-mono tracking-wider text-xs uppercase whitespace-nowrap">
+        {text}
+      </span>
+    )}
 
     {/* High tech crosshair dash decorations */}
-    {active && (
+    {active && !collapsed && (
       <div className="absolute right-4 w-1.5 h-1.5 border-r border-t border-blue-400/50" />
     )}
   </button>

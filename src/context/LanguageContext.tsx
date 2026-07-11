@@ -59,8 +59,8 @@ const translations: Record<Language, Record<string, string>> = {
         'skills.htmlDesc': 'Framework web tôi thường dùng là React hoặc Next.js tùy yêu cầu.',
         'skills.net': '.Net Core, Microservice',
         'skills.netDesc': 'Ứng dụng được triển khai trên .NET, container hóa với Docker, định hướng microservice khi phù hợp quy mô.',
-        'skills.db': 'Sql Server, MongoDB, Redis',
-        'skills.dbDesc': '3 công nghệ này đáp ứng hầu hết bài toán lưu trữ, hiệu năng và bảo mật dữ liệu.',
+        'skills.db': 'MongoDB, Redis',
+        'skills.dbDesc': 'Các công nghệ này đáp ứng hầu hết bài toán lưu trữ, hiệu năng và bảo mật dữ liệu.',
         'skills.os': 'Linux, Windows, Network',
         'skills.osDesc': 'Ưu tiên Linux trong triển khai, vẫn hỗ trợ Windows Server miễn có Docker.',
 
@@ -89,6 +89,10 @@ const translations: Record<Language, Record<string, string>> = {
         'contact.sendBtn': 'Gửi tin nhắn',
         'contact.success': 'Tin nhắn đã được gửi thành công!',
         'contact.error': 'Có lỗi xảy ra, có thể server chưa chạy.',
+        'contact.error.nameRequired': 'Vui lòng nhập họ và tên.',
+        'contact.error.emailRequired': 'Vui lòng nhập địa chỉ email.',
+        'contact.error.emailInvalid': 'Địa chỉ email không hợp lệ.',
+        'contact.error.messageRequired': 'Vui lòng nhập lời nhắn.',
 
         // Common
         'common.close': 'Đóng',
@@ -150,8 +154,8 @@ const translations: Record<Language, Record<string, string>> = {
         'skills.htmlDesc': 'My preferred web frameworks are React or Next.js depending on requirements.',
         'skills.net': '.Net Core, Microservice',
         'skills.netDesc': 'Applications deployed on .NET, containerized with Docker, microservices oriented when appropriate.',
-        'skills.db': 'Sql Server, MongoDB, Redis',
-        'skills.dbDesc': 'These 3 technologies cover most storage, performance, and data security needs.',
+        'skills.db': 'MongoDB, Redis',
+        'skills.dbDesc': 'These technologies cover most storage, performance, and data security needs.',
         'skills.os': 'Linux, Windows, Network',
         'skills.osDesc': 'I prioritize Linux for deployment but support Windows Server if Docker is available.',
 
@@ -180,6 +184,10 @@ const translations: Record<Language, Record<string, string>> = {
         'contact.sendBtn': 'Send Message',
         'contact.success': 'Message sent successfully!',
         'contact.error': 'An error occurred, the server might be down.',
+        'contact.error.nameRequired': 'Please enter your name.',
+        'contact.error.emailRequired': 'Please enter your email.',
+        'contact.error.emailInvalid': 'Please enter a valid email address.',
+        'contact.error.messageRequired': 'Please enter your message.',
 
         // Common
         'common.close': 'Close',

@@ -124,7 +124,7 @@ const About: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group">
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
@@ -136,7 +136,7 @@ const About: React.FC = () => {
                 </div>
               </Reveal>
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group">
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
@@ -148,7 +148,7 @@ const About: React.FC = () => {
                 </div>
               </Reveal>
               <Reveal width="100%">
-                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group hover:-translate-y-1">
+                <div className="flex flex-col items-center p-4 bg-slate-50/10 dark:bg-zinc-900/10 border border-slate-200/60 dark:border-zinc-800/60 hover:border-blue-500/50 transition-all duration-300 relative overflow-visible group">
                   <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-300 dark:border-zinc-700 pointer-events-none" />
                   <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-300 dark:border-zinc-700 pointer-events-none" />

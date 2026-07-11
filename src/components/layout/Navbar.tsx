@@ -3,6 +3,7 @@ import { Sun, Moon, User, Code, Briefcase, Mail } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 
 const navItems = [
   { key: "nav.about", href: "#about", icon: User },
@@ -15,22 +16,11 @@ type Theme = "light" | "dark";
 
 const Navbar: React.FC = () => {
   const { t } = useLanguage();
-  const [theme, setTheme] = useState<Theme>("dark");
+  const { theme, setTheme } = useTheme();
   const [isAvatarVisible, setIsAvatarVisible] = useState(true);
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme === "light" || savedTheme === "dark") {
-      setTheme(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      setTheme("dark");
-      applyTheme("dark");
-    }
-  }, []);
 
   useEffect(() => {
     if (location.pathname !== "/") {
@@ -60,21 +50,8 @@ const Navbar: React.FC = () => {
     };
   }, [location.pathname]);
 
-  const applyTheme = (selectedTheme: Theme) => {
-    const root = window.document.documentElement;
-    const isDark = selectedTheme === "dark";
-
-    if (isDark) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("theme", selectedTheme);
-  };
-
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
-    applyTheme(newTheme);
   };
 
   const handleNavClick = (
@@ -149,7 +126,7 @@ const Navbar: React.FC = () => {
                   />
                   {/* Original bold letter outline paths P and S */}
                   <path
-                    d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 244 157 L 232 153 M 250 200 L 243 208M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220 M 239 156 L 232 153 M 249 201 L 237 213"
+                    d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220"
                     fill="none"
                     pathLength={1000}
                   />

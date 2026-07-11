@@ -86,7 +86,7 @@ app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDE='), async 
             query += ' WHERE is_visible = true';
         }
 
-        query += ' ORDER BY created_at DESC';
+        query += ' ORDER BY sort_order ASC, created_at DESC';
 
         const result = await pool.query(query, params);
         res.json(result.rows);
@@ -132,6 +132,24 @@ app.delete(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDEvOmlk'),
     }
 });
 
+// PATCH: Reorder projects
+app.patch(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2QtcGF5bG9hZC1oYXNoLXA5MDEvcmVvcmRlcg=='), authMiddleware, async (req, res) => {
+    // Expects body: { order: [{ id, sort_order }, ...] }
+    const { order } = req.body;
+    if (!Array.isArray(order)) {
+        return res.status(400).json({ error: 'order phải là một mảng' });
+    }
+    try {
+        const updates = order.map(({ id, sort_order }) =>
+            pool.query('UPDATE projects SET sort_order=$1 WHERE id=$2', [sort_order, id])
+        );
+        await Promise.all(updates);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 3. Message Channel Secure Payload (Messages CRUD)
 app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), authMiddleware, async (req, res) => {
     try {
@@ -142,50 +160,56 @@ app.get(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), au
     }
 });
 
-// Discord Webhook
-const sendDiscordMessage = async (data) => {
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhookUrl) {
-        console.warn("DISCORD_WEBHOOK_URL chưa được thiết lập.");
-        return;
+// Telegram Notification
+const sendTelegramMessage = async (data) => {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId || chatId === 'YOUR_TELEGRAM_CHAT_ID') {
+        console.warn("TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID chưa được cấu hình chính xác.");
+        return null;
     }
 
     const { name, email, message } = data;
-
-    const embed = {
-        title: "📩 Tin nhắn liên hệ mới",
-        color: 0x3498db, // Blue
-        fields: [
-            { name: "Tên", value: name || "N/A", inline: true },
-            { name: "Email", value: email || "N/A", inline: true },
-            { name: "Nội dung", value: message || "No content" }
-        ],
-        timestamp: new Date().toISOString(),
-        footer: { text: "MNT Web" }
-    };
+    const text = `<b>📩 Tin nhắn liên hệ mới</b>\n\n` +
+                 `👤 <b>Tên:</b> ${name || "N/A"}\n` +
+                 `📧 <b>Email:</b> ${email || "N/A"}\n\n` +
+                 `💬 <b>Nội dung:</b>\n${message || "No content"}`;
 
     try {
-        await fetch(webhookUrl, {
+        const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ embeds: [embed] })
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: text,
+                parse_mode: "HTML"
+            })
         });
-        console.log("Đã gửi thông báo tới Discord.");
+        const resData = await response.json();
+        if (resData.ok) {
+            console.log("Đã gửi thông báo tới Telegram.");
+            return resData.result.message_id;
+        } else {
+            console.error("Lỗi gửi thông báo Telegram:", resData.description);
+            return null;
+        }
     } catch (error) {
-        console.error("Không gửi được thông báo Discord:", error);
+        console.error("Không gửi được thông báo Telegram:", error);
+        return null;
     }
 };
 
 app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), async (req, res) => {
     const { name, email, message } = req.body;
     try {
-        const result = await pool.query(
-            'INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING *',
-            [name, email, message]
-        );
+        // Gửi tới Telegram để lấy message_id
+        const telegramMessageId = await sendTelegramMessage(req.body);
 
-        // Gửi tới Discord
-        sendDiscordMessage(req.body);
+        const result = await pool.query(
+            'INSERT INTO messages (name, email, message, telegram_message_id) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, email, message, telegramMessageId]
+        );
 
         res.json(result.rows[0]);
     } catch (err) {
@@ -193,9 +217,48 @@ app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14Mzk='), a
     }
 });
 
+// Telegram Deletion Helper
+const deleteTelegramMessage = async (messageId) => {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (!token || !chatId || chatId === 'YOUR_TELEGRAM_CHAT_ID') {
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${token}/deleteMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: chatId,
+                message_id: Number(messageId)
+            })
+        });
+        const resData = await response.json();
+        if (resData.ok) {
+            console.log(`Đã xóa tin nhắn liên quan trên Telegram (ID: ${messageId}).`);
+        } else {
+            console.warn(`Không thể xóa tin nhắn trên Telegram: ${resData.description}`);
+        }
+    } catch (error) {
+        console.error("Không kết nối được để xóa tin nhắn Telegram:", error);
+    }
+};
+
 app.delete(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L21zZy1jaGFubmVsLXNlY3VyZS14MzkvOmlk'), authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
+        // Lấy telegram_message_id trước khi xóa trong DB
+        const msgResult = await pool.query('SELECT telegram_message_id FROM messages WHERE id = $1', [id]);
+        if (msgResult.rows.length > 0) {
+            const telegramMessageId = msgResult.rows[0].telegram_message_id;
+            if (telegramMessageId) {
+                // Gọi bất đồng bộ xóa tin nhắn trên Telegram
+                await deleteTelegramMessage(telegramMessageId);
+            }
+        }
+
         await pool.query('DELETE FROM messages WHERE id = $1', [id]);
         res.json({ success: true });
     } catch (err) {
@@ -265,8 +328,117 @@ app.post(_dec('L2FwaS92My9zeXMtdGVsZW1ldHJ5L2NvcmUtcmVzb3VyY2UtY3YtbGluay1lNDI='
     }
 });
 
+// ── Telegram Bot Command Handler ───────────────────────────────────────────
+
+// Helper: gửi tin nhắn phản hồi về chat_id cụ thể
+const sendTelegramReply = async (chatId, text) => {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    if (!token) return;
+    try {
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+        });
+    } catch (err) {
+        console.error('sendTelegramReply error:', err.message);
+    }
+};
+
+// Helper: lấy trạng thái CV hiện tại từ DB
+const getCvEnabled = async () => {
+    const result = await pool.query("SELECT value FROM settings WHERE key = 'cv_download_enabled'");
+    return result.rows.length ? result.rows[0].value === 'true' : true;
+};
+
+// Helper: cập nhật trạng thái CV trong DB
+const setCvEnabled = async (enabled) => {
+    await pool.query(
+        "INSERT INTO settings (key, value) VALUES ('cv_download_enabled', $1) ON CONFLICT (key) DO UPDATE SET value = $1",
+        [String(enabled)]
+    );
+};
+
+// Telegram Webhook Endpoint — nhận lệnh từ Telegram
+// Bảo mật bằng secret token trong header X-Telegram-Bot-Api-Secret-Token
+app.post('/api/telegram-bot-hook', async (req, res) => {
+    // Xác thực webhook secret (tùy chọn nhưng khuyến nghị)
+    const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (webhookSecret) {
+        const incomingSecret = req.headers['x-telegram-bot-api-secret-token'];
+        if (incomingSecret !== webhookSecret) {
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+    }
+
+    // Chỉ xử lý chat từ đúng CHAT_ID đã cấu hình (ngăn người lạ dùng lệnh)
+    const allowedChatId = process.env.TELEGRAM_CHAT_ID;
+    const update = req.body;
+    const message = update?.message;
+
+    if (!message || !message.text) {
+        return res.json({ ok: true }); // bỏ qua các update không phải tin nhắn
+    }
+
+    const chatId = String(message.chat?.id);
+    const text = message.text.trim().toLowerCase();
+
+    // Kiểm tra quyền — chỉ cho phép đúng chat_id đã cấu hình
+    if (allowedChatId && chatId !== String(allowedChatId)) {
+        await sendTelegramReply(chatId, '⛔ Bạn không có quyền dùng lệnh này.');
+        return res.json({ ok: true });
+    }
+
+    try {
+        if (text === '/ancv' || text.startsWith('/ancv ')) {
+            const currentlyEnabled = await getCvEnabled();
+            if (!currentlyEnabled) {
+                // CV đang ẩn rồi → thông báo trạng thái
+                await sendTelegramReply(chatId,
+                    `ℹ️ <b>CV đang ở trạng thái: ĐÃ ẨN</b>\n\nCV hiện đã bị ẩn rồi, không cần ẩn thêm.\nDùng /hiencv để kích hoạt lại.`
+                );
+            } else {
+                // CV đang hiện → tắt đi
+                await setCvEnabled(false);
+                await sendTelegramReply(chatId,
+                    `🚫 <b>Đã ẨN CV thành công!</b>\n\nNút tải CV trên trang web đã bị tắt.\nDùng /hiencv để hiện lại.`
+                );
+            }
+
+        } else if (text === '/hiencv' || text.startsWith('/hiencv ')) {
+            const currentlyEnabled = await getCvEnabled();
+            if (currentlyEnabled) {
+                // CV đang hiện rồi → thông báo trạng thái
+                await sendTelegramReply(chatId,
+                    `ℹ️ <b>CV đang ở trạng thái: ĐANG HIỆN</b>\n\nCV hiện đã được bật rồi, không cần bật thêm.\nDùng /ancv để ẩn đi.`
+                );
+            } else {
+                // CV đang ẩn → bật lại
+                await setCvEnabled(true);
+                await sendTelegramReply(chatId,
+                    `✅ <b>Đã HIỆN CV thành công!</b>\n\nNút tải CV trên trang web đã được bật lại.\nDùng /ancv để ẩn đi.`
+                );
+            }
+
+        } else if (text === '/trangthaiCV' || text === '/statuscv') {
+            const currentlyEnabled = await getCvEnabled();
+            await sendTelegramReply(chatId,
+                `📋 <b>Trạng thái CV hiện tại:</b>\n\n${currentlyEnabled ? '✅ ĐANG HIỆN — Người dùng có thể tải CV.' : '🚫 ĐANG ẨN — Nút tải CV bị tắt.'}\n\nLệnh:\n• /hiencv — Bật hiển thị CV\n• /ancv — Tắt hiển thị CV`
+            );
+        }
+        // Lệnh không nhận ra → bỏ qua (không reply tránh spam)
+
+    } catch (err) {
+        console.error('Telegram command handler error:', err.message);
+        await sendTelegramReply(chatId, '❌ Có lỗi xảy ra khi xử lý lệnh. Thử lại sau.');
+    }
+
+    res.json({ ok: true });
+});
+
 const server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
+    console.log(`Telegram Bot Webhook endpoint: POST /api/telegram-bot-hook`);
 });
 
 server.on('error', (e) => {

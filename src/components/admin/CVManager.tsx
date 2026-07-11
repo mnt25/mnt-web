@@ -80,28 +80,28 @@ const CVManager = () => {
   return (
     <div className="max-w-3xl space-y-6 select-none font-sans relative">
       {/* Header */}
-      <div className="pb-4 border-b border-zinc-800/80">
-        <span className="font-mono text-xs text-blue-500 uppercase tracking-widest font-bold block mb-1">
+      <div className="pb-4 border-b border-slate-200 dark:border-zinc-800/80">
+        <span className="font-mono text-[10px] sm:text-xs text-blue-600 dark:text-blue-500 uppercase tracking-widest font-bold block mb-1">
           CV STORAGE PATH & ACCESS CONTROL
         </span>
-        <h2 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
-          <FileText className="w-6 h-6 text-blue-400" />
+        <h2 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
+          <FileText className="w-6 h-6 text-blue-600 dark:text-blue-405" />
           QUẢN LÝ CV CỦA BẠN
         </h2>
       </div>
 
       {/* Control Box */}
-      <div className="bg-zinc-950/45 backdrop-blur-md p-6 border border-zinc-800 rounded-none relative">
+      <div className="bg-white/70 dark:bg-zinc-950/45 backdrop-blur-md p-6 border border-slate-200 dark:border-zinc-800 rounded-none relative shadow-sm dark:shadow-none">
         {/* Corner tech indicators */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-zinc-700" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-zinc-700" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-zinc-700" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-zinc-700" />
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-700" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-700" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-700" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-700" />
 
         <div className="space-y-6">
           {/* Link config */}
           <div>
-            <label className="block font-mono text-[10px] text-zinc-500 uppercase tracking-widest mb-2.5">
+            <label className="block font-mono text-[10px] text-slate-500 dark:text-zinc-500 uppercase tracking-widest mb-2.5">
               Đường dẫn tải xuống CV (Google Drive, Dropbox, iCloud...)
             </label>
 
@@ -111,16 +111,16 @@ const CVManager = () => {
                   type="text"
                   value={cvLink}
                   onChange={(e) => setCvLink(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 border border-zinc-800 bg-zinc-950 text-white rounded-none focus:border-blue-500 focus:shadow-[0_0_8px_rgba(59,130,246,0.2)] outline-none font-mono text-xs transition-all duration-300"
+                  className="w-full pl-9 pr-4 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/40 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none font-mono text-xs transition-all duration-300"
                   placeholder="https://..."
                 />
-                <Link className="absolute left-3 top-3 w-4 h-4 text-zinc-600" />
+                <Link className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-zinc-600" />
               </div>
 
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-2 rounded-none shadow-[0_0_8px_rgba(59,130,246,0.3)] disabled:opacity-50 min-w-[170px]"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-2 rounded-none shadow-sm disabled:opacity-50 min-w-[170px]"
               >
                 {loading ? (
                   <>
@@ -138,15 +138,15 @@ const CVManager = () => {
           </div>
 
           {/* Toggle Switch */}
-          <div className="pt-6 border-t border-zinc-900 space-y-3">
-            <div className="flex items-center justify-between p-4 bg-zinc-950 border border-zinc-900 rounded-none relative">
+          <div className="pt-6 border-t border-slate-250 dark:border-zinc-900 space-y-3">
+            <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900 rounded-none relative">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500" />
               <div>
-                <span className="block font-mono text-xs font-bold text-zinc-300 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-400" />
+                <span className="block font-mono text-xs font-bold text-slate-700 dark:text-zinc-300 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   CHO PHÉP KHÁCH TẢI CV
                 </span>
-                <p className="text-xs font-mono text-zinc-400 mt-1 uppercase">
+                <p className="text-xs font-mono text-slate-500 dark:text-zinc-400 mt-1 uppercase">
                   Tự động vô hiệu hóa luồng tải file CV của bạn từ API công cộng khi được tắt.
                 </p>
               </div>
@@ -158,23 +158,23 @@ const CVManager = () => {
                 className={`relative inline-flex h-7 w-20 items-center rounded-none transition-all duration-300 outline-none border font-mono text-[9px] font-extrabold tracking-widest select-none ${
                   isEnabled
                     ? "bg-blue-600/10 border-blue-500/80 shadow-[0_0_8px_rgba(59,130,246,0.25)]"
-                    : "bg-zinc-950 border-zinc-800"
+                    : "bg-slate-100 dark:bg-zinc-950 border-slate-200 dark:border-zinc-800 text-slate-400 dark:text-zinc-650"
                 }`}
               >
                 {toggleLoading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto text-blue-400" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto text-blue-600 dark:text-blue-400" />
                 ) : (
                   <>
                     {/* Background inactive states */}
-                    <span className="absolute left-2.5 text-zinc-600">OFF</span>
-                    <span className="absolute right-3.5 text-blue-400/50">ON</span>
+                    <span className="absolute left-2.5 text-slate-400 dark:text-zinc-600">OFF</span>
+                    <span className="absolute right-3.5 text-blue-600/50 dark:text-blue-400/50">ON</span>
                     
                     {/* Sliding Knob representing active state */}
                     <span
                       className={`absolute top-0.5 bottom-0.5 w-[36px] flex items-center justify-center font-mono text-[9px] font-extrabold text-white transition-all duration-300 ${
                         isEnabled
                           ? "left-[40px] bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"
-                          : "left-[2px] bg-zinc-800 border border-zinc-700 text-zinc-400"
+                          : "left-[2px] bg-slate-400 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 text-white dark:text-zinc-400"
                       }`}
                     >
                       {isEnabled ? "ON" : "OFF"}
@@ -188,8 +188,8 @@ const CVManager = () => {
       </div>
 
       {/* Decorative mechanical notes for futuristic feeling */}
-      <div className="p-4 bg-zinc-950/20 border border-zinc-900 font-mono text-xs text-zinc-400 uppercase leading-relaxed space-y-1">
-        <div className="flex items-center gap-1.5 text-zinc-300">
+      <div className="p-4 bg-slate-50 dark:bg-zinc-950/20 border border-slate-200 dark:border-zinc-900 font-mono text-xs text-slate-500 dark:text-zinc-400 uppercase leading-relaxed space-y-1 shadow-sm dark:shadow-none">
+        <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300 font-bold">
           <Terminal className="w-3.5 h-3.5" />
           <span>HƯỚNG DẪN CẤU HÌNH</span>
         </div>
@@ -204,10 +204,10 @@ const CVManager = () => {
             key={t.id}
             className={`p-4 border font-mono text-xs uppercase tracking-wider backdrop-blur-md min-w-[280px] shadow-lg flex items-center gap-3 animate-fade-in pointer-events-auto rounded-none relative ${
               t.type === "success"
-                ? "bg-emerald-950/80 border-emerald-500 text-emerald-400"
+                ? "bg-emerald-50/95 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
                 : t.type === "error"
-                ? "bg-red-950/80 border-red-500 text-red-400"
-                : "bg-amber-950/80 border-amber-500 text-amber-400"
+                ? "bg-red-50/95 dark:bg-red-950/80 border-red-300 dark:border-red-500 text-red-700 dark:text-red-400"
+                : "bg-amber-50/95 dark:bg-amber-950/80 border-amber-300 dark:border-amber-500 text-amber-700 dark:text-amber-400"
             }`}
           >
             {/* Vertical neon accent indicator */}
@@ -220,9 +220,9 @@ const CVManager = () => {
                   : "bg-amber-500"
               }`}
             />
-            {t.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce text-emerald-400" />}
-            {t.type === "error" && <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-400 animate-ping" />}
-            {t.type === "warning" && <HelpCircle className="w-5 h-5 flex-shrink-0 text-amber-400" />}
+            {t.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce text-emerald-600 dark:text-emerald-400" />}
+            {t.type === "error" && <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600 dark:text-red-400 animate-ping" />}
+            {t.type === "warning" && <HelpCircle className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />}
             <span>{t.text}</span>
           </div>
         ))}

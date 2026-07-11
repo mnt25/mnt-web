@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, Phone, MapPin, AlertCircle, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { FaFacebookF, FaTelegramPlane, FaGithub } from "react-icons/fa";
@@ -13,23 +13,63 @@ const Contact: React.FC = () => {
     email: "",
     message: "",
   });
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const { id, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [id]: value,
+    });
+    setErrors({
+      ...errors,
+      [id]: "",
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     // Xử lý gửi tin nhắn liên hệ thông qua API và cập nhật trạng thái hiển thị của form
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
+    
+    // Reset status and validation errors
+    setStatus("idle");
+    const newErrors = { name: "", email: "", message: "" };
+    let hasError = false;
+
+    if (!formData.name.trim()) {
+      newErrors.name = t('contact.error.nameRequired');
+      hasError = true;
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = t('contact.error.emailRequired');
+      hasError = true;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = t('contact.error.emailInvalid');
+        hasError = true;
+      }
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = t('contact.error.messageRequired');
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
       return;
     }
+
+    setStatus("loading");
 
     const success = await api.sendMessage(formData);
 
@@ -167,8 +207,8 @@ const Contact: React.FC = () => {
               <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6">
                 {t('contact.formTitle')}
               </h3>
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div>
+              <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                <div className="relative pb-5">
                   <label
                     htmlFor="name"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
@@ -180,13 +220,21 @@ const Contact: React.FC = () => {
                     id="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border ${
+                      errors.name 
+                        ? 'border-red-500 focus:ring-red-500' 
+                        : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'
+                    } text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:border-transparent transition-all`}
                     placeholder={t('contact.phName')}
-                    required
                     autoComplete="off"
                   />
+                  {errors.name && (
+                    <span className="text-red-500 text-xs absolute bottom-0 left-0">
+                      {errors.name}
+                    </span>
+                  )}
                 </div>
-                <div>
+                <div className="relative pb-5">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
@@ -198,13 +246,21 @@ const Contact: React.FC = () => {
                     id="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border ${
+                      errors.email 
+                        ? 'border-red-500 focus:ring-red-500' 
+                        : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'
+                    } text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:border-transparent transition-all`}
                     placeholder={t('contact.phEmail')}
-                    required
                     autoComplete="off"
                   />
+                  {errors.email && (
+                    <span className="text-red-500 text-xs absolute bottom-0 left-0">
+                      {errors.email}
+                    </span>
+                  )}
                 </div>
-                <div>
+                <div className="relative pb-5">
                   <label
                     htmlFor="message"
                     className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
@@ -216,15 +272,25 @@ const Contact: React.FC = () => {
                     rows={4}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    className={`w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border ${
+                      errors.message 
+                        ? 'border-red-500 focus:ring-red-500' 
+                        : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'
+                    } text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:border-transparent transition-all resize-none`}
                     placeholder={t('contact.phMessage')}
-                    required
                   ></textarea>
+                  {errors.message && (
+                    <span className="text-red-500 text-xs absolute bottom-0 left-0">
+                      {errors.message}
+                    </span>
+                  )}
                 </div>
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
+                  disabled={status === "loading"}
+                  className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/70 text-white font-medium transition-colors shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                 >
+                  {status === "loading" && <Loader2 className="w-5 h-5 animate-spin" />}
                   {t('contact.sendBtn')}
                 </button>
                 {status === "success" && (

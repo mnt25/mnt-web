@@ -21,7 +21,7 @@ const Projects: React.FC = () => {
       description: "Hệ thống giám sát thời gian thực giúp người vận hành hiểu ngữ cảnh xung quanh robot di động trong nhà (kho hàng, nhà máy). AI tích hợp (Qwen2.5-VL + 3D-R1 chạy trên đám mây RunPod GPU Cloud) tự động phân tích mức độ nguy hiểm, giải thích lý do và đề xuất robot giảm tốc/dừng lại.",
       descriptionEn: "Real-time monitoring system helping operators understand mobile robot surroundings in indoor environments. Integrates Qwen2.5-VL and 3D-R1 models on RunPod GPU Cloud to analyze danger levels, output reasoning steps, and suggest safety commands.",
       image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
-      tags: ["React", "Tailwind CSS v4", "FastAPI", "MongoDB", "RunPod GPU", "Qwen2.5-VL"],
+      tags: ["React", "Tailwind CSS", "FastAPI", "MongoDB", "RunPod GPU", "Qwen2.5-VL"],
       liveDemo: "https://c2-app-137.io.vn/",
       sourceCode: "https://github.com/mnt25/",
       isVisible: true

@@ -33,7 +33,6 @@ const Skills: React.FC = () => {
       badges: [
         { name: "MySQL", src: "https://img.shields.io/badge/MySQL-%234479A1.svg?style=flat&logo=mysql&logoColor=white&labelColor=%234479A1" },
         { name: "MongoDB", src: "https://img.shields.io/badge/MongoDB-%2347A248.svg?style=flat&logo=mongodb&logoColor=white&labelColor=%2347A248" },
-        { name: "SQL Server", src: "https://img.shields.io/badge/SQL_Server-%23CC2927.svg?style=flat&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDQuMjQgMiA3djEwYzAgMi43NiA0LjQ4IDUgMTAgNXMxMC0yLjI0IDEwLTVWN2MwLTIuNzYtNC40OC01LTEwLTV6bTAgMThjLTQuNDEgMC04LTEuNzktOC00di0xLjEyYzIuMDYgMS40NSA1LjI8IDIuMTIgOCAyLjEyczUuOTQtLjY3IDgtMi4xMlYxNmMwIDIuMjEtMy41OSA0LTggNHptMC02Yy00LjQxIDAtOC0xLjc5LTgtNHYxLjEyQzYuMDYgMTAuMzMgOS4yOCAxMSAxMiAxMXM1Ljk0LS42NyA4LTIuMTJWMTBjMCAyLjIxLTMuNTkgNC04IDR6bTAtNmMtNC40MSAwLTgtMS43OS04LTRzMy41OS00IDgtNCA4IDEuNzkgOCA0LTMuNTkgNC04IDR6Ii8+PC9zdmc+&logoColor=white&labelColor=%23CC2927" },
         { name: "Neon Tech DB", src: "https://img.shields.io/badge/Neon_Tech_DB-%2300E599.svg?style=flat" },
         { name: "Docker", src: "https://img.shields.io/badge/Docker-%232496ED.svg?style=flat&logo=docker&logoColor=white&labelColor=%232496ED" },
         { name: "Nginx", src: "https://img.shields.io/badge/Nginx-%23009639.svg?style=flat&logo=nginx&logoColor=white&labelColor=%23009639" },
