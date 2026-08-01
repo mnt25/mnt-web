@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Terminal, CornerDownLeft, Sparkles, User, Code, Briefcase, Mail, ShieldCheck, Trash2 } from "lucide-react";
+import { Terminal, CornerDownLeft, Sparkles, User, Code, Briefcase, Mail, Trash2 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 
 interface HistoryItem {
@@ -39,7 +39,7 @@ export const TerminalCard: React.FC = () => {
   // Initial welcome message (Set once, preserves history across language toggles)
   useEffect(() => {
     setHistory((prev) => {
-      if (prev.length > 0) return prev; // Do not wipe existing history on language toggle
+      if (prev.length > 0) return prev;
       return [
         {
           id: "welcome",
@@ -58,7 +58,7 @@ export const TerminalCard: React.FC = () => {
     });
   }, [language, isVi]);
 
-  // Scroll ONLY the inner terminal scroll container when history updates (NO page scrolling!)
+  // Scroll ONLY the inner terminal scroll container when history updates
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
@@ -107,12 +107,6 @@ export const TerminalCard: React.FC = () => {
               <span className="text-green-400 font-mono font-bold">contact</span>
               <span className="text-slate-400 text-xs ml-2">
                 {isVi ? "— Thông tin liên hệ" : "— Contact details"}
-              </span>
-            </div>
-            <div>
-              <span className="text-green-400 font-mono font-bold">sudo hire</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Tuyển dụng" : "— Hire developer"}
               </span>
             </div>
             <div>
@@ -182,51 +176,6 @@ export const TerminalCard: React.FC = () => {
           <p className="pl-2">• Website: <span className="text-green-400">https://mnt.id.vn</span></p>
         </div>
       );
-    } else if (lower === "sudo hire" || lower === "hire") {
-      outputNode = (
-        <div className="p-3.5 my-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/50 text-xs sm:text-sm font-mono space-y-2.5 text-emerald-200 shadow-lg shadow-emerald-950/30">
-          <div className="flex items-center gap-2 text-emerald-400 font-bold border-b border-emerald-800/60 pb-1.5">
-            <ShieldCheck className="w-4.5 h-4.5 text-emerald-400 animate-pulse" />
-            <span>
-              {isVi
-                ? "[XÁC THỰC ROOT THÀNH CÔNG] - CẤP QUYỀN TUYỂN DỤNG!"
-                : "[AUTHENTICATED ROOT] - PRIVILEGE GRANTED!"}
-            </span>
-          </div>
-          <div className="space-y-1.5 pl-1 text-slate-300">
-            <p>
-              <span className="text-emerald-400 font-semibold">👨‍💻 {isVi ? "Ứng viên" : "Candidate"}:</span> Phạm Sơn ({t("about.roleValue")})
-            </p>
-            <p>
-              <span className="text-yellow-400 font-semibold">⚡ {isVi ? "Trạng thái" : "Status"}:</span>{" "}
-              {isVi ? "Sẵn sàng phỏng vấn & Onboard ngay 🚀" : "Ready for Interview & Onboarding 🚀"}
-            </p>
-            <p>
-              <span className="text-purple-400 font-semibold">🎯 {isVi ? "Điểm mạnh" : "Superpowers"}:</span>{" "}
-              {isVi
-                ? "Fullstack Web & AI • Tư duy giải pháp • Clean Architecture • Cầu tiến"
-                : "Fullstack Web & AI • Problem Solver • Clean Architecture • Fast Learner"}
-            </p>
-          </div>
-          <div className="pt-1 flex flex-wrap gap-2">
-            <a
-              href="mailto:sonpv.work@gmail.com"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-colors shadow active:scale-95"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>{isVi ? "Gửi Email Trực Tiếp" : "Send Email"}</span>
-            </a>
-            <button
-              type="button"
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-zinc-900 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 font-medium text-xs transition-colors active:scale-95 cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
-              <span>{isVi ? "Chuyển Đến Form Liên Hệ" : "Go to Contact Form"}</span>
-            </button>
-          </div>
-        </div>
-      );
     } else {
       outputNode = (
         <p className="text-red-400 text-xs sm:text-sm font-mono">
@@ -264,7 +213,6 @@ export const TerminalCard: React.FC = () => {
     { label: "skills", cmd: "skills", icon: <Code className="w-3 h-3 text-purple-400" /> },
     { label: "projects", cmd: "projects", icon: <Briefcase className="w-3 h-3 text-cyan-400" /> },
     { label: "contact", cmd: "contact", icon: <Mail className="w-3 h-3 text-emerald-400" /> },
-    { label: "sudo hire", cmd: "sudo hire", icon: <ShieldCheck className="w-3 h-3 text-green-400" /> },
     { label: "clear", cmd: "clear", icon: <Trash2 className="w-3 h-3 text-slate-400" /> },
   ];
 
@@ -292,7 +240,7 @@ export const TerminalCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Output Screen (Only this container scrolls internally) */}
+        {/* Output Screen */}
         <div
           ref={scrollContainerRef}
           className="p-4 h-64 sm:h-72 overflow-y-auto font-mono text-xs sm:text-sm space-y-3 scrollbar-thin scrollbar-thumb-zinc-800"
