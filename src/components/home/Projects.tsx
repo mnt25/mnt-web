@@ -186,11 +186,9 @@ const Projects: React.FC = () => {
                       const hasSourceCode = Boolean(project.sourceCode && project.sourceCode.trim() !== "" && project.sourceCode !== "#");
                       const hasLiveDemo = Boolean(project.liveDemo && project.liveDemo.trim() !== "" && project.liveDemo !== "#");
 
-                      if (!hasSourceCode && !hasLiveDemo) return null;
-
                       return (
                         <div className="flex items-center gap-4 mt-auto pt-2">
-                          {hasSourceCode && (
+                          {hasSourceCode ? (
                             <a
                               href={project.sourceCode}
                               target="_blank"
@@ -200,8 +198,17 @@ const Projects: React.FC = () => {
                               <FiGithub className="w-4 h-4 mr-2" />
                               {t('projects.code')}
                             </a>
+                          ) : (
+                            <span
+                              className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-slate-200 dark:border-zinc-800 text-sm font-medium text-slate-400 dark:text-zinc-600 opacity-40 cursor-not-allowed select-none"
+                              title={language === 'en' ? "Source code not public" : "Chưa mở source code"}
+                            >
+                              <FiGithub className="w-4 h-4 mr-2" />
+                              {t('projects.code')}
+                            </span>
                           )}
-                          {hasLiveDemo && (
+
+                          {hasLiveDemo ? (
                             <a
                               href={project.liveDemo}
                               target="_blank"
@@ -211,6 +218,14 @@ const Projects: React.FC = () => {
                               <ExternalLink className="w-4 h-4 mr-2" />
                               {t('projects.demo')}
                             </a>
+                          ) : (
+                            <span
+                              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-slate-200/60 dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800 text-sm font-medium text-slate-400 dark:text-zinc-600 opacity-40 cursor-not-allowed select-none"
+                              title={language === 'en' ? "Live Demo not available" : "Chưa có Live Demo"}
+                            >
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              {t('projects.demo')}
+                            </span>
                           )}
                         </div>
                       );
