@@ -167,7 +167,16 @@ const Projects: React.FC = () => {
                       </span>
                     )}
 
-                    <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 line-clamp-3 flex-grow">
+                    <p 
+                      className="text-slate-600 dark:text-slate-400 text-sm mb-4 h-[4.5rem]"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
                       {language === 'en' && project.descriptionEn ? project.descriptionEn : project.description}
                     </p>
 
