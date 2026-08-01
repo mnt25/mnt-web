@@ -2,10 +2,7 @@ import React from "react";
 import { User, Terminal, Coffee } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
-
-// Tự động tính toán tuổi dựa trên năm sinh và năm hiện tại
-const birthYear = 2003;
-const age = new Date().getFullYear() - birthYear;
+import { TerminalCard } from "./TerminalCard";
 
 const About: React.FC = () => {
   const { t, language } = useLanguage();
@@ -27,74 +24,10 @@ const About: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <Reveal width="100%">
-              <div className="relative bg-slate-50/10 dark:bg-zinc-900/10 p-8 border border-slate-200/80 dark:border-zinc-800/80 backdrop-blur-sm relative overflow-visible">
-                {/* Họa tiết trang trí góc giả lập lưới thiết kế (Grid brackets) */}
-                <div className="absolute -top-px -left-px w-2 h-2 -translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
-                <div className="absolute -top-px -right-px w-2 h-2 translate-x-1/2 -translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
-                <div className="absolute -bottom-px -left-px w-2 h-2 -translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
-                <div className="absolute -bottom-px -right-px w-2 h-2 translate-x-1/2 translate-y-1/2 border border-slate-300 dark:border-zinc-700 pointer-events-none bg-slate-50 dark:bg-zinc-900" />
-                
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-3 h-3 bg-red-500"></div>
-                  <div className="w-3 h-3 bg-yellow-500"></div>
-                  <div className="w-3 h-3 bg-green-500"></div>
-                </div>
-                <div className="font-mono text-sm text-slate-700 dark:text-slate-300 space-y-2">
-                  <p>
-                    <span className="text-purple-600 dark:text-purple-400">
-                      const
-                    </span>{" "}
-                    <span className="text-blue-600 dark:text-blue-400">
-                      developer
-                    </span>{" "}
-                    ={" "}
-                    <span className="text-yellow-600 dark:text-yellow-300">{`{`}</span>
-                  </p>
-                  <p className="pl-4">
-                    name:{" "}
-                    <span className="text-green-600 dark:text-green-400">
-                      '{t('common.name')}'
-                    </span>
-                    ,
-                  </p>
-                  <p className="pl-4">
-                    age:{" "}
-                    <span className="text-green-600 dark:text-green-400">
-                      '{age} {t('about.ageUnit')}'
-                    </span>
-                    ,
-                  </p>
-                  <p className="pl-4">
-                    role:{" "}
-                    <span className="text-green-600 dark:text-green-400">
-                      '{t('about.roleValue')}'
-                    </span>
-                    ,
-                  </p>
-                  <p className="pl-4">
-                    passion: [
-                    <span className="text-green-600 dark:text-green-400">
-                      '{t('about.passion.coding')}'
-                    </span>
-                    ,{" "}
-                    <span className="text-green-600 dark:text-green-400">
-                      '{t('about.passion.uiux')}'
-                    </span>
-                    ,{" "}
-                    <span className="text-green-600 dark:text-green-400">
-                      '{t('about.passion.solving')}'
-                    </span>
-                    ],
-                  </p>
-                  <p className="pl-4">
-                    hardWorker:{" "}
-                    <span className="text-red-600 dark:text-red-400">true</span>
-                  </p>
-                  <p className="text-yellow-600 dark:text-yellow-300">{`}`};</p>
-                </div>
-              </div>
+              <TerminalCard />
             </Reveal>
           </div>
+
 
           <div className="space-y-6">
             <Reveal>
