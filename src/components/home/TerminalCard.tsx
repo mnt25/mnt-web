@@ -184,13 +184,47 @@ export const TerminalCard: React.FC = () => {
       );
     } else if (lower === "sudo hire" || lower === "hire") {
       outputNode = (
-        <div className="p-3 my-1 rounded bg-emerald-950/60 border border-emerald-500/50 text-xs sm:text-sm space-y-1 text-emerald-300 font-mono">
-          <p className="font-bold text-emerald-400">
-            {isVi ? "✅ [TRUY CẬP ĐƯỢC PHÉP] Phạm Sơn đã sẵn sàng hợp tác!" : "✅ [ACCESS GRANTED] Pham Son is available!"}
-          </p>
-          <p>
-            {isVi ? "Cảm ơn bạn! Vui lòng gửi tin nhắn qua biểu mẫu liên hệ bên dưới trang web." : "Thank you! Feel free to leave a message in the contact form below."}
-          </p>
+        <div className="p-3.5 my-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/50 text-xs sm:text-sm font-mono space-y-2.5 text-emerald-200 shadow-lg shadow-emerald-950/30">
+          <div className="flex items-center gap-2 text-emerald-400 font-bold border-b border-emerald-800/60 pb-1.5">
+            <ShieldCheck className="w-4.5 h-4.5 text-emerald-400 animate-pulse" />
+            <span>
+              {isVi
+                ? "[XÁC THỰC ROOT THÀNH CÔNG] - CẤP QUYỀN TUYỂN DỤNG!"
+                : "[AUTHENTICATED ROOT] - PRIVILEGE GRANTED!"}
+            </span>
+          </div>
+          <div className="space-y-1.5 pl-1 text-slate-300">
+            <p>
+              <span className="text-emerald-400 font-semibold">👨‍💻 {isVi ? "Ứng viên" : "Candidate"}:</span> Phạm Sơn ({t("about.roleValue")})
+            </p>
+            <p>
+              <span className="text-yellow-400 font-semibold">⚡ {isVi ? "Trạng thái" : "Status"}:</span>{" "}
+              {isVi ? "Sẵn sàng phỏng vấn & Onboard ngay 🚀" : "Ready for Interview & Onboarding 🚀"}
+            </p>
+            <p>
+              <span className="text-purple-400 font-semibold">🎯 {isVi ? "Điểm mạnh" : "Superpowers"}:</span>{" "}
+              {isVi
+                ? "Fullstack Web & AI • Tư duy giải pháp • Clean Architecture • Cầu tiến"
+                : "Fullstack Web & AI • Problem Solver • Clean Architecture • Fast Learner"}
+            </p>
+          </div>
+          <div className="pt-1 flex flex-wrap gap-2">
+            <a
+              href="mailto:sonpv.work@gmail.com"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-colors shadow active:scale-95"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              <span>{isVi ? "Gửi Email Trực Tiếp" : "Send Email"}</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-zinc-900 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 font-medium text-xs transition-colors active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+              <span>{isVi ? "Chuyển Đến Form Liên Hệ" : "Go to Contact Form"}</span>
+            </button>
+          </div>
         </div>
       );
     } else {
