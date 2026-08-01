@@ -182,26 +182,39 @@ const Projects: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-4 mt-auto">
-                      <a
-                        href={project.sourceCode}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-slate-300 dark:border-zinc-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-black dark:hover:text-white transition-colors"
-                      >
-                        <FiGithub className="w-4 h-4 mr-2" />
-                        {t('projects.code')}
-                      </a>
-                      <a
-                        href={project.liveDemo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm font-medium text-white transition-colors shadow-lg shadow-blue-500/25"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        {t('projects.demo')}
-                      </a>
-                    </div>
+                    {(() => {
+                      const hasSourceCode = Boolean(project.sourceCode && project.sourceCode.trim() !== "" && project.sourceCode !== "#");
+                      const hasLiveDemo = Boolean(project.liveDemo && project.liveDemo.trim() !== "" && project.liveDemo !== "#");
+
+                      if (!hasSourceCode && !hasLiveDemo) return null;
+
+                      return (
+                        <div className="flex items-center gap-4 mt-auto pt-2">
+                          {hasSourceCode && (
+                            <a
+                              href={project.sourceCode}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-slate-300 dark:border-zinc-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-black dark:hover:text-white transition-colors"
+                            >
+                              <FiGithub className="w-4 h-4 mr-2" />
+                              {t('projects.code')}
+                            </a>
+                          )}
+                          {hasLiveDemo && (
+                            <a
+                              href={project.liveDemo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-sm font-medium text-white transition-colors shadow-lg shadow-blue-500/25"
+                            >
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              {t('projects.demo')}
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </Reveal>
