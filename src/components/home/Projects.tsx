@@ -168,7 +168,7 @@ const Projects: React.FC = () => {
                     )}
 
                     <p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-4 h-[4.5rem]"
+                      className="text-slate-600 dark:text-slate-400 text-sm leading-snug mb-4 h-[3.6rem] max-h-[3.6rem] overflow-hidden"
                       style={{
                         display: "-webkit-box",
                         WebkitLineClamp: 3,
