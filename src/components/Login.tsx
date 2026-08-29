@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../server/api";
-import { Lock, Eye, EyeOff, User, Terminal } from "lucide-react";
+import { Lock, Eye, EyeOff, User, ArrowLeft, Loader2 } from "lucide-react";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-
   useEffect(() => {
-    // Tự động kiểm tra token phiên làm việc hiện tại và chuyển hướng sang trang quản trị nếu còn hạn
     const token = localStorage.getItem("token");
     const expire = localStorage.getItem("token_expire");
 
@@ -43,7 +41,7 @@ const Login: React.FC = () => {
       } else {
         setError("Tên đăng nhập hoặc mật khẩu không đúng!");
       }
-    } catch (err) {
+    } catch {
       setError("Đã xảy ra lỗi kết nối với máy chủ!");
     } finally {
       setIsLoading(false);
@@ -51,100 +49,78 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#030303] transition-colors duration-300 relative overflow-hidden">
-      {/* High-tech Cyber Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none z-0" />
+    <div className="min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#09090b] px-4 transition-colors duration-300 relative overflow-hidden">
+      {/* Back button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>Về trang chủ</span>
+      </button>
 
-    
-
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none dark:opacity-40">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 dark:bg-cyan-500/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="relative bg-white/80 dark:bg-[#09090b]/40 backdrop-blur-md p-8 w-full max-w-md border border-slate-200/80 dark:border-zinc-800/85 z-10 shadow-xl dark:shadow-none">
-        {/* Họa tiết trang trí góc vuông phong cách kỹ thuật */}
-        <div className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-blue-600 dark:border-blue-500 pointer-events-none" />
-        <div className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-blue-600 dark:border-blue-500 pointer-events-none" />
-        <div className="absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 border-blue-600 dark:border-blue-500 pointer-events-none" />
-        <div className="absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 border-blue-600 dark:border-blue-500 pointer-events-none" />
-
+      <div className="relative bg-white dark:bg-zinc-900/80 backdrop-blur-xl p-8 sm:p-10 w-full max-w-md border border-black/[0.08] dark:border-white/[0.08] rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/40 z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-16 w-16 rounded-full border border-slate-200 dark:border-zinc-800 flex items-center justify-center mb-4 shadow-sm bg-slate-50 dark:bg-zinc-900/30 relative overflow-hidden group">
-            {/* Spinning scanner element */}
-            <div className="absolute inset-0.5 rounded-full border border-dashed border-blue-500/30 dark:border-cyan-500/20 group-hover:rotate-180 transition-transform duration-1000" />
-            <div className="absolute inset-0 bg-blue-500/5 dark:bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Lock className="h-6 w-6 text-blue-600 dark:text-cyan-400 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+          <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-black/5 dark:border-white/10 flex items-center justify-center mb-4">
+            <Lock className="w-5 h-5 text-cyan-500" />
           </div>
-          <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-blue-600 dark:text-blue-500" />
-            <h2 className="text-xl font-mono font-black tracking-widest uppercase text-slate-800 dark:text-zinc-100">
-              PS // LOGIN
-            </h2>
-          </div>
-          <span className="text-[9px] font-mono tracking-[0.3em] text-slate-400 dark:text-zinc-500 uppercase mt-2">
-            SYSTEM ACCESS REQUIRED
+          <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-white">
+            Admin Portal
+          </h2>
+          <span className="text-xs font-mono text-zinc-500 mt-1">
+            Xác thực phiên làm việc quản trị
           </span>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div className="relative pb-5">
-            <label className="block text-[10px] font-mono tracking-wider uppercase text-slate-500 dark:text-zinc-400 mb-2">
-              Console Username
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-mono text-zinc-600 dark:text-zinc-400 mb-1.5">
+              Tài khoản Admin
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <User className="h-4 w-4 text-slate-400 dark:text-zinc-500" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                <User className="w-4 h-4" />
               </div>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-zinc-800 bg-white/40 dark:bg-[#050506]/60 text-slate-900 dark:text-white font-mono text-xs placeholder-slate-400 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 transition-all duration-300"
-                placeholder="Enter root ID"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-black/10 dark:border-white/10 text-zinc-900 dark:text-white text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono"
+                placeholder="Username"
                 autoComplete="off"
               />
             </div>
           </div>
 
-          <div className="relative pb-5">
-            <label className="block text-[10px] font-mono tracking-wider uppercase text-slate-500 dark:text-zinc-400 mb-2">
-              Terminal Password
+          <div>
+            <label className="block text-xs font-mono text-zinc-600 dark:text-zinc-400 mb-1.5">
+              Mật khẩu
             </label>
-
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Lock className="h-4 w-4 text-slate-400 dark:text-zinc-500" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                <Lock className="w-4 h-4" />
               </div>
-
               <input
                 type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-10 py-3 border border-slate-200 dark:border-zinc-800 bg-white/40 dark:bg-[#050506]/60 text-slate-900 dark:text-white font-mono text-xs placeholder-slate-400 focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 transition-all duration-300"
-                placeholder="••••••"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-black/10 dark:border-white/10 text-zinc-900 dark:text-white text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono"
+                placeholder="••••••••"
               />
-
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
               >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="text-red-600 dark:text-red-400 font-mono text-[10px] text-center bg-red-50 dark:bg-red-950/10 border border-red-200 dark:border-red-900/30 p-3 leading-relaxed relative">
-              <div className="absolute top-0 left-0 w-1 h-1 bg-red-600 dark:bg-red-500" />
-              <div className="absolute bottom-0 right-0 w-1 h-1 bg-red-600 dark:bg-red-500" />
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-mono text-center">
               {error}
             </div>
           )}
@@ -152,11 +128,10 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center items-center py-3 px-4 border border-blue-600 dark:border-blue-500/30 text-xs font-mono uppercase tracking-widest text-white dark:text-cyan-400 bg-blue-600 dark:bg-blue-950/20 hover:bg-blue-700 dark:hover:bg-blue-500/25 transition-all duration-300 relative overflow-hidden group shadow-lg shadow-blue-600/10 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-2 py-3 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-xs font-mono font-semibold transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {/* Tech line hover effect */}
-            <span className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-            {isLoading ? "AUTHORIZING..." : "Sign In // ACCESS"}
+            {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+            <span>{isLoading ? "Đang xác thực..." : "Đăng nhập hệ thống"}</span>
           </button>
         </form>
       </div>

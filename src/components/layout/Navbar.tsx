@@ -1,64 +1,91 @@
-import React, { useState, useEffect } from "react";
-import { Sun, Moon, User, Code, Briefcase, Mail } from "lucide-react";
-import { useLanguage } from "../../context/LanguageContext";
+import React, { useState, useEffect, useRef } from "react";
+import SignatureLogo from "./SignatureLogo";
+import { Sun, Moon } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "../../context/LanguageContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
 const navItems = [
-  { key: "nav.about", href: "#about", icon: User },
-  { key: "nav.skills", href: "#skills", icon: Code },
-  { key: "nav.projects", href: "#projects", icon: Briefcase },
-  { key: "nav.contact", href: "#contact", icon: Mail },
+  { key: "nav.about", href: "#about" },
+  { key: "nav.experience", href: "#experience" },
+  { key: "nav.projects", href: "#projects" },
+  { key: "nav.contact", href: "#contact" },
 ];
-
-type Theme = "light" | "dark";
 
 const Navbar: React.FC = () => {
   const { t } = useLanguage();
-  const { theme, setTheme } = useTheme();
-  const [isAvatarVisible, setIsAvatarVisible] = useState(true);
-
+  const { theme, toggleTheme } = useTheme();
+  const [activeSection, setActiveSection] = useState<string>("");
+  const isManualScrolling = useRef<boolean>(false);
+  const manualScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname !== "/") {
-      setIsAvatarVisible(false);
-      return;
-    }
+    let ticking = false;
 
-    const avatarElement = document.getElementById("hero-avatar");
-    if (!avatarElement) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsAvatarVisible(entry.isIntersecting);
-        });
-      },
-      {
-        threshold: 0,
-        rootMargin: "-80px 0px 0px 0px"
+    const checkScroll = () => {
+      if (isManualScrolling.current) {
+        ticking = false;
+        return;
       }
-    );
 
-    observer.observe(avatarElement);
+      if (window.scrollY < 120) {
+        setActiveSection("");
+        ticking = false;
+        return;
+      }
 
-    return () => {
-      observer.disconnect();
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80) {
+        setActiveSection("#contact");
+        ticking = false;
+        return;
+      }
+
+      const sections = ["contact", "projects", "skills", "experience", "about"];
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 220) {
+            const mapped = sectionId === "skills" ? "#experience" : `#${sectionId}`;
+            setActiveSection(mapped);
+            ticking = false;
+            return;
+          }
+        }
+      }
+      ticking = false;
     };
-  }, [location.pathname]);
 
-  const handleThemeChange = (newTheme: Theme) => {
-    setTheme(newTheme);
-  };
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(checkScroll);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    checkScroll();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (manualScrollTimer.current) clearTimeout(manualScrollTimer.current);
+    };
+  }, []);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
     e.preventDefault();
+    setActiveSection(href);
+    isManualScrolling.current = true;
+
+    if (manualScrollTimer.current) clearTimeout(manualScrollTimer.current);
+    manualScrollTimer.current = setTimeout(() => {
+      isManualScrolling.current = false;
+    }, 850);
 
     if (location.pathname !== "/") {
       navigate("/");
@@ -66,7 +93,7 @@ const Navbar: React.FC = () => {
         const targetId = href.replace("#", "");
         const element = document.getElementById(targetId);
         if (element) {
-          const headerOffset = 80;
+          const headerOffset = 90;
           const elementPosition = element.getBoundingClientRect().top;
           const offsetPosition =
             elementPosition + window.scrollY - headerOffset;
@@ -80,7 +107,7 @@ const Navbar: React.FC = () => {
     const element = document.getElementById(targetId);
 
     if (element) {
-      const headerOffset = 80;
+      const headerOffset = 90;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
@@ -92,6 +119,7 @@ const Navbar: React.FC = () => {
   };
 
   const scrollToTop = () => {
+    setActiveSection("");
     if (location.pathname !== "/") {
       navigate("/");
     } else {
@@ -103,128 +131,73 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-slate-200/80 dark:border-zinc-800/80 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div
-              className={`flex-shrink-0 flex items-center gap-2 cursor-pointer transition-all duration-300 ${isAvatarVisible && location.pathname === "/"
-                  ? "opacity-0 scale-95 pointer-events-none"
-                  : "opacity-100 scale-100"
-                }`}
-              onClick={scrollToTop}
-            >
-              <div className="icon-logo h-12 w-12">
-                <svg viewBox="0 0 304 304" className="w-full h-full" fill="none">
-                  {/* Perfectly Round Circle with Bold Continuous Stroke */}
-                  <circle
-                    cx={152}
-                    cy={152}
-                    r={145}
-                    fill="none"
-                    pathLength={1000}
-                  />
-                  {/* Original bold letter outline paths P and S */}
-                  <path
-                    d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220"
-                    fill="none"
-                    pathLength={1000}
-                  />
-                </svg>
-              </div>
-            </div>
+      <header className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none transition-all duration-300">
+        <nav className="pointer-events-auto flex items-center justify-between gap-2 sm:gap-6 px-3 sm:px-4 py-2 rounded-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] transition-all duration-300 max-w-2xl w-full">
+          {/* Brand Signature Logo: < Pham Son /> with Agustina Font */}
+          <SignatureLogo
+            name="Pham Son"
+            onClick={scrollToTop}
+            className="pr-3 border-r border-black/[0.06] dark:border-white/[0.08]"
+          />
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-8">
-              <div className="flex items-baseline space-x-6">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <a
-                      key={item.key}
-                      href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                    >
-                      <Icon className="w-4 h-4" />
-                      {t(item.key)}
-                    </a>
-                  );
-                })}
-              </div>
-
-              {/* Language Switcher */}
-              <LanguageSwitcher />
-
-              {/* Theme Toggle Switch */}
-              <button
-                onClick={() => handleThemeChange(isDarkMode ? "light" : "dark")}
-                className="relative inline-flex items-center h-8 w-16 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none border border-slate-300 dark:border-slate-600 shrink-0"
-                aria-label="Toggle theme"
-              >
-                <span className="sr-only">Toggle theme</span>
-                <div className="absolute w-full flex justify-between px-1.5 pointer-events-none">
-                  <Sun className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                  <Moon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                </div>
-                <span
-                  className={`relative inline-flex items-center justify-center w-6 h-6 transform rounded-full bg-white dark:bg-slate-800 shadow-md transition-transform duration-300 ease-in-out z-10 ${isDarkMode ? 'translate-x-9' : 'translate-x-1'
-                    }`}
+          {/* Desktop Nav Items */}
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.href;
+              return (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200 select-none text-center ${
+                    isActive
+                      ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xs"
+                      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                  }`}
                 >
-                  {isDarkMode ? (
-                    <Moon className="w-4 h-4 text-blue-400" />
-                  ) : (
-                    <Sun className="w-4 h-4 text-orange-500" />
-                  )}
-                </span>
-              </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="-mr-2 flex md:hidden gap-4 items-center">
-              <LanguageSwitcher />
-              {/* Mobile Theme Toggle Switch */}
-              <button
-                onClick={() => handleThemeChange(isDarkMode ? "light" : "dark")}
-                className="relative inline-flex items-center h-8 w-16 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none border border-slate-300 dark:border-slate-600 shrink-0"
-                aria-label="Toggle theme"
-              >
-                <span className="sr-only">Toggle theme</span>
-                <div className="absolute w-full flex justify-between px-1.5 pointer-events-none">
-                  <Sun className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                  <Moon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                </div>
-                <span
-                  className={`relative inline-flex items-center justify-center w-6 h-6 transform rounded-full bg-white dark:bg-slate-800 shadow-md transition-transform duration-300 ease-in-out z-10 ${isDarkMode ? 'translate-x-9' : 'translate-x-1'
-                    }`}
-                >
-                  {isDarkMode ? (
-                    <Moon className="w-4 h-4 text-blue-400" />
-                  ) : (
-                    <Sun className="w-4 h-4 text-orange-500" />
-                  )}
-                </span>
-              </button>
-            </div>
+                  {t(item.key)}
+                </a>
+              );
+            })}
           </div>
-        </div>
 
-      </nav>
+          {/* Right Utilities: Language & Theme Toggle */}
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-lg border-t border-slate-200/80 dark:border-zinc-800/80 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_10px_rgba(0,0,0,0.2)]">
-        <div className="flex justify-around items-center h-16 px-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100/90 dark:bg-zinc-900/90 border border-black/10 dark:border-white/10 hover:border-cyan-500/30 transition-all duration-300 hover:scale-110 active:scale-90 shadow-2xs"
+              aria-label="Toggle theme"
+              title={isDarkMode ? "Chuyển sang chế độ Sáng" : "Chuyển sang chế độ Tối"}
+            >
+              {isDarkMode ? (
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Moon className="w-3.5 h-3.5 text-indigo-500" />
+              )}
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Mobile Floating Bottom Navigation */}
+      <div className="md:hidden fixed bottom-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <div className="pointer-events-auto flex items-center justify-around gap-1 px-3 py-2 rounded-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_8px_30px_rgb(0,0,0,0.15)] max-w-sm w-full">
           {navItems.map((item) => {
-            const Icon = item.icon;
+            const isActive = activeSection === item.href;
             return (
               <a
                 key={item.key}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className="flex flex-col items-center justify-center w-full h-full text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 active:scale-95 transition-all duration-200"
+                className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors duration-200 select-none ${
+                  isActive
+                    ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900"
+                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                }`}
               >
-                <Icon className="w-5 h-5 mb-1" />
-                <span className="text-[10px] font-medium">{t(item.key)}</span>
+                {t(item.key)}
               </a>
             );
           })}

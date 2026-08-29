@@ -6,139 +6,134 @@ type Theme = 'light' | 'dark';
 interface ThemeContextType {
     theme: Theme;
     setTheme: (theme: Theme) => void;
+    toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const defaultContext: ThemeContextType = {
+    theme: 'dark',
+    setTheme: () => {},
+    toggleTheme: () => {},
+};
+
+const ThemeContext = createContext<ThemeContextType>(defaultContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [theme, setThemeState] = useState<Theme>(() => {
+        if (typeof window === 'undefined') return 'dark';
         const saved = localStorage.getItem('theme') as Theme | null;
         return saved === 'light' || saved === 'dark' ? saved : 'dark';
     });
 
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [showContent, setShowContent] = useState(false);
+    const [isClosed, setIsClosed] = useState(false);
     const [transitionTheme, setTransitionTheme] = useState<Theme>('dark');
+
+    const applyThemeToDOM = (newTheme: Theme) => {
+        if (typeof window === 'undefined') return;
+        const root = window.document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(newTheme);
+        localStorage.setItem('theme', newTheme);
+    };
 
     const setTheme = (newTheme: Theme) => {
         if (newTheme === theme || isTransitioning) return;
 
         setIsTransitioning(true);
         setTransitionTheme(newTheme);
-        
-        // Khởi chạy hoạt ảnh đóng tấm che (curtain closes)
-        setTimeout(() => {
-            setShowContent(true);
-        }, 20);
 
-        // Sau 500ms (hai tấm che gặp nhau ở giữa màn hình), chuyển đổi theme thực tế
+        // Giai đoạn 1 (0ms): 2 cánh khép từ 2 bên mép vào giữa (2/4 màn hình)
+        requestAnimationFrame(() => {
+            setIsClosed(true);
+        });
+
+        // Giai đoạn 2 (sau 340ms): 2 cánh đã gặp nhau ở giữa -> Đổi màu theme
         setTimeout(() => {
             setThemeState(newTheme);
-        }, 500);
+            applyThemeToDOM(newTheme);
 
-        // Sau 950ms, mở lại tấm che (curtain opens)
-        setTimeout(() => {
-            setShowContent(false);
-        }, 950);
+            // Giai đoạn 3 (sau 160ms): Mở 2 cánh từ giữa lùi về 2 bên
+            setTimeout(() => {
+                setIsClosed(false);
 
-        // Sau 1450ms, dọn dẹp và kết thúc quá trình chuyển tiếp
-        setTimeout(() => {
-            setIsTransitioning(false);
-        }, 1450);
+                // Giai đoạn 4 (sau 360ms): Hoàn tất và ẩn overlay
+                setTimeout(() => {
+                    setIsTransitioning(false);
+                }, 360);
+            }, 160);
+        }, 340);
+    };
+
+    const toggleTheme = () => {
+        setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
     useEffect(() => {
-        const root = window.document.documentElement;
+        applyThemeToDOM(theme);
+    }, []);
 
-        const applyTheme = (targetTheme: Theme) => {
-            root.classList.remove('light', 'dark');
-            root.classList.add(targetTheme);
-        };
-
-        applyTheme(theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
+    const isLightTarget = transitionTheme === 'light';
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
+        <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
             {children}
+
+            {/* Hiệu ứng 2 cánh cửa khép từ 2 bên vào giữa (2/4) rồi mở ngược lại */}
             {isTransitioning && (
-                <div className="fixed inset-0 pointer-events-none z-[99999] flex">
-                    {/* Tấm che bên trái (Left Shutter) */}
-                    <div 
-                        className={`fixed top-0 left-0 w-1/2 h-full ${
-                            transitionTheme === 'light' 
-                                ? 'bg-slate-50 border-r border-slate-200' 
-                                : 'bg-zinc-950 border-r border-zinc-900'
-                        } transition-transform duration-500 ease-in-out pointer-events-auto ${
-                            showContent ? 'translate-x-0' : '-translate-x-full'
-                        }`}
+                <div className="fixed inset-0 pointer-events-none z-[99999] select-none overflow-hidden">
+                    {/* Cánh bên Trái (chiếm 2/4 = 50% màn hình bên trái) */}
+                    <div
+                        className={`fixed top-0 left-0 w-1/2 h-full transition-transform duration-320 ease-[cubic-bezier(0.16,1,0.3,1)] z-[100] ${
+                            isLightTarget
+                                ? 'bg-slate-50 border-r border-slate-200 shadow-2xl'
+                                : 'bg-zinc-950 border-r border-zinc-800 shadow-2xl'
+                        } ${isClosed ? 'translate-x-0' : '-translate-x-full'}`}
                     >
-                        {/* Họa tiết chấm bi liti nền */}
-                        <div className={`absolute inset-0 pointer-events-none ${
-                            transitionTheme === 'light'
-                                ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] opacity-50'
-                                : 'bg-[radial-gradient(#1e293b_1.5px,transparent_1.5px)] opacity-85'
-                        } [background-size:12px_12px]`} />
-                        
-                        {/* Đường sáng viền mép trong (Glowing edge) */}
-                        <div className={`absolute top-0 right-0 w-0.5 h-full ${
-                            transitionTheme === 'light'
-                                ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-300 shadow-[0_0_8px_#f59e0b]'
-                                : 'bg-gradient-to-b from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_8px_#06b6d4]'
-                        }`} />
+                        {/* Đường viền phát sáng nhẹ mép trong */}
+                        <div
+                            className={`absolute top-0 right-0 w-[1.5px] h-full ${
+                                isLightTarget
+                                    ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-300 shadow-[0_0_12px_#f59e0b]'
+                                    : 'bg-gradient-to-b from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_12px_#06b6d4]'
+                            }`}
+                        />
                     </div>
-                    {/* Tấm che bên phải (Right Shutter) */}
-                    <div 
-                        className={`fixed top-0 right-0 w-1/2 h-full ${
-                            transitionTheme === 'light' 
-                                ? 'bg-slate-50 border-l border-slate-200' 
-                                : 'bg-zinc-950 border-l border-zinc-900'
-                        } transition-transform duration-500 ease-in-out pointer-events-auto ${
-                            showContent ? 'translate-x-0' : 'translate-x-full'
-                        }`}
+
+                    {/* Cánh bên Phải (chiếm 2/4 = 50% màn hình bên phải) */}
+                    <div
+                        className={`fixed top-0 right-0 w-1/2 h-full transition-transform duration-320 ease-[cubic-bezier(0.16,1,0.3,1)] z-[100] ${
+                            isLightTarget
+                                ? 'bg-slate-50 border-l border-slate-200 shadow-2xl'
+                                : 'bg-zinc-950 border-l border-zinc-800 shadow-2xl'
+                        } ${isClosed ? 'translate-x-0' : 'translate-x-full'}`}
                     >
-                        {/* Họa tiết chấm bi liti nền */}
-                        <div className={`absolute inset-0 pointer-events-none ${
-                            transitionTheme === 'light'
-                                ? 'bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] opacity-50'
-                                : 'bg-[radial-gradient(#1e293b_1.5px,transparent_1.5px)] opacity-85'
-                        } [background-size:12px_12px]`} />
-                        
-                        {/* Đường sáng viền mép trong (Glowing edge) */}
-                        <div className={`absolute top-0 left-0 w-0.5 h-full ${
-                            transitionTheme === 'light'
-                                ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-300 shadow-[0_0_8px_#f59e0b]'
-                                : 'bg-gradient-to-b from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_8px_#06b6d4]'
-                        }`} />
+                        {/* Đường viền phát sáng nhẹ mép trong */}
+                        <div
+                            className={`absolute top-0 left-0 w-[1.5px] h-full ${
+                                isLightTarget
+                                    ? 'bg-gradient-to-b from-amber-300 via-amber-500 to-amber-300 shadow-[0_0_12px_#f59e0b]'
+                                    : 'bg-gradient-to-b from-cyan-400 via-blue-500 to-cyan-400 shadow-[0_0_12px_#06b6d4]'
+                            }`}
+                        />
                     </div>
-                    {/* Icon chuyển đổi ở chính giữa (Center Transition Icon) */}
-                    <div 
-                        className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out z-[100000] flex items-center justify-center ${
-                            transitionTheme === 'light' 
-                                ? 'bg-white border-slate-200 shadow-slate-200/50' 
-                                : 'bg-zinc-900 border-zinc-800 shadow-black/80'
-                        } border rounded-full p-6 shadow-2xl ${
-                            showContent ? 'scale-100 opacity-100 rotate-0' : 'scale-0 opacity-0 rotate-180'
+
+                    {/* Icon Mặt Trời / Mặt Trăng phát sáng quang học ở chính giữa tâm điểm */}
+                    <div
+                        className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-250 ease-out z-[100000] flex items-center justify-center ${
+                            isLightTarget
+                                ? 'bg-white border-amber-400/50 shadow-[0_0_40px_rgba(245,158,11,0.35)]'
+                                : 'bg-zinc-900 border-cyan-400/50 shadow-[0_0_40px_rgba(6,182,212,0.35)]'
+                        } border rounded-full p-5 sm:p-6 ${
+                            isClosed
+                                ? 'scale-100 opacity-100 rotate-0'
+                                : 'scale-50 opacity-0 rotate-90'
                         }`}
                     >
-                        {transitionTheme === 'light' ? (
-                            <Sun className="w-12 h-12 text-amber-500 animate-pulse drop-shadow-[0_0_15px_rgba(245,158,11,0.6)]" />
+                        {isLightTarget ? (
+                            <Sun className="w-10 h-10 sm:w-12 sm:h-12 text-amber-500 animate-pulse drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
                         ) : (
-                            <Moon className="w-12 h-12 text-indigo-400 animate-pulse drop-shadow-[0_0_15px_rgba(129,140,248,0.6)]" />
+                            <Moon className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 animate-pulse drop-shadow-[0_0_12px_rgba(34,211,238,0.6)]" />
                         )}
-                    </div>
-                    {/* Chữ trạng thái công nghệ dưới Icon (Tech status text) */}
-                    <div 
-                        className={`fixed top-[calc(50%+70px)] left-1/2 -translate-x-1/2 z-[100000] font-mono text-[10px] sm:text-xs tracking-[0.25em] font-semibold text-center select-none uppercase transition-all duration-300 delay-100 ${
-                            showContent ? 'scale-100 opacity-80' : 'scale-90 opacity-0'
-                        } ${
-                            transitionTheme === 'light'
-                                ? 'text-slate-500 drop-shadow-[0_0_5px_rgba(100,116,139,0.3)]'
-                                : 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]'
-                        } animate-pulse`}
-                    >
-                        {transitionTheme === 'light' ? 'INIT_LIGHT_INTERFACE' : 'LOAD_DARK_INTERFACE'}
                     </div>
                 </div>
             )}
@@ -146,10 +141,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 };
 
-export const useTheme = () => {
-    const context = useContext(ThemeContext);
-    if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
+export const useTheme = (): ThemeContextType => {
+    return useContext(ThemeContext);
 };

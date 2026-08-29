@@ -1,252 +1,248 @@
 import React, { useEffect, useState } from 'react';
-import { Download, Mail, MapPin, Globe } from 'lucide-react';
+import { Download, MapPin, Check, Copy, ArrowUpRight, Sparkles } from 'lucide-react';
 import { FaFacebookF, FaTelegramPlane, FaGithub } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { Dialog } from "../ui/Dialog";
-import { Separator } from "../ui/Separator";
+import SnowEffect from "../ui/SnowEffect";
 import { api } from '../../../server/api';
+
+const ROLES_VI = [
+  "Xin chào!",
+  "Tôi là Phạm Sơn",
+  "Tôi là một Software & AI Engineer",
+];
+
+const ROLES_EN = [
+  "Hello there!",
+  "My name is Pham Son",
+  "I'm a Software & AI Engineer",
+];
 
 const Hero: React.FC = () => {
   const { t, language } = useLanguage();
   const [cvLink, setCvLink] = useState<string>('#');
   const [isCVEnabled, setIsCVEnabled] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
-  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
-  const roles = language === 'vi' ? [
-    "Tốt nghiệp chuyên ngành Kỹ thuật phần mềm",
-    "Đam mê xây dựng các ứng dụng web hiện đại",
-    "Tối ưu trải nghiệm người dùng",
-  ] : [
-    "Computer Science Graduate",
-    "Passionate in building modern web applications",
-    "Enthusiastic about optimizing user experience",
-  ];
+  // Typewriter states
+  const [text, setText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopIndex, setLoopIndex] = useState(0);
+
+  const roles = language === "vi" ? ROLES_VI : ROLES_EN;
+
+  // Reset typewriter when language changes
+  useEffect(() => {
+    setText("");
+    setIsDeleting(false);
+    setLoopIndex(0);
+  }, [language]);
 
   useEffect(() => {
-    // Lấy trạng thái kích hoạt và liên kết tải CV từ API hệ thống
     const fetchCVData = async () => {
-      const status = await api.getAccountStatus();
-      setIsCVEnabled(status.enabled);
+      try {
+        const status = await api.getAccountStatus();
+        setIsCVEnabled(status.enabled);
 
-      if (status.enabled) {
-        const cvData = await api.getCVLink();
-        setCvLink(cvData.link);
-      } else {
+        if (status.enabled) {
+          const cvData = await api.getCVLink();
+          setCvLink(cvData.link);
+        } else {
+          setCvLink("#");
+        }
+      } catch {
         setCvLink("#");
       }
     };
     fetchCVData();
   }, []);
 
+  // Smooth lightweight typewriter effect
   useEffect(() => {
-    // Tự động xoay vòng danh sách vai trò (roles) mỗi 3 giây
-    const interval = setInterval(() => {
-      setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [roles.length]);
+    const currentRole = roles[loopIndex % roles.length];
+    let speed = isDeleting ? 30 : 65;
+
+    if (!isDeleting && text === currentRole) {
+      const pauseTimer = setTimeout(() => setIsDeleting(true), 2000);
+      return () => clearTimeout(pauseTimer);
+    }
+
+    if (isDeleting && text === "") {
+      setIsDeleting(false);
+      setLoopIndex((prev) => prev + 1);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setText((prev) =>
+        isDeleting
+          ? currentRole.substring(0, prev.length - 1)
+          : currentRole.substring(0, prev.length + 1)
+      );
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [text, isDeleting, loopIndex, roles]);
 
   const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Ngăn chặn tải xuống và hiển thị thông báo nếu tính năng này bị khóa từ phía Admin
     if (!isCVEnabled) {
       e.preventDefault();
       setShowDialog(true);
     }
   };
 
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("mnt250723@gmail.com");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
+
   return (
     <section
       id="hero"
-      className="relative min-h-[70vh] flex flex-col items-center justify-start overflow-visible bg-transparent transition-colors duration-300 pt-24 sm:pt-36 pb-12"
+      className="relative w-full min-h-[92vh] sm:min-h-screen flex flex-col items-center justify-center pt-28 sm:pt-32 pb-14 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden select-none"
     >
-      {/* Hiệu ứng màu nền chuyển sắc cho Light mode (ẩn ở Dark mode để giữ nền đen sâu tối giản) */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none dark:hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-[80px] mix-blend-multiply"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] mix-blend-multiply"></div>
-      </div>
+      {/* Snowfall scoped strictly across the full 1st viewport */}
+      <SnowEffect />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center z-10 w-full overflow-visible">
-        <Reveal overflow="visible">
-          <div className="w-full max-w-2xl relative transition-all duration-300 bg-transparent overflow-visible">
+      {/* Ambient center spotlight */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[360px] bg-cyan-500/[0.04] dark:bg-cyan-500/[0.07] rounded-full blur-[140px] pointer-events-none -z-10" />
 
-            <div className="flex w-full relative overflow-visible">
-              {/* Đường kẻ mảnh kẻ ngang tràn viền (Full-bleed border) */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300vw] h-px bg-slate-200/80 dark:bg-zinc-800/80 pointer-events-none" />
+      <div className="relative max-w-5xl mx-auto w-full flex flex-col items-center text-center z-10">
+        {/* Display Typography Headline: Welcome to my portfolio! */}
+        <Reveal>
+          <div className="relative mb-6 w-full flex justify-center">
+            <h1 className="font-instrument text-3xl sm:text-5xl md:text-6xl lg:text-7xl italic font-normal tracking-tight text-zinc-950 dark:text-white whitespace-nowrap leading-tight text-center">
+              <span>{t('hero.headline.part1')}</span>{" "}
+              <span className="text-cyan-600 dark:text-cyan-400 font-semibold">{t('hero.headline.part2')}</span>
+            </h1>
+          </div>
+        </Reveal>
 
-              <div className="w-[112px] sm:w-[180px] shrink-0 border-l border-r border-slate-200 dark:border-zinc-800/80 p-2 sm:p-4 flex flex-col items-center justify-center bg-transparent relative z-10">
-                <div id="hero-avatar" className="h-24 w-24 sm:h-36 sm:w-36 rounded-full border border-slate-200 dark:border-zinc-800/80 overflow-hidden bg-slate-50 dark:bg-zinc-950 flex items-center justify-center shadow-lg relative flex-shrink-0 group z-10 ring-1 ring-slate-200 dark:ring-zinc-800 ring-offset-2 ring-offset-white dark:ring-offset-black">
-                  {/* Họa tiết chấm bi liti làm nền cho khung chứa Avatar */}
-                  <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1.5px,transparent_1.5px)] [background-size:8px_8px] pointer-events-none opacity-85 z-0" />
+        {/* Typewriter Dynamic Role Badge (Image 1 Style) */}
+        <Reveal>
+          <div className="h-11 mb-10 flex items-center justify-center">
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-100/90 dark:bg-zinc-900/90 border border-black/10 dark:border-white/15 font-mono text-xs sm:text-sm text-cyan-600 dark:text-cyan-400 font-semibold shadow-sm backdrop-blur-sm">
+              <Sparkles className="w-4 h-4 text-cyan-500 shrink-0" />
+              <span>{text}</span>
+              <span className="w-1.5 h-4 bg-cyan-500 animate-pulse ml-0.5 rounded-xs" />
+            </div>
+          </div>
+        </Reveal>
 
-                  <div className="icon-logo h-full w-full p-2 flex items-center justify-center relative z-10">
-                    <svg viewBox="0 0 304 304" className="w-[85%] h-[85%]" fill="none">
-                      <circle
-                        cx={152}
-                        cy={152}
-                        r={142}
-                        fill="none"
-                        pathLength={1000}
-                      />
-                      <path
-                        d="M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 108 M 218 85 C 211 81 201 79 186 83 C 174 87 160 96 160 122 C 160 136 173 152 187 152 C 201 152 214 168 214 188 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 151 220 M 90 224 V 80 H 115 C 129 80 140 96 140 116 C 140 136 129 152 115 152 H 110 M 218 85 C 211 81 201 79 186 82 C 173 87 160 96 160 122 C 161 136 173 149 189 153 C 199 157 216 165 215 192 C 214 208 201 224 188 225 C 176.6667 225 165.3333 225 142 220"
-                        fill="none"
-                        pathLength={1000}
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+        {/* Action Dock: Download CV + Copy Email (Image 2 Top Row) */}
+        <Reveal>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6">
+            {/* Download CV */}
+            <a
+              href={isCVEnabled ? cvLink : undefined}
+              download={isCVEnabled ? true : undefined}
+              target={isCVEnabled ? "_blank" : undefined}
+              rel={isCVEnabled ? "noopener noreferrer" : undefined}
+              onClick={handleDownload}
+              className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-mono font-semibold transition-all duration-200 ${
+                isCVEnabled
+                  ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-lg shadow-black/10 dark:shadow-white/5 hover:scale-[1.02] active:scale-[0.98]"
+                  : "bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-75"
+              }`}
+            >
+              <Download className="w-4 h-4" />
+              <span>{t('hero.downloadCV')}</span>
+              <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+            </a>
 
-              <div className="flex flex-1 flex-col border-r border-slate-200 dark:border-zinc-800/80">
-                <div className="h-10 sm:h-14 relative overflow-hidden bg-transparent w-full">
-                  <div className="absolute inset-0 bg-[repeating-linear-gradient(315deg,#e2e8f0,#e2e8f0_1px,transparent_0,transparent_50%)] dark:bg-[repeating-linear-gradient(315deg,#27272a,#27272a_1px,transparent_0,transparent_50%)] bg-[length:10px_10px] opacity-80 dark:opacity-[0.56]" />
-                </div>
+            {/* 1-Click Copy Email */}
+            <button
+              onClick={handleCopyEmail}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-xs sm:text-sm font-mono font-medium bg-white dark:bg-zinc-900/90 border border-black/10 dark:border-white/15 text-zinc-800 dark:text-zinc-200 hover:border-cyan-500/40 hover:text-cyan-600 dark:hover:text-cyan-400 shadow-sm transition-all duration-200 active:scale-[0.98]"
+              title="Sao chép địa chỉ Email"
+            >
+              {copiedEmail ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span className="text-emerald-500 font-semibold">{language === 'vi' ? 'Đã sao chép email!' : 'Email copied!'}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 opacity-60" />
+                  <span>mnt250723@gmail.com</span>
+                </>
+              )}
+            </button>
+          </div>
+        </Reveal>
 
-                <div className="border-t border-slate-200 dark:border-zinc-800/80 py-2 sm:py-3.5 pl-4 sm:pl-6 flex items-center bg-transparent flex-1">
-                  <h1 className="text-xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
-                    {t('common.name')}
-                  </h1>
-                </div>
-
-                <div className="border-t border-slate-200 dark:border-zinc-800/80 h-10 sm:h-12 py-1 pl-4 sm:pl-6 flex items-center bg-transparent">
-                  <div className="h-6 sm:h-7 overflow-hidden relative w-full flex items-center">
-                    <div
-                      key={currentRoleIndex}
-                      className="animate-slide-up-fade text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-mono flex items-center gap-1.5"
-                    >
-                      {roles[currentRoleIndex]}
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Location & Social Unified Pill Dock (Image 2 Bottom Row) */}
+        <Reveal>
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-5 px-5 py-2.5 rounded-full bg-zinc-50/80 dark:bg-zinc-900/50 border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-md text-xs font-mono text-zinc-500 dark:text-zinc-400">
+            <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300">
+              <MapPin className="w-3.5 h-3.5 text-cyan-500" />
+              <span>{t('contact.addressText')}</span>
             </div>
 
-            <div className="relative w-full h-8 sm:h-10 pointer-events-none shrink-0 z-0">
-              <Separator className="!max-w-none !px-0 !border-x-0 !mx-0" />
+            <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">•</span>
+
+            {/* Social Icons Group */}
+            <div className="flex items-center gap-2">
+              <a
+                href="https://github.com/ps257"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-all hover:scale-115"
+                title="GitHub"
+              >
+                <FaGithub className="w-4 h-4" />
+              </a>
+              <a
+                href="https://t.me/pvson03"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-telegram transition-all hover:scale-115"
+                title="Telegram"
+              >
+                <FaTelegramPlane className="w-4 h-4" />
+              </a>
+              <a
+                href="https://zalo.me/0377309531"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-blue-500 transition-all hover:scale-115"
+                title="Zalo"
+              >
+                <SiZalo className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/phamson.25723"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-facebook transition-all hover:scale-115"
+                title="Facebook"
+              >
+                <FaFacebookF className="w-4 h-4" />
+              </a>
             </div>
-
-            <div className="flex w-full relative overflow-visible">
-              <div className="w-[112px] sm:w-[180px] shrink-0 px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col items-center justify-end bg-transparent relative z-10 min-h-[160px] sm:min-h-[200px]">
-                <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
-
-                <div className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 opacity-30 hover:opacity-100 transition-opacity duration-500 select-none z-20">
-                  <div className="transform rotate-180" style={{ writingMode: 'vertical-rl' }}>
-                    <span className="font-mono text-[8px] sm:text-[12px] tracking-[0.16em] text-slate-500 dark:text-zinc-400 uppercase font-bold whitespace-nowrap">
-                      Software & AI Engineer
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-1 flex-col bg-transparent relative">
-                <div className="absolute top-[-8px] sm:top-[-10px] bottom-0 right-0 w-px bg-slate-200 dark:bg-zinc-800/80 pointer-events-none" />
-                <div className="p-4 sm:p-5.5 space-y-3 sm:space-y-4 bg-transparent relative z-10 flex-1 flex flex-col justify-center">
-                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
-                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
-                      <MapPin className="size-3.5 text-slate-500 dark:text-zinc-400" />
-                    </div>
-                    <span className="font-sans font-medium text-balance">{t('contact.addressText')}</span>
-                  </div>
-
-                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
-                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
-                      <Mail className="size-3.5 text-slate-500 dark:text-zinc-400" />
-                    </div>
-                    <a href="mailto:mnt250723@gmail.com" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors font-mono underline-offset-4 hover:underline">
-                      mnt250723@gmail.com
-                    </a>
-                  </div>
-
-                  <div className="flex items-center gap-3.5 font-mono text-[11px] sm:text-sm text-slate-700 dark:text-zinc-300">
-                    <div className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800">
-                      <Globe className="size-3.5 text-slate-500 dark:text-zinc-400" />
-                    </div>
-                    <a href="https://mnt.id.vn" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors font-mono underline-offset-4 hover:underline">
-                      mnt.id.vn
-                    </a>
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-200 dark:border-zinc-800/80 p-3 sm:p-4 flex items-center gap-3 bg-transparent">
-                  <a
-                    href="https://www.facebook.com/phamson.25723"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105"
-                    title="Facebook"
-                  >
-                    <FaFacebookF className="size-4" />
-                  </a>
-                  <a
-                    href="https://github.com/mnt25"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all hover:scale-105"
-                    title="GitHub"
-                  >
-                    <FaGithub className="size-4" />
-                  </a>
-                  <a
-                    href="https://t.me/pvson03"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-500 dark:hover:text-cyan-400 transition-all hover:scale-105"
-                    title="Telegram"
-                  >
-                    <FaTelegramPlane className="size-4" />
-                  </a>
-                  <a
-                    href="https://zalo.me/0377309531"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105"
-                    title="Zalo"
-                  >
-                    <SiZalo className="size-4" />
-                  </a>
-                  <a
-                    href={isCVEnabled ? cvLink : undefined}
-                    download={isCVEnabled ? true : undefined}
-                    target={isCVEnabled ? "_blank" : undefined}
-                    rel={isCVEnabled ? "noopener noreferrer" : undefined}
-                    onClick={handleDownload}
-                    className={`flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-850 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-105 ${!isCVEnabled ? "opacity-75 cursor-not-allowed" : ""}`}
-                    title={t('hero.downloadCV')}
-                  >
-                    <Download className="size-4" />
-                    <span className="ml-2 text-xs sm:text-sm">{t('hero.downloadCV')}</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300vw] h-px bg-slate-200/80 dark:bg-zinc-800/80 pointer-events-none" />
           </div>
         </Reveal>
       </div>
 
+      {/* CV Locked Modal Dialog */}
       <Dialog
         isOpen={showDialog}
         onClose={() => setShowDialog(false)}
         title={t('common.notice')}
       >
-        <div className="space-y-5">
-          <div className="p-4 bg-slate-50 dark:bg-[#030304]/60 border border-slate-200/50 dark:border-zinc-900/60 relative font-mono text-xs md:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line rounded-none">
-            {/* Các chi tiết/đường kẻ góc mang phong cách bảng mạch kỹ thuật (Cyberpunk brackets) */}
-            <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-slate-350 dark:border-zinc-700" />
-            <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-slate-350 dark:border-zinc-700" />
-            <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-slate-350 dark:border-zinc-700" />
-            <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-slate-350 dark:border-zinc-700" />
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/10 font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
             {t('hero.cvDisabled')}
           </div>
 
           <div className="flex justify-end">
             <button
               onClick={() => setShowDialog(false)}
-              className="px-5 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-700 dark:text-cyan-400 border border-slate-200 dark:border-cyan-500/20 hover:border-blue-500 dark:hover:border-cyan-400 hover:shadow-[0_0_12px_rgba(34,211,238,0.25)] font-mono text-[11px] uppercase tracking-wider font-bold transition-all duration-300 rounded-none"
+              className="px-4 py-2 rounded-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-mono text-xs uppercase tracking-wider font-semibold transition-all"
             >
               {t('common.close')}
             </button>

@@ -18,13 +18,13 @@ import { Separator } from "./components/ui/Separator";
 const MainContent: React.FC = () => (
   <main className="overflow-x-hidden">
     <Hero />
-    <Separator />
+    <Separator hasDot={true} />
     <About />
-    <Separator />
+    <Separator hasDot={false} />
     <Skills />
-    <Separator />
+    <Separator hasDot={true} />
     <Projects />
-    <Separator />
+    <Separator hasDot={true} />
     <Contact />
   </main>
 );
@@ -41,7 +41,7 @@ const App: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isAuthPage = location.pathname.startsWith("/psmanager");
+  const isAuthPage = location.pathname.startsWith("/psmanager") || location.pathname === "/pslogin";
   const { language, t } = useLanguage();
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const AppContent: React.FC = () => {
   }, [language]);
 
   return (
-    <div className="relative min-h-screen bg-transparent text-slate-900 dark:text-slate-50 selection:bg-blue-500/30 selection:text-blue-600 dark:selection:text-blue-200 transition-colors duration-300">
+    <div className="relative min-h-screen bg-transparent text-zinc-900 dark:text-zinc-50 selection:bg-cyan-500/20 selection:text-cyan-700 dark:selection:text-cyan-300 transition-colors duration-300">
       <GrowingRootsBackground />
       {!isAuthPage && <Navbar />}
       <Routes>

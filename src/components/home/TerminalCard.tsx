@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Terminal, CornerDownLeft, Sparkles, User, Code, Briefcase, Mail, Trash2 } from "lucide-react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Terminal, Sparkles, User, Code, Mail, Trash2 } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 
 interface HistoryItem {
@@ -11,187 +11,193 @@ interface HistoryItem {
 const birthYear = 2003;
 const age = new Date().getFullYear() - birthYear;
 
-// Skill categories taken directly from Skills.tsx without versions
-const skillCategories = [
-  {
-    title: "AI Applications & Models",
-    skills: ["FastAPI", "OpenAI", "Prompt Engineering", "AI Agents", "RAG & Vector Search"],
-  },
-  {
-    title: "Programming & Web Development",
-    skills: ["React", "Next.js", "Node.js", "Python", "PHP", "Javascript", "Typescript"],
-  },
-  {
-    title: "Databases & OS / DevOps",
-    skills: ["MySQL", "MongoDB", "Neon Tech DB", "Docker", "Nginx", "Linux", "Git"],
-  },
-];
+const AUTO_COMMANDS = ["whoami", "skills", "contact"];
 
 export const TerminalCard: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(true);
 
   const isVi = language === "vi";
 
-  // Initial welcome message (Set once, preserves history across language toggles)
+  // IntersectionObserver: Only auto-type when visible on screen
   useEffect(() => {
-    setHistory((prev) => {
-      if (prev.length > 0) return prev;
-      return [
-        {
-          id: "welcome",
-          output: (
-            <div className="space-y-1 text-xs sm:text-sm text-slate-300">
-              <p className="text-blue-400 font-semibold">Pham Son CLI</p>
-              <p className="text-slate-400">
-                {isVi
-                  ? "Gõ lệnh hoặc bấm nút gợi ý bên dưới để khám phá thông tin."
-                  : "Type a command or click suggestion chips below to explore info."}
-              </p>
-            </div>
-          ),
-        },
-      ];
-    });
+    const el = cardRef.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    io.observe(el);
+
+    return () => io.disconnect();
+  }, []);
+
+  // Initial welcome message (clean & concise)
+  useEffect(() => {
+    setHistory([
+      {
+        id: "welcome",
+        output: (
+          <div className="text-xs font-mono text-zinc-400">
+            <p className="text-cyan-400 font-semibold">MNT Core v3.0 [Online]</p>
+          </div>
+        ),
+      },
+    ]);
   }, [language, isVi]);
 
-  // Scroll ONLY the inner terminal scroll container when history updates
+  // Smooth scroll terminal to bottom on new output
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [history]);
+  }, [history, input]);
 
-  const executeCommand = (cmdStr: string) => {
-    const trimmed = cmdStr.trim();
-    if (!trimmed) return;
+  // Command generator (chỉ giữ các thông tin cốt lõi, tinh gọn nhất)
+  const getCommandOutput = useCallback(
+    (cmdStr: string): React.ReactNode => {
+      const lower = cmdStr.trim().toLowerCase();
 
-    const lower = trimmed.toLowerCase();
-    const id = Date.now().toString() + Math.random().toString(36).substr(2, 4);
-
-    let outputNode: React.ReactNode = null;
-
-    if (lower === "clear" || lower === "cls") {
-      setHistory([]);
-      setInput("");
-      return;
-    } else if (lower === "help" || lower === "?" || lower === "goi y" || lower === "gợi ý") {
-      outputNode = (
-        <div className="space-y-1.5 py-1 text-xs sm:text-sm">
-          <p className="text-yellow-400 font-medium">
-            {isVi ? "Các lệnh khả dụng:" : "Available commands:"}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-2 text-slate-300">
-            <div>
-              <span className="text-green-400 font-mono font-bold">whoami</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Giới thiệu bản thân" : "— Developer profile"}
-              </span>
-            </div>
-            <div>
-              <span className="text-green-400 font-mono font-bold">skills</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Kỹ năng chuyên môn" : "— Technical skills"}
-              </span>
-            </div>
-            <div>
-              <span className="text-green-400 font-mono font-bold">projects</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Danh sách dự án" : "— Project list"}
-              </span>
-            </div>
-            <div>
-              <span className="text-green-400 font-mono font-bold">contact</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Thông tin liên hệ" : "— Contact details"}
-              </span>
-            </div>
-            <div>
-              <span className="text-green-400 font-mono font-bold">clear</span>
-              <span className="text-slate-400 text-xs ml-2">
-                {isVi ? "— Xóa màn hình" : "— Clear output"}
-              </span>
-            </div>
+      if (lower === "whoami" || lower === "about") {
+        return (
+          <div className="p-2.5 my-1 rounded-lg bg-zinc-900/90 border border-white/10 font-mono text-xs space-y-1">
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">name:</span> <span className="text-emerald-400">"Phạm Sơn"</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">age:</span> <span className="text-emerald-400">{age} (2003)</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">role:</span> <span className="text-emerald-400">"Software & AI Engineer"</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">location:</span> <span className="text-emerald-400">"Hà Nội, Việt Nam"</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">status:</span> <span className="text-cyan-300 font-medium">"Open for opportunities 🚀"</span>
+            </p>
           </div>
-        </div>
-      );
-    } else if (lower === "whoami" || lower === "about" || lower === "cat about.json") {
-      outputNode = (
-        <div className="p-3 my-1 rounded bg-zinc-950/80 border border-blue-500/30 font-mono text-xs sm:text-sm space-y-1">
-          <p className="text-blue-400 font-bold">{"{"}</p>
-          <p className="pl-4 text-slate-300">
-            name: <span className="text-green-400">"{t("common.name")}"</span>,
-          </p>
-          <p className="pl-4 text-slate-300">
-            age: <span className="text-green-400">"{age} {t("about.ageUnit")}"</span>,
-          </p>
-          <p className="pl-4 text-slate-300">
-            role: <span className="text-green-400">"{t("about.roleValue")}"</span>,
-          </p>
-          <p className="pl-4 text-slate-300">
-            passion: [<span className="text-green-400">"{t("about.passion.coding")}"</span>, <span className="text-green-400">"{t("about.passion.uiux")}"</span>, <span className="text-green-400">"{t("about.passion.solving")}"</span>],
-          </p>
-          <p className="pl-4 text-slate-300">
-            status: <span className="text-cyan-400">"{isVi ? "Đang mở cơ hội nghề nghiệp 🚀" : "Open for opportunities 🚀"}"</span>
-          </p>
-          <p className="text-blue-400 font-bold">{"}"}</p>
-        </div>
-      );
-    } else if (lower === "skills" || lower === "./skills") {
-      outputNode = (
-        <div className="py-1 space-y-2 text-xs sm:text-sm">
-          <p className="text-purple-400 font-semibold">⚡ {isVi ? "Kỹ năng chuyên môn:" : "Technical Stack:"}</p>
-          {skillCategories.map((cat, idx) => (
-            <div key={idx} className="space-y-1 pl-2">
-              <p className="text-slate-400 text-xs font-mono font-medium">• {cat.title}:</p>
-              <div className="flex flex-wrap gap-1.5 pl-3">
-                {cat.skills.map((s) => (
-                  <span key={s} className="px-2 py-0.5 rounded bg-blue-950/70 border border-blue-500/40 text-blue-300 text-xs font-mono">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    } else if (lower === "projects" || lower === "./projects") {
-      outputNode = (
-        <div className="py-1.5 text-xs sm:text-sm text-slate-300 space-y-1">
-          <p className="text-cyan-400 font-semibold">📂 {isVi ? "Danh sách dự án tiêu biểu:" : "Highlighted Projects:"}</p>
-          <p className="pl-2">• <span className="text-white font-medium">IndoorScence AI</span> — {isVi ? "Giám sát AI ngữ cảnh robot di động (Qwen2.5-VL + RunPod GPU)" : "Real-time AI monitoring for mobile robots"}</p>
-          <p className="pl-2">• <span className="text-white font-medium">MNT Web - Portfolio</span> — {isVi ? "Trang thông tin cá nhân & Admin Dashboard quản trị" : "Portfolio & Admin Dashboard"}</p>
-          <p className="pl-2">• <span className="text-white font-medium">Weather Dashboard</span> — {isVi ? "Dự báo thời tiết thời gian thực" : "Real-time weather forecast app"}</p>
-          <p className="pl-2">• <span className="text-white font-medium">Hệ thống đặt phòng trực tuyến</span> — {isVi ? "Hệ thống quản lý đặt phòng & Admin" : "Online room booking system"}</p>
-        </div>
-      );
-    } else if (lower === "contact" || lower === "./contact") {
-      outputNode = (
-        <div className="py-1.5 text-xs sm:text-sm text-slate-300 space-y-1">
-          <p className="text-emerald-400 font-semibold">📬 {isVi ? "Thông tin liên hệ:" : "Contact Details:"}</p>
-          <p className="pl-2">• Email: <a href="mailto:sonpv.work@gmail.com" className="text-blue-400 underline">sonpv.work@gmail.com</a></p>
-          <p className="pl-2">• Website: <span className="text-green-400">https://mnt.id.vn</span></p>
-        </div>
-      );
-    } else {
-      outputNode = (
-        <p className="text-red-400 text-xs sm:text-sm font-mono">
-          {isVi
-            ? `zsh: không tìm thấy lệnh: ${trimmed}. Gõ 'help' để xem danh sách lệnh.`
-            : `zsh: command not found: ${trimmed}. Type 'help' for available commands.`}
+        );
+      } else if (lower === "skills" || lower === "./skills") {
+        return (
+          <div className="p-2.5 my-1 rounded-lg bg-zinc-900/90 border border-white/10 font-mono text-xs space-y-1">
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">ai:</span> <span className="text-zinc-200">FastAPI, OpenAI, AI Agents, RAG</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">web:</span> <span className="text-zinc-200">React, Next.js, Node.js, Python, TypeScript</span>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-cyan-400 font-semibold">cloud & db:</span> <span className="text-zinc-200">PostgreSQL, MongoDB, Docker, Linux, Git</span>
+            </p>
+          </div>
+        );
+      } else if (lower === "contact" || lower === "./contact") {
+        return (
+          <div className="p-2.5 my-1 rounded-lg bg-zinc-900/90 border border-white/10 font-mono text-xs space-y-1">
+            <p className="text-zinc-300">
+              <span className="text-emerald-400 font-semibold">email:</span> <a href="mailto:mnt250723@gmail.com" className="text-cyan-400 underline ml-1">mnt250723@gmail.com</a>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-emerald-400 font-semibold">github:</span> <a href="https://github.com/ps257" target="_blank" rel="noopener noreferrer" className="text-cyan-400 underline ml-1">github.com/ps257</a>
+            </p>
+            <p className="text-zinc-300">
+              <span className="text-emerald-400 font-semibold">website:</span> <span className="text-emerald-400 ml-1">https://mnt.id.vn</span>
+            </p>
+          </div>
+        );
+      }
+
+      return (
+        <p className="text-rose-400 text-xs font-mono">
+          {isVi ? `zsh: không tìm thấy lệnh: ${cmdStr}` : `zsh: command not found: ${cmdStr}`}
         </p>
       );
-    }
+    },
+    [isVi]
+  );
 
-    setHistory((prev) => [
-      ...prev,
-      { id, command: trimmed, output: outputNode },
-    ]);
-    setInput("");
-  };
+  const executeCommand = useCallback(
+    (cmdStr: string) => {
+      const trimmed = cmdStr.trim();
+      if (!trimmed) return;
+
+      const lower = trimmed.toLowerCase();
+      if (lower === "clear" || lower === "cls") {
+        setHistory([]);
+        setInput("");
+        return;
+      }
+
+      const id = Date.now().toString() + Math.random().toString(36).substr(2, 4);
+      const outputNode = getCommandOutput(trimmed);
+
+      setHistory((prev) => [
+        ...prev,
+        { id, command: trimmed, output: outputNode },
+      ]);
+      setInput("");
+    },
+    [getCommandOutput]
+  );
+
+  // Auto-typing engine: types continuously, pauses, executes, clears, and repeats forever
+  useEffect(() => {
+    if (!isInView) return;
+
+    let cmdIdx = 0;
+    let charIdx = 0;
+    let isTyping = true;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      const currentCmd = AUTO_COMMANDS[cmdIdx % AUTO_COMMANDS.length];
+
+      if (isTyping) {
+        if (charIdx < currentCmd.length) {
+          charIdx++;
+          setInput(currentCmd.substring(0, charIdx));
+          timeoutId = setTimeout(tick, 80);
+        } else {
+          // Finished typing command -> execute
+          isTyping = false;
+          timeoutId = setTimeout(() => {
+            executeCommand(currentCmd);
+            // Reading pause after output (~3s)
+            timeoutId = setTimeout(() => {
+              cmdIdx++;
+              charIdx = 0;
+              isTyping = true;
+
+              // If completed the whole cycle, clear first to clean screen
+              if (cmdIdx % AUTO_COMMANDS.length === 0) {
+                setInput("clear");
+                timeoutId = setTimeout(() => {
+                  setHistory([]);
+                  setInput("");
+                  timeoutId = setTimeout(tick, 800);
+                }, 400);
+              } else {
+                tick();
+              }
+            }, 3000);
+          }, 400);
+        }
+      }
+    };
+
+    timeoutId = setTimeout(tick, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [isInView, executeCommand]);
 
   const handleQuickClick = (e: React.MouseEvent, cmd: string) => {
     e.preventDefault();
@@ -200,116 +206,84 @@ export const TerminalCard: React.FC = () => {
     inputRef.current?.focus();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      executeCommand(input);
-    }
-  };
-
-  // Quick command suggestions
   const quickSuggestions = [
-    { label: "help", cmd: "help", icon: <Sparkles className="w-3 h-3 text-yellow-400" /> },
-    { label: "whoami", cmd: "whoami", icon: <User className="w-3 h-3 text-blue-400" /> },
+    { label: "whoami", cmd: "whoami", icon: <User className="w-3 h-3 text-cyan-400" /> },
     { label: "skills", cmd: "skills", icon: <Code className="w-3 h-3 text-purple-400" /> },
-    { label: "projects", cmd: "projects", icon: <Briefcase className="w-3 h-3 text-cyan-400" /> },
-    { label: "contact", cmd: "contact", icon: <Mail className="w-3 h-3 text-emerald-400" /> },
-    { label: "clear", cmd: "clear", icon: <Trash2 className="w-3 h-3 text-slate-400" /> },
+    { label: "contact", cmd: "contact", icon: <Mail className="w-3 h-3 text-blue-400" /> },
+    { label: "clear", cmd: "clear", icon: <Trash2 className="w-3 h-3 text-zinc-400" /> },
   ];
 
   return (
-    <div className="w-full space-y-3">
+    <div ref={cardRef} className="w-full space-y-3 select-none">
       {/* Main Terminal Window */}
       <div
-        className="bg-zinc-950/95 dark:bg-black/95 border border-slate-700/60 dark:border-zinc-800 rounded-lg shadow-2xl overflow-hidden backdrop-blur-md transition-all duration-300 hover:border-blue-500/50"
+        className="bg-zinc-950 border border-black/10 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/30"
         onClick={() => inputRef.current?.focus()}
       >
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/90 border-b border-zinc-800/80 select-none">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/90 border-b border-zinc-800 select-none">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500/90 hover:opacity-80 transition-opacity" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/90 hover:opacity-80 transition-opacity" />
-            <div className="w-3 h-3 rounded-full bg-green-500/90 hover:opacity-80 transition-opacity" />
+            <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
-            <Terminal className="w-3.5 h-3.5 text-blue-400" />
-            <span>bash - phamson@mnt.id.vn:~</span>
+          <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-400">
+            <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+            <span>mnt-inspector@bash</span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono text-emerald-400 font-medium hidden sm:inline">LIVE</span>
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-mono text-emerald-400 font-medium">AUTO</span>
           </div>
         </div>
 
         {/* Output Screen */}
         <div
           ref={scrollContainerRef}
-          className="p-4 h-64 sm:h-72 overflow-y-auto font-mono text-xs sm:text-sm space-y-3 scrollbar-thin scrollbar-thumb-zinc-800"
+          className="p-4 h-60 sm:h-64 overflow-y-auto font-mono text-xs space-y-2.5 scroll-smooth"
         >
           {history.map((item) => (
             <div key={item.id} className="space-y-1">
               {item.command && (
-                <div className="flex items-center gap-2 text-slate-300">
-                  <span className="text-emerald-400 font-bold">visitor@mnt:~$</span>
-                  <span className="text-white font-semibold">{item.command}</span>
+                <div className="flex items-center gap-2 text-zinc-300">
+                  <span className="text-cyan-400 font-bold">mnt:~$</span>
+                  <span className="text-white font-medium">{item.command}</span>
                 </div>
               )}
               {item.output && <div className="pl-1">{item.output}</div>}
             </div>
           ))}
 
-          {/* Active Input Line */}
-          <div className="flex items-center gap-2 pt-1 text-slate-200">
-            <span className="text-emerald-400 font-bold">visitor@mnt:~$</span>
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={isVi ? "Gõ lệnh (vd: help)..." : "Type command (e.g. help)..."}
-              className="flex-1 bg-transparent outline-none border-none text-white font-mono placeholder:text-zinc-600 focus:ring-0 p-0 text-xs sm:text-sm"
-              autoComplete="off"
-              spellCheck={false}
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                executeCommand(input);
-              }}
-              className="text-zinc-500 hover:text-blue-400 p-1 transition-colors"
-              title="Execute"
-            >
-              <CornerDownLeft className="w-3.5 h-3.5" />
-            </button>
+          {/* Active Auto-Typing Input Line with blinking cursor */}
+          <div className="flex items-center gap-2 pt-1 text-zinc-200">
+            <span className="text-cyan-400 font-bold">mnt:~$</span>
+            <span className="text-white font-mono text-xs">
+              {input}
+            </span>
+            <span className="w-1.5 h-3.5 bg-cyan-400 animate-pulse inline-block" />
           </div>
         </div>
       </div>
 
-      {/* Quick Suggestion Chips (Gợi ý ấn nhanh) */}
+      {/* Quick Suggestion Chips */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-mono text-slate-400 dark:text-zinc-400">
-          <span className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
-            <span className="font-semibold text-slate-700 dark:text-zinc-300">
-              {isVi ? "Gợi ý ấn nhanh:" : "Quick Commands:"}
-            </span>
-          </span>
-          <span className="text-[11px] text-zinc-500">
-            {isVi ? "Click để chạy lệnh" : "Click to execute"}
+        <div className="flex items-center justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400">
+          <span className="flex items-center gap-1.5 font-medium">
+            <Sparkles className="w-3 h-3 text-cyan-500" />
+            <span>{isVi ? "Gợi ý nhanh (Click để chạy):" : "Quick actions (Click to run):"}</span>
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {quickSuggestions.map((item) => (
             <button
               key={item.cmd}
               type="button"
               onClick={(e) => handleQuickClick(e, item.cmd)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 text-slate-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 text-xs font-mono transition-all duration-200 shadow-sm hover:shadow-blue-500/10 active:scale-95 group cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/10 hover:border-cyan-500/40 text-zinc-700 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 text-xs font-mono transition-all active:scale-95"
             >
               {item.icon}
-              <span className="group-hover:translate-x-0.5 transition-transform">{item.label}</span>
+              <span>{item.label}</span>
             </button>
           ))}
         </div>
@@ -317,3 +291,5 @@ export const TerminalCard: React.FC = () => {
     </div>
   );
 };
+
+export default TerminalCard;

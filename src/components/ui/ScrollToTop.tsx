@@ -17,11 +17,11 @@ const ScrollToTop: React.FC = () => {
       const docHeight =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
-      const progress = (scrollTop / docHeight) * 100;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       setScrollProgress(progress);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -32,43 +32,44 @@ const ScrollToTop: React.FC = () => {
     });
   };
 
-  const radius = 20;
+  const radius = 18;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset =
     circumference - (scrollProgress / 100) * circumference;
 
   return (
     <div
-      className={`fixed bottom-24 right-4 md:bottom-8 md:right-8 z-50 transition-all duration-500 transform ${
+      className={`fixed bottom-20 md:bottom-8 right-4 md:right-8 z-40 transition-all duration-300 transform ${
         isVisible
-          ? "translate-y-0 opacity-100"
-          : "translate-y-10 opacity-0 pointer-events-none"
+          ? "translate-y-0 opacity-100 scale-100"
+          : "translate-y-6 opacity-0 scale-90 pointer-events-none"
       }`}
     >
       <button
         onClick={scrollToTop}
-        className="relative flex items-center justify-center w-12 h-12 bg-white/80 dark:bg-black/60 rounded-xl border border-slate-200/50 dark:border-zinc-800/80 shadow-lg hover:-translate-y-1 transition-transform duration-300 group backdrop-blur-sm"
+        className="relative flex items-center justify-center w-11 h-11 bg-white/90 dark:bg-zinc-900/90 rounded-full border border-black/10 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/30 hover:scale-105 transition-all duration-200 group backdrop-blur-md"
         aria-label="Scroll to top"
+        title="Cuộn lên đầu trang"
       >
         {/* Progress Circle Border */}
         <svg
           className="absolute top-0 left-0 w-full h-full -rotate-90 transform pointer-events-none"
-          viewBox="0 0 48 48"
+          viewBox="0 0 44 44"
         >
           <circle
-            cx="24"
-            cy="24"
+            cx="22"
+            cy="22"
             r={radius}
             fill="none"
-            className="stroke-slate-200 dark:stroke-slate-700"
+            className="stroke-black/5 dark:stroke-white/10"
             strokeWidth="2"
           />
           <circle
-            cx="24"
-            cy="24"
+            cx="22"
+            cy="22"
             r={radius}
             fill="none"
-            className="stroke-blue-500 transition-all duration-100 ease-out"
+            className="stroke-cyan-500 transition-all duration-100 ease-out"
             strokeWidth="2"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -77,7 +78,7 @@ const ScrollToTop: React.FC = () => {
         </svg>
 
         {/* Arrow Icon */}
-        <ArrowUp className="w-5 h-5 text-slate-700 dark:text-blue-400 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors" />
+        <ArrowUp className="w-4 h-4 text-zinc-700 dark:text-zinc-300 group-hover:text-cyan-500 transition-colors" />
       </button>
     </div>
   );

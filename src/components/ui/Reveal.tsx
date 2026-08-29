@@ -6,28 +6,54 @@ interface RevealProps {
   overflow?: "hidden" | "visible";
 }
 
+// Global shared IntersectionObserver singleton to prevent hundreds of observer instances
+type ObserverCallback = (isVisible: boolean) => void;
+const listeners = new Map<Element, ObserverCallback>();
+
+let sharedObserver: IntersectionObserver | null = null;
+
+function getSharedObserver() {
+  if (typeof window === "undefined") return null;
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const cb = listeners.get(entry.target);
+            if (cb) {
+              cb(true);
+              listeners.delete(entry.target);
+              sharedObserver?.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px 50px 0px" }
+    );
+  }
+  return sharedObserver;
+}
+
 export const Reveal: React.FC<RevealProps> = ({ children, width = "100%", overflow = "hidden" }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect(); 
-        }
-      },
-      { threshold: 0.15 } 
-    );
+    const el = ref.current;
+    if (!el) return;
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
+    const observer = getSharedObserver();
+    if (!observer) {
+      setIsVisible(true);
+      return;
     }
 
+    listeners.set(el, () => setIsVisible(true));
+    observer.observe(el);
+
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      listeners.delete(el);
+      observer.unobserve(el);
     };
   }, []);
 
@@ -43,8 +69,8 @@ export const Reveal: React.FC<RevealProps> = ({ children, width = "100%", overfl
     >
       <div
         style={{ height: "100%" }}
-        className={`transition-all duration-1000 ease-out transform ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
+        className={`transition-all duration-700 ease-out transform ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         }`}
       >
         {children}
