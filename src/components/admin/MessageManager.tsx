@@ -1,10 +1,26 @@
 import { useEffect, useState } from "react";
-import { Trash2, MessageSquare, Mail, User, Clock, Terminal, Loader2, CheckCircle2, AlertTriangle, HelpCircle, AlertCircle } from "lucide-react";
+import {
+  Trash2,
+  MessageSquare,
+  Mail,
+  Clock,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  HelpCircle,
+  AlertCircle,
+  Sparkles,
+  Copy,
+  Check,
+} from "lucide-react";
 import { api } from "../../../server/api";
 import type { ContactMessage } from "../../types/contact";
+import AdminSkeletonLoader from "./AdminSkeletonLoader";
 
 const MessageManager = () => {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [toasts, setToasts] = useState<{ id: string; type: "success" | "error" | "warning"; text: string }[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -38,14 +54,23 @@ const MessageManager = () => {
       setMessages(data);
     } catch (err) {
       console.error("Lỗi khi tải tin nhắn liên hệ:", err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const copyToClipboard = (email: string) => {
+    navigator.clipboard.writeText(email);
+    setCopiedEmail(email);
+    showToast(`Đã sao chép email: ${email}`, "success");
+    setTimeout(() => setCopiedEmail(null), 2000);
   };
 
   const handleDelete = (id: string) => {
     setConfirmDialog({
       isOpen: true,
-      title: "XÓA TIN NHẮN VĨNH VIỄN",
-      message: "Bạn có chắc chắn muốn xóa vĩnh viễn tin nhắn này? Bản ghi sẽ bị loại bỏ hoàn toàn khỏi cơ sở dữ liệu và không thể khôi phục.",
+      title: "Xác Nhận Xóa Tin Nhắn",
+      message: "Bạn có chắc chắn muốn xóa vĩnh viễn tin nhắn này khỏi hệ thống?",
       onConfirm: async () => {
         setConfirmDialog((prev) => ({ ...prev, loading: true }));
         try {
@@ -71,79 +96,99 @@ const MessageManager = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <AdminSkeletonLoader
+        title="Đang"
+        italicWord="nạp"
+        endWord="tin nhắn"
+        subtitle="Đang kéo hòm thư liên hệ — từng bức thư một, kiên nhẫn nhé!"
+        cardsCount={4}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 select-none font-sans relative">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-black/[0.06] dark:border-white/[0.08]">
         <div>
-          <span className="font-mono text-[10px] sm:text-xs text-blue-600 dark:text-blue-500 uppercase tracking-widest font-bold block mb-1">
-            INBOX / SYSTEM FEEDBACK LOGS
-          </span>
-          <h2 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            TIN NHẮN LIÊN HỆ
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-semibold mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>HỘP THƯ LIÊN HỆ KHÁCH HÀNG</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+            Tin Nhắn Liên Hệ
           </h2>
+          <p className="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+            Tổng hợp các phản hồi, lời mời phỏng vấn & dự án gửi từ form liên hệ
+          </p>
         </div>
-        <div className="bg-white dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 p-2 font-mono text-[10px] text-slate-500 dark:text-zinc-400 uppercase shadow-sm dark:shadow-none">
-          logs_count: {messages.length} total
+
+        <div className="px-4 py-2 rounded-full bg-white dark:bg-zinc-900/80 border border-black/[0.08] dark:border-white/[0.08] font-mono text-xs text-zinc-600 dark:text-zinc-300 shadow-xs">
+          Tổng số: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{messages.length}</strong> tin nhắn
         </div>
       </div>
 
-      {/* Message console feeds */}
+      {/* Message list */}
       <div className="space-y-4">
         {messages.length === 0 ? (
-          <div className="p-12 text-center border border-slate-200 dark:border-zinc-850 bg-slate-50/50 dark:bg-zinc-950/20 relative shadow-sm dark:shadow-none">
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-700" />
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-700" />
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-700" />
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-700" />
-            
-            <span className="font-mono text-xs text-slate-400 dark:text-zinc-500 italic">
-              // Không tìm thấy bất kỳ bản ghi tin nhắn nào trên hệ thống.
-            </span>
+          <div className="p-12 text-center rounded-3xl border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-zinc-900/40">
+            <MessageSquare className="w-8 h-8 text-zinc-400 mx-auto mb-3" />
+            <p className="font-mono text-xs text-zinc-500">
+              Chưa có tin nhắn liên hệ nào trong hộp thư.
+            </p>
           </div>
         ) : (
           messages.map((msg) => (
             <div
               key={msg.id}
-              className="bg-white/70 dark:bg-zinc-950/40 border border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors p-5 relative group shadow-sm dark:shadow-none"
+              className="bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-emerald-500/40 dark:hover:border-emerald-400/40 rounded-3xl p-6 relative group shadow-sm transition-all duration-300"
             >
-              {/* Technical indicators on corners */}
-              <div className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l border-slate-400 dark:border-zinc-600" />
-              <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-slate-400 dark:border-zinc-600" />
-              <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-slate-400 dark:border-zinc-600" />
-              <div className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r border-slate-400 dark:border-zinc-600" />
-
               {/* Message metadata details */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-zinc-900 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.05] pb-4">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-800 dark:text-white font-bold">
-                    <User className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <div className="flex items-center gap-2 text-zinc-950 dark:text-white font-bold text-sm">
+                    <div className="w-7 h-7 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-mono text-xs">
+                      {msg.name?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
                     <span>{msg.name}</span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-slate-500 dark:text-zinc-400 font-mono">
-                    <Mail className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
-                    <a 
-                      href={`mailto:${msg.email}`} 
-                      className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline decoration-slate-200 dark:decoration-zinc-800 hover:decoration-blue-500"
+                  <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300 font-mono">
+                    <Mail className="w-3.5 h-3.5 text-zinc-400" />
+                    <a
+                      href={`mailto:${msg.email}`}
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
                     >
                       {msg.email}
                     </a>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(msg.email)}
+                      className="p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+                      title="Sao chép email"
+                    >
+                      {copiedEmail === msg.email ? (
+                        <Check className="w-3 h-3 text-emerald-500" />
+                      ) : (
+                        <Copy className="w-3 h-3" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between md:justify-end gap-4 text-xs font-mono text-slate-400 dark:text-zinc-500">
+                <div className="flex items-center justify-between sm:justify-end gap-3 text-xs font-mono text-zinc-400">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-600" />
+                    <Clock className="w-3.5 h-3.5 text-zinc-400" />
                     <span>
-                      {new Date(msg.date || msg.created_at || "").toLocaleString("en-GB")}
+                      {new Date(msg.date || msg.created_at || "").toLocaleString("vi-VN")}
                     </span>
                   </div>
 
                   <button
                     onClick={() => handleDelete(msg.id)}
-                    className="p-1.5 border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-500/50 text-slate-550 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300"
+                    className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 border border-black/5 dark:border-white/5 transition-all cursor-pointer"
                     title="Xóa tin nhắn"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -151,13 +196,9 @@ const MessageManager = () => {
                 </div>
               </div>
 
-              {/* Message content block styled like a console text output */}
-              <div className="mt-4 relative">
-                <div className="absolute top-2.5 left-3 flex items-center gap-1.5 text-slate-400 dark:text-zinc-600 font-mono text-[9px] pointer-events-none select-none uppercase">
-                  <Terminal className="w-2.5 h-2.5" />
-                  <span>message_output_stream</span>
-                </div>
-                <p className="font-mono text-xs text-slate-800 dark:text-zinc-300 bg-slate-50 dark:bg-[#040405] border border-slate-150 dark:border-zinc-900/60 pl-4 pr-4 pt-7 pb-4 rounded-none leading-relaxed whitespace-pre-wrap">
+              {/* Message content */}
+              <div className="mt-4">
+                <p className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 bg-zinc-50/80 dark:bg-zinc-800/40 border border-black/[0.04] dark:border-white/[0.04] p-4 rounded-2xl leading-relaxed whitespace-pre-wrap font-sans">
                   {msg.message}
                 </p>
               </div>
@@ -166,25 +207,19 @@ const MessageManager = () => {
         )}
       </div>
 
-      {/* Cyber Confirm Dialog */}
+      {/* Modern Confirm Dialog */}
       {confirmDialog.isOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-[#000000bd] backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 p-6 max-w-md w-full relative select-none shadow-xl dark:shadow-none">
-            {/* Blueprint Frame corner indicators */}
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-650" />
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-650" />
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-650" />
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-650" />
-
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-950 border border-black/10 dark:border-white/10 p-6 sm:p-7 rounded-3xl max-w-md w-full relative select-none shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start gap-4 mb-5">
-              <div className="p-3 border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-500 rounded-none">
-                <AlertCircle className="w-6 h-6 animate-pulse" />
+              <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500 shrink-0">
+                <AlertCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="font-mono text-sm font-bold uppercase tracking-wider text-red-605 dark:text-red-400">
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">
                   {confirmDialog.title}
                 </h3>
-                <p className="text-xs text-slate-650 dark:text-zinc-400 font-sans leading-relaxed">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-mono leading-relaxed">
                   {confirmDialog.message}
                 </p>
               </div>
@@ -193,23 +228,23 @@ const MessageManager = () => {
             <div className="flex items-center justify-end gap-3 font-mono text-xs">
               <button
                 onClick={() => setConfirmDialog((prev) => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-400 font-bold transition-all"
+                className="px-4 py-2 rounded-full border border-black/10 dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-medium transition-all cursor-pointer"
                 disabled={confirmDialog.loading}
               >
-                HỦY BỎ
+                Hủy bỏ
               </button>
               <button
                 onClick={confirmDialog.onConfirm}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold transition-all flex items-center gap-2"
+                className="px-5 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold transition-all flex items-center gap-2 shadow-md cursor-pointer"
                 disabled={confirmDialog.loading}
               >
                 {confirmDialog.loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    ĐANG XÓA...
+                    <span>Đang xóa...</span>
                   </>
                 ) : (
-                  "XÁC NHẬN XÓA"
+                  "Xác nhận xóa"
                 )}
               </button>
             </div>
@@ -217,32 +252,22 @@ const MessageManager = () => {
         </div>
       )}
 
-      {/* Floating Cyber Toasts Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] space-y-3 pointer-events-none">
+      {/* Floating Toasts Container */}
+      <div className="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`p-4 border font-mono text-xs uppercase tracking-wider backdrop-blur-md min-w-[280px] shadow-lg flex items-center gap-3 animate-fade-in pointer-events-auto rounded-none relative ${
+            className={`p-4 rounded-2xl border font-mono text-xs shadow-xl flex items-center gap-3 backdrop-blur-xl pointer-events-auto animate-in slide-in-from-bottom-5 duration-200 ${
               t.type === "success"
-                ? "bg-emerald-50/95 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
+                ? "bg-emerald-50/95 dark:bg-emerald-950/90 border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
                 : t.type === "error"
-                ? "bg-red-50/95 dark:bg-red-950/80 border-red-300 dark:border-red-500 text-red-700 dark:text-red-400"
-                : "bg-amber-50/95 dark:bg-amber-950/80 border-amber-300 dark:border-amber-500 text-amber-700 dark:text-amber-400"
+                ? "bg-rose-50/95 dark:bg-rose-950/90 border-rose-500/30 text-rose-800 dark:text-rose-300"
+                : "bg-amber-50/95 dark:bg-amber-950/90 border-amber-500/30 text-amber-800 dark:text-amber-300"
             }`}
           >
-            {/* Vertical neon accent indicator */}
-            <div
-              className={`absolute left-0 top-0 bottom-0 w-1 ${
-                t.type === "success"
-                  ? "bg-emerald-500"
-                  : t.type === "error"
-                  ? "bg-red-500"
-                  : "bg-amber-500"
-              }`}
-            />
-            {t.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce text-emerald-600 dark:text-emerald-400" />}
-            {t.type === "error" && <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600 dark:text-red-400 animate-ping" />}
-            {t.type === "warning" && <HelpCircle className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />}
+            {t.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />}
+            {t.type === "error" && <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />}
+            {t.type === "warning" && <HelpCircle className="w-5 h-5 text-amber-500 shrink-0" />}
             <span>{t.text}</span>
           </div>
         ))}

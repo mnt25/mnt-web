@@ -1,12 +1,31 @@
 import { useState, useEffect } from "react";
-import { Save, FileText, Terminal, Link, Shield, Loader2, CheckCircle2, AlertTriangle, HelpCircle } from "lucide-react";
+import {
+  Save,
+  FileText,
+  Link,
+  Shield,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  HelpCircle,
+  ExternalLink,
+  Sparkles,
+  User,
+  GraduationCap,
+  Award,
+  Globe,
+  MapPin,
+  Mail,
+} from "lucide-react";
 import { api } from "../../../server/api";
+import AdminSkeletonLoader from "./AdminSkeletonLoader";
 
 const CVManager = () => {
   const [cvLink, setCvLink] = useState("");
   const [isEnabled, setIsEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   // Styled Toast States
   const [toasts, setToasts] = useState<{ id: string; type: "success" | "error" | "warning"; text: string }[]>([]);
@@ -24,12 +43,14 @@ const CVManager = () => {
       try {
         const [cvData, statusData] = await Promise.all([
           api.getAdminCVLink(),
-          api.getAccountStatus()
+          api.getAccountStatus(),
         ]);
         setCvLink(cvData.link);
         setIsEnabled(statusData.enabled);
       } catch (err) {
         console.error("Lỗi khi tải cấu hình CV:", err);
+      } finally {
+        setInitialLoading(false);
       }
     };
     fetchData();
@@ -40,9 +61,9 @@ const CVManager = () => {
     try {
       const success = await api.updateCVLink(cvLink);
       if (success) {
-        showToast("Đã cập nhật và lưu trữ đường dẫn CV thành công!", "success");
+        showToast("Đã lưu và cập nhật đường dẫn CV thành công!", "success");
       } else {
-        showToast("Gặp sự cố trong quá trình đồng bộ hóa đường dẫn CV!", "error");
+        showToast("Gặp sự cố khi lưu đường dẫn CV!", "error");
       }
     } catch (err) {
       console.error(err);
@@ -62,8 +83,8 @@ const CVManager = () => {
         setIsEnabled(nextState);
         showToast(
           nextState 
-            ? "Đã cho phép khách tải CV công khai!" 
-            : "Đã tắt quyền tải CV của khách công cộng!", 
+            ? "Đã bật: Khách truy cập có thể xem trực tiếp CV trên web!" 
+            : "Đã tắt: Khi khách bấm xem CV sẽ hiển thị thông báo bảo trì!", 
           "success"
         );
       } else {
@@ -77,152 +98,277 @@ const CVManager = () => {
     }
   };
 
+  if (initialLoading) {
+    return (
+      <AdminSkeletonLoader
+        title="Đang"
+        italicWord="nạp"
+        endWord="hồ sơ cá nhân"
+        subtitle="Đang tải dữ liệu hồ sơ và liên kết CV — kiên nhẫn một chút nhé!"
+        cardsCount={3}
+      />
+    );
+  }
+
   return (
-    <div className="max-w-3xl space-y-6 select-none font-sans relative">
-      {/* Header */}
-      <div className="pb-4 border-b border-slate-200 dark:border-zinc-800/80">
-        <span className="font-mono text-[10px] sm:text-xs text-blue-600 dark:text-blue-500 uppercase tracking-widest font-bold block mb-1">
-          CV STORAGE PATH & ACCESS CONTROL
-        </span>
-        <h2 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white flex items-center gap-2">
-          <FileText className="w-6 h-6 text-blue-600 dark:text-blue-405" />
-          QUẢN LÝ CV CỦA BẠN
+    <div className="max-w-4xl space-y-8 select-none font-sans relative pb-10 animate-in fade-in duration-200">
+      {/* Header Section */}
+      <div className="pb-6 border-b border-black/[0.06] dark:border-white/[0.08]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-semibold mb-2">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>HỒ SƠ CÁ NHÂN & CẤU HÌNH CV</span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+          Quản Lý Hồ Sơ & CV
         </h2>
+        <p className="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+          Xem thông tin chuyên môn, chứng chỉ đào tạo và cấu hình đường dẫn tài liệu CV trực tuyến
+        </p>
       </div>
 
-      {/* Control Box */}
-      <div className="bg-white/70 dark:bg-zinc-950/45 backdrop-blur-md p-6 border border-slate-200 dark:border-zinc-800 rounded-none relative shadow-sm dark:shadow-none">
-        {/* Corner tech indicators */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-700" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-700" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-700" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-700" />
+      {/* SECTION 1: Cấu hình Liên kết CV & Trạng thái truy cập */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] shadow-sm space-y-6 relative overflow-hidden">
+        {/* Top gradient accent bar */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-blue-500" />
 
-        <div className="space-y-6">
-          {/* Link config */}
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+            <FileText className="w-5 h-5" />
+          </div>
           <div>
-            <label className="block font-mono text-[10px] text-slate-500 dark:text-zinc-500 uppercase tracking-widest mb-2.5">
-              Đường dẫn tải xuống CV (Google Drive, Dropbox, iCloud...)
-            </label>
+            <h3 className="text-base font-bold text-zinc-950 dark:text-white">
+              Cấu Hình Liên Kết CV Trực Tuyến
+            </h3>
+            <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Đường dẫn Google Drive file PDF hiển thị trực tiếp trong Live Preview Modal
+            </p>
+          </div>
+        </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={cvLink}
-                  onChange={(e) => setCvLink(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950/40 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none font-mono text-xs transition-all duration-300"
-                  placeholder="https://..."
-                />
-                <Link className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-zinc-600" />
+        {/* Link input area */}
+        <div className="space-y-2 pt-2">
+          <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+            Đường dẫn Google Drive CV (hoặc link PDF trực tiếp):
+          </label>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                <Link className="w-4 h-4" />
               </div>
-
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-2 rounded-none shadow-sm disabled:opacity-50 min-w-[170px]"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    ĐANG LƯU...
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    LƯU ĐƯỜNG DẪN
-                  </>
-                )}
-              </button>
+              <input
+                type="text"
+                value={cvLink}
+                onChange={(e) => setCvLink(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-black/10 dark:border-white/10 text-zinc-900 dark:text-white text-xs sm:text-sm outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 font-mono transition-all"
+                placeholder="https://drive.google.com/file/d/.../view"
+              />
             </div>
+
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className="px-6 py-2.5 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-xs font-mono font-semibold transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 disabled:opacity-50 min-w-[150px] cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
+                  <span>Đang lưu...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Lưu Đường Dẫn</span>
+                </>
+              )}
+            </button>
           </div>
 
-          {/* Toggle Switch */}
-          <div className="pt-6 border-t border-slate-250 dark:border-zinc-900 space-y-3">
-            <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900 rounded-none relative">
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500" />
-              <div>
-                <span className="block font-mono text-xs font-bold text-slate-700 dark:text-zinc-300 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  CHO PHÉP KHÁCH TẢI CV
-                </span>
-                <p className="text-xs font-mono text-slate-500 dark:text-zinc-400 mt-1 uppercase">
-                  Tự động vô hiệu hóa luồng tải file CV của bạn từ API công cộng khi được tắt.
-                </p>
-              </div>
+          {cvLink && cvLink !== "#" && (
+            <div className="pt-1">
+              <a
+                href={cvLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-600 dark:text-cyan-400 hover:underline"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Kiểm tra mở liên kết trực tiếp trên tab mới</span>
+              </a>
+            </div>
+          )}
+        </div>
 
-              {/* High-tech Neon Toggle Switch with ON/OFF Labels */}
-              <button
-                onClick={handleToggle}
-                disabled={toggleLoading}
-                className={`relative inline-flex h-7 w-20 items-center rounded-none transition-all duration-300 outline-none border font-mono text-[9px] font-extrabold tracking-widest select-none ${
-                  isEnabled
-                    ? "bg-blue-600/10 border-blue-500/80 shadow-[0_0_8px_rgba(59,130,246,0.25)]"
-                    : "bg-slate-100 dark:bg-zinc-950 border-slate-200 dark:border-zinc-800 text-slate-400 dark:text-zinc-650"
+        {/* Toggle Switch */}
+        <div className="pt-4 border-t border-black/5 dark:border-white/5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-cyan-500" />
+                <span className="text-sm font-bold text-zinc-950 dark:text-white">
+                  Cho Phép Khách Xem CV Trực Tuyến
+                </span>
+              </div>
+              <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Khi tắt: Khách bấm vào nút CV trên trang chủ sẽ nhận được thông báo bảo trì cùng thông tin liên hệ.
+              </p>
+            </div>
+
+            {/* Modern iOS Style Switch Toggle */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isEnabled}
+              onClick={handleToggle}
+              disabled={toggleLoading}
+              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
+                isEnabled ? "bg-cyan-500" : "bg-zinc-300 dark:bg-zinc-700"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out flex items-center justify-center ${
+                  isEnabled ? "translate-x-7" : "translate-x-0"
                 }`}
               >
                 {toggleLoading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto text-blue-600 dark:text-blue-400" />
+                  <Loader2 className="w-3 h-3 text-zinc-500 animate-spin" />
                 ) : (
-                  <>
-                    {/* Background inactive states */}
-                    <span className="absolute left-2.5 text-slate-400 dark:text-zinc-600">OFF</span>
-                    <span className="absolute right-3.5 text-blue-600/50 dark:text-blue-400/50">ON</span>
-                    
-                    {/* Sliding Knob representing active state */}
-                    <span
-                      className={`absolute top-0.5 bottom-0.5 w-[36px] flex items-center justify-center font-mono text-[9px] font-extrabold text-white transition-all duration-300 ${
-                        isEnabled
-                          ? "left-[40px] bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"
-                          : "left-[2px] bg-slate-400 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 text-white dark:text-zinc-400"
-                      }`}
-                    >
-                      {isEnabled ? "ON" : "OFF"}
-                    </span>
-                  </>
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      isEnabled ? "bg-cyan-500" : "bg-zinc-400"
+                    }`}
+                  />
                 )}
-              </button>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: Thông tin Hồ sơ cá nhân (Profile Overview) */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] shadow-sm space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+            <User className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-zinc-950 dark:text-white">
+              Thông Tin Hồ Sơ Chuyên Môn
+            </h3>
+            <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400">
+              Tổng quan thông tin kỹ sư phần mềm & AI đang hiển thị trên trang chủ
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 space-y-1">
+            <span className="text-[11px] font-mono text-zinc-400 block">HỌ VÀ TÊN</span>
+            <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100 block">Phạm Sơn</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 space-y-1">
+            <span className="text-[11px] font-mono text-zinc-400 block">CHỨC DANH</span>
+            <span className="text-sm font-bold text-cyan-600 dark:text-cyan-400 block">Software & AI Engineer</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 space-y-1">
+            <span className="text-[11px] font-mono text-zinc-400 block flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-cyan-500" /> ĐỊA ĐIỂM LÀM VIỆC
+            </span>
+            <span className="text-xs font-mono text-zinc-800 dark:text-zinc-200 block">Hà Nội, Việt Nam</span>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 space-y-1">
+            <span className="text-[11px] font-mono text-zinc-400 block flex items-center gap-1">
+              <Mail className="w-3 h-3 text-cyan-500" /> EMAIL CHÍNH THỨC
+            </span>
+            <span className="text-xs font-mono text-zinc-800 dark:text-zinc-200 block">phamson.work@gmail.com</span>
+          </div>
+        </div>
+
+        {/* Bằng cấp & Chứng chỉ */}
+        <div className="pt-2 space-y-3">
+          <span className="text-xs font-mono text-zinc-500 font-semibold uppercase flex items-center gap-1.5">
+            <GraduationCap className="w-4 h-4 text-cyan-500" /> Bằng Cấp & Chứng Chỉ Đào Tạo Đã Xác Thực
+          </span>
+
+          <div className="space-y-2.5">
+            <div className="p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Award className="w-4 h-4 text-cyan-500 shrink-0" />
+                <div>
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 block">
+                    BTEC Higher National Diploma in Computing (Software Engineering)
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-500">Cao Đẳng Anh Quốc BTEC FPT</span>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold shrink-0">
+                Đã Tốt Nghiệp
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Award className="w-4 h-4 text-cyan-500 shrink-0" />
+                <div>
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 block">
+                    Chương trình Đào tạo Nhân tài AI Thực chiến (Track AI Applications)
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-500">VinUni & Tập đoàn Vingroup</span>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-semibold shrink-0">
+                Chứng Chỉ AI
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-zinc-50/80 dark:bg-zinc-800/40 border border-black/5 dark:border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Award className="w-4 h-4 text-cyan-500 shrink-0" />
+                <div>
+                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 block">
+                    Chứng Chỉ Tiếng Anh Chuẩn B2
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-500">Hệ Thống Giáo Dục FPT</span>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-semibold shrink-0">
+                B2 Level
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Decorative mechanical notes for futuristic feeling */}
-      <div className="p-4 bg-slate-50 dark:bg-zinc-950/20 border border-slate-200 dark:border-zinc-900 font-mono text-xs text-slate-500 dark:text-zinc-400 uppercase leading-relaxed space-y-1 shadow-sm dark:shadow-none">
-        <div className="flex items-center gap-1.5 text-slate-700 dark:text-zinc-300 font-bold">
-          <Terminal className="w-3.5 h-3.5" />
-          <span>HƯỚNG DẪN CẤU HÌNH</span>
+      {/* Guide Card */}
+      <div className="p-5 rounded-2xl bg-zinc-100/70 dark:bg-zinc-900/40 border border-black/5 dark:border-white/5 font-mono text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5">
+        <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-200">
+          <Globe className="w-4 h-4 text-cyan-500" />
+          <span>Đồng bộ hóa tức thì trên trang chủ:</span>
         </div>
-        <p>// 1. Hãy đảm bảo link CV ở trạng thái "Bất kỳ ai có liên kết đều có thể truy cập" (Anyone with the link can view).</p>
-        <p>// 2. Tránh sử dụng liên kết rút gọn để tăng tính ổn định của đường dẫn tải xuống.</p>
+        <p className="pl-6 leading-relaxed">
+          Mọi thay đổi về đường dẫn CV hoặc trạng thái hiển thị đều được đồng bộ ngay lập tức với nút <strong>"CV"</strong> trên thanh điều hướng và màn hình Hero trang chủ.
+        </p>
       </div>
 
-      {/* Floating Cyber Toasts Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] space-y-3 pointer-events-none">
+      {/* Toasts Container */}
+      <div className="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`p-4 border font-mono text-xs uppercase tracking-wider backdrop-blur-md min-w-[280px] shadow-lg flex items-center gap-3 animate-fade-in pointer-events-auto rounded-none relative ${
+            className={`p-4 rounded-2xl border font-mono text-xs shadow-xl flex items-center gap-3 backdrop-blur-xl pointer-events-auto animate-in slide-in-from-bottom-5 duration-200 ${
               t.type === "success"
-                ? "bg-emerald-50/95 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
+                ? "bg-emerald-50/95 dark:bg-emerald-950/90 border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
                 : t.type === "error"
-                ? "bg-red-50/95 dark:bg-red-950/80 border-red-300 dark:border-red-500 text-red-700 dark:text-red-400"
-                : "bg-amber-50/95 dark:bg-amber-950/80 border-amber-300 dark:border-amber-500 text-amber-700 dark:text-amber-400"
+                ? "bg-rose-50/95 dark:bg-rose-950/90 border-rose-500/30 text-rose-800 dark:text-rose-300"
+                : "bg-amber-50/95 dark:bg-amber-950/90 border-amber-500/30 text-amber-800 dark:text-amber-300"
             }`}
           >
-            {/* Vertical neon accent indicator */}
-            <div
-              className={`absolute left-0 top-0 bottom-0 w-1 ${
-                t.type === "success"
-                  ? "bg-emerald-500"
-                  : t.type === "error"
-                  ? "bg-red-500"
-                  : "bg-amber-500"
-              }`}
-            />
-            {t.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce text-emerald-600 dark:text-emerald-400" />}
-            {t.type === "error" && <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600 dark:text-red-400 animate-ping" />}
-            {t.type === "warning" && <HelpCircle className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />}
+            {t.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />}
+            {t.type === "error" && <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />}
+            {t.type === "warning" && <HelpCircle className="w-5 h-5 text-amber-500 shrink-0" />}
             <span>{t.text}</span>
           </div>
         ))}

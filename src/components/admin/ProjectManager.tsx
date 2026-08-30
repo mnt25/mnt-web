@@ -1,13 +1,35 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Plus, Trash2, Edit, X, Eye, EyeOff, Terminal, Calendar, Code, Link2, Loader2, CheckCircle2, AlertTriangle, HelpCircle, AlertCircle, GripVertical, ArrowUpDown } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Edit,
+  X,
+  Eye,
+  EyeOff,
+  Calendar,
+  Code,
+  Link2,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  HelpCircle,
+  AlertCircle,
+  GripVertical,
+  ArrowUpDown,
+  Sparkles,
+  FolderKanban,
+} from "lucide-react";
 import { api } from "../../../server/api";
 import type { Project } from "../../types/project";
+import AdminSkeletonLoader from "./AdminSkeletonLoader";
 
 const ProjectManager = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const [togglingVisibilityId, setTogglingVisibilityId] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   // Drag-and-drop state
   const dragIndexRef = useRef<number | null>(null);
@@ -64,10 +86,12 @@ const ProjectManager = () => {
       setProjects(result);
     } catch (err) {
       console.error("Lỗi tải danh sách dự án:", err);
+    } finally {
+      setInitialLoading(false);
     }
   };
 
-  // ── Drag & Drop handlers ──────────────────────────────────────────────
+  // Drag & Drop handlers
   const handleDragStart = (index: number) => {
     dragIndexRef.current = index;
   };
@@ -78,31 +102,26 @@ const ProjectManager = () => {
   };
 
   const handleDrop = async (dropIndex: number) => {
-    const fromIndex = dragIndexRef.current;
-    if (fromIndex === null || fromIndex === dropIndex) {
-      dragIndexRef.current = null;
-      setDragOverIndex(null);
-      return;
-    }
+    const dragIndex = dragIndexRef.current;
+    if (dragIndex === null || dragIndex === dropIndex) return;
 
-    // Reorder local list
     const reordered = [...projects];
-    const [moved] = reordered.splice(fromIndex, 1);
+    const [moved] = reordered.splice(dragIndex, 1);
     reordered.splice(dropIndex, 0, moved);
+
     setProjects(reordered);
     dragIndexRef.current = null;
     setDragOverIndex(null);
 
-    // Persist order to backend
     setIsSavingOrder(true);
     try {
-      const orderPayload = reordered.map((p, i) => ({ id: p.id, sort_order: i }));
+      const orderPayload = reordered.map((p, idx) => ({ id: p.id, sort_order: idx + 1 }));
       const ok = await api.reorderProjects(orderPayload);
       if (ok) {
-        showToast("Đã lưu thứ tự dự án!", "success");
+        showToast("Đã lưu thứ tự dự án thành công!", "success");
       } else {
-        showToast("Không thể lưu thứ tự. Thử lại!", "error");
-        loadProjects(); // revert
+        showToast("Không thể lưu thứ tự. Vui lòng thử lại!", "error");
+        loadProjects();
       }
     } finally {
       setIsSavingOrder(false);
@@ -146,8 +165,8 @@ const ProjectManager = () => {
   const handleDelete = (id: string) => {
     setConfirmDialog({
       isOpen: true,
-      title: "XÁC NHẬN XÓA DỰ ÁN",
-      message: "Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa vĩnh viễn dự án này khỏi hệ thống?",
+      title: "Xác Nhận Xóa Dự Án",
+      message: "Hành động này sẽ xóa vĩnh viễn dự án khỏi danh mục hiển thị trên website.",
       onConfirm: async () => {
         setConfirmDialog((prev) => ({ ...prev, loading: true }));
         try {
@@ -200,6 +219,8 @@ const ProjectManager = () => {
   };
 
   const toggleVisibility = async (p: Project) => {
+    if (togglingVisibilityId) return;
+    setTogglingVisibilityId(p.id);
     try {
       const updated = { ...p, isVisible: !p.isVisible };
       const result = await api.updateProject(updated);
@@ -210,6 +231,8 @@ const ProjectManager = () => {
     } catch (err) {
       console.error("Lỗi cập nhật hiển thị dự án:", err);
       showToast("Lỗi kết nối máy chủ!", "error");
+    } finally {
+      setTogglingVisibilityId(null);
     }
   };
 
@@ -229,58 +252,68 @@ const ProjectManager = () => {
     });
   };
 
+  if (initialLoading) {
+    return (
+      <AdminSkeletonLoader
+        title="Đang"
+        italicWord="nạp"
+        endWord="dự án"
+        subtitle="Đang chạy danh mục dự án qua hệ thống — từng dự án một, kiên nhẫn nhé!"
+        cardsCount={6}
+      />
+    );
+  }
+
   return (
-    <div className="space-y-6 select-none">
+    <div className="space-y-6 select-none font-sans">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-black/[0.06] dark:border-white/[0.08]">
         <div>
-          <span className="font-mono text-[10px] sm:text-xs text-blue-600 dark:text-blue-500 uppercase tracking-widest font-bold block mb-1">
-            PROJECT MANAGER MODULE
-          </span>
-          <h2 className="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
-            QUẢN LÝ DỰ ÁN
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-mono font-semibold mb-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>DANH MỤC SẢN PHẨM & DỰ ÁN</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">
+            Quản Lý Dự Án
           </h2>
+          <p className="text-xs sm:text-sm font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+            Thêm mới, chỉnh sửa nội dung song ngữ, kéo thả sắp xếp thứ tự hiển thị
+          </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {isSavingOrder && (
-            <span className="flex items-center gap-1.5 font-mono text-[10px] text-blue-600 dark:text-blue-400 uppercase">
-              <Loader2 className="w-3 h-3 animate-spin" /> Đang lưu thứ tự...
+            <span className="flex items-center gap-1.5 font-mono text-xs text-cyan-600 dark:text-cyan-400">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Đang lưu thứ tự...
             </span>
           )}
-          <span className="hidden sm:flex items-center gap-1.5 font-mono text-[10px] text-slate-400 dark:text-zinc-500 uppercase">
-            <ArrowUpDown className="w-3 h-3" /> Kéo để sắp xếp
+          <span className="hidden sm:flex items-center gap-1.5 font-mono text-xs text-zinc-400 dark:text-zinc-500">
+            <ArrowUpDown className="w-3.5 h-3.5" /> Kéo hàng để đổi vị trí
           </span>
           <button
             onClick={handleAddNew}
-            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs uppercase tracking-wider font-bold transition-all duration-300 flex items-center justify-center gap-2 rounded-none border border-blue-500/50 shadow-sm hover:shadow-md"
+            className="px-5 py-2.5 bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-mono text-xs font-semibold rounded-full shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Thêm dự án mới
+            <Plus className="w-4 h-4 text-cyan-400 dark:text-cyan-600" /> Thêm dự án mới
           </button>
         </div>
       </div>
 
-      {/* Cyber Grid Table */}
-      <div className="bg-white/70 dark:bg-zinc-950/45 backdrop-blur-md border border-slate-200 dark:border-zinc-800 rounded-none overflow-hidden relative shadow-sm dark:shadow-none">
-        {/* Corner blueprint lines */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-700" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-700" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-700" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-700" />
-
+      {/* Modern Card Table */}
+      <div className="bg-white dark:bg-zinc-900/60 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.08] rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/40">
+              <tr className="border-b border-black/[0.06] dark:border-white/[0.08] bg-zinc-50/80 dark:bg-zinc-900/80">
                 <th className="px-3 py-4 w-10"></th>
-                <th className="px-6 py-4 font-mono text-[10px] sm:text-xs uppercase text-slate-500 dark:text-zinc-400 tracking-wider">Tên dự án</th>
-                <th className="px-6 py-4 font-mono text-[10px] sm:text-xs uppercase text-slate-500 dark:text-zinc-400 tracking-wider">Thời gian</th>
-                <th className="px-6 py-4 font-mono text-[10px] sm:text-xs uppercase text-slate-500 dark:text-zinc-400 tracking-wider">Trạng thái</th>
-                <th className="px-6 py-4 font-mono text-[10px] sm:text-xs uppercase text-slate-500 dark:text-zinc-400 tracking-wider text-right">Thao tác</th>
+                <th className="px-6 py-4 font-mono text-xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">Tên dự án</th>
+                <th className="px-6 py-4 font-mono text-xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">Thời gian</th>
+                <th className="px-6 py-4 font-mono text-xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold">Trạng thái</th>
+                <th className="px-6 py-4 font-mono text-xs uppercase text-zinc-500 dark:text-zinc-400 font-semibold text-right">Thao tác</th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-slate-100 dark:divide-zinc-900 font-sans">
+            <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.04] font-sans">
               {projects.map((p, index) => (
                 <tr
                   key={p.id}
@@ -289,31 +322,33 @@ const ProjectManager = () => {
                   onDragOver={(e) => handleDragOver(e, index)}
                   onDrop={() => handleDrop(index)}
                   onDragEnd={handleDragEnd}
-                  className={`hover:bg-slate-50/50 dark:hover:bg-zinc-900/30 transition-colors group cursor-default
-                    ${dragOverIndex === index && dragIndexRef.current !== index
-                      ? "border-t-2 border-blue-500"
+                  className={`hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40 transition-colors group cursor-default ${
+                    dragOverIndex === index && dragIndexRef.current !== index
+                      ? "border-t-2 border-cyan-500"
                       : ""
-                    }
-                    ${dragIndexRef.current === index ? "opacity-40" : "opacity-100"}
-                  `}
+                  } ${dragIndexRef.current === index ? "opacity-40" : "opacity-100"}`}
                 >
                   {/* Drag handle */}
                   <td className="px-3 py-4 w-10">
-                    <div className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-zinc-700 hover:text-slate-500 dark:hover:text-zinc-400 transition-colors flex justify-center">
+                    <div className="cursor-grab active:cursor-grabbing text-zinc-300 dark:text-zinc-600 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors flex justify-center">
                       <GripVertical className="w-4 h-4" />
                     </div>
                   </td>
+
                   {/* Title & tags */}
                   <td className="px-6 py-4">
-                    <div className="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <div className="font-bold text-zinc-950 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                       {p.title}
                     </div>
                     {p.titleEn && (
-                      <div className="text-xs text-slate-400 dark:text-zinc-500 font-mono mt-0.5">{p.titleEn}</div>
+                      <div className="text-xs text-zinc-400 dark:text-zinc-500 font-mono mt-0.5">{p.titleEn}</div>
                     )}
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {p.tags.map((tag, idx) => (
-                        <span key={idx} className="px-2 py-0.5 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 font-mono text-[9px] text-slate-500 dark:text-zinc-400 uppercase">
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-mono text-[10px]"
+                        >
                           {tag}
                         </span>
                       ))}
@@ -321,26 +356,21 @@ const ProjectManager = () => {
                   </td>
 
                   {/* Start / End Date */}
-                  <td className="px-6 py-4 font-mono text-xs text-slate-700 dark:text-zinc-350">
+                  <td className="px-6 py-4 font-mono text-xs text-zinc-600 dark:text-zinc-300">
                     {p.startDate ? (
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
-                        <span className="inline-flex items-center gap-1">
-                          <span>{p.startDate.split("-").reverse().join("/")}</span>
-                          <span className="opacity-60 mx-0.5">—</span>
-                          <span>
-                            {p.endDate === "Present" ? (
-                              <span className="text-base font-extrabold leading-none inline-block align-middle font-sans text-blue-500 dark:text-blue-400">∞</span>
-                            ) : (
-                              p.endDate?.split("-").reverse().join("/") || (
-                                <span className="text-base font-extrabold leading-none inline-block align-middle font-sans text-blue-500 dark:text-blue-400">∞</span>
-                              )
-                            )}
-                          </span>
+                        <Calendar className="w-3.5 h-3.5 text-cyan-500" />
+                        <span>
+                          {p.startDate.split("-").reverse().join("/")} —{" "}
+                          {p.endDate === "Present" ? (
+                            <span className="font-bold text-cyan-600 dark:text-cyan-400">Hiện tại</span>
+                          ) : (
+                            p.endDate?.split("-").reverse().join("/") || "Hiện tại"
+                          )}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-slate-400 dark:text-zinc-650">// N/A</span>
+                      <span className="text-zinc-400 dark:text-zinc-600">—</span>
                     )}
                   </td>
 
@@ -348,13 +378,19 @@ const ProjectManager = () => {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => toggleVisibility(p)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 font-mono text-[10px] uppercase tracking-wider font-bold transition-all duration-300 border ${
+                      disabled={togglingVisibilityId === p.id}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-xs font-semibold transition-all border cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                         p.isVisible
-                          ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 hover:border-emerald-500 dark:hover:border-emerald-400/50"
-                          : "bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/20 hover:border-red-500 dark:hover:border-red-400/50"
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400 border-black/5 dark:border-white/10 hover:bg-zinc-200"
                       }`}
                     >
-                      {p.isVisible ? (
+                      {togglingVisibilityId === p.id ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin text-cyan-500" />
+                          <span>Đang lưu...</span>
+                        </>
+                      ) : p.isVisible ? (
                         <>
                           <Eye className="w-3 h-3" /> Hiển thị
                         </>
@@ -368,10 +404,11 @@ const ProjectManager = () => {
 
                   {/* Actions (Edit / Delete) */}
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex gap-2">
+                    <div className="inline-flex gap-1.5">
                       <button
                         onClick={() => handleEdit(p)}
-                        className="p-2 border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 hover:bg-blue-50 dark:hover:bg-blue-950/20 hover:border-blue-500/50 text-slate-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
+                        disabled={togglingVisibilityId !== null || isSavingOrder}
+                        className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-cyan-500/10 text-zinc-600 dark:text-zinc-300 hover:text-cyan-600 dark:hover:text-cyan-400 border border-black/5 dark:border-white/5 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                         title="Sửa thông tin"
                       >
                         <Edit className="w-4 h-4" />
@@ -379,7 +416,8 @@ const ProjectManager = () => {
 
                       <button
                         onClick={() => handleDelete(p.id)}
-                        className="p-2 border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-500/50 text-slate-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300"
+                        disabled={togglingVisibilityId !== null || isSavingOrder}
+                        className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 hover:bg-rose-500/10 text-zinc-600 dark:text-zinc-300 hover:text-rose-600 dark:hover:text-rose-400 border border-black/5 dark:border-white/5 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                         title="Xóa dự án"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -391,8 +429,8 @@ const ProjectManager = () => {
 
               {projects.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center py-10 font-mono text-slate-400 dark:text-zinc-500">
-                    // Không tìm thấy dữ liệu dự án trên máy chủ.
+                  <td colSpan={5} className="text-center py-12 font-mono text-zinc-400 dark:text-zinc-500 text-sm">
+                    Chưa có dự án nào trong hệ thống. Hãy bấm nút "Thêm dự án mới" để bắt đầu.
                   </td>
                 </tr>
               )}
@@ -401,59 +439,60 @@ const ProjectManager = () => {
         </div>
       </div>
 
-      {/* Cyber Blueprint Edit / Create Modal */}
+      {/* Edit / Create Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/85 flex items-center justify-center z-50 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white dark:bg-[#09090b]/95 border border-slate-200 dark:border-zinc-800 w-full max-w-2xl relative rounded-none shadow-2xl flex flex-col max-h-[90vh]">
-            
-            {/* Modal Tech Brackets */}
-            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-blue-650" />
-            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-blue-650" />
-            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-blue-650" />
-            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-blue-650" />
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white dark:bg-zinc-950 border border-black/10 dark:border-white/10 w-full max-w-2xl relative rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Top gradient accent bar */}
+            <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-teal-400 to-blue-500 shrink-0" />
 
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-zinc-800">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-5 h-5 text-blue-600 dark:text-blue-500" />
-                <h3 className="font-mono text-sm uppercase tracking-wider font-extrabold text-slate-800 dark:text-white">
-                  {editingProject ? "CẬP NHẬT DỰ ÁN" : "TẠO DỰ ÁN MỚI"}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-black/5 dark:border-white/10 bg-zinc-50/70 dark:bg-zinc-900/70">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+                  <FolderKanban className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">
+                  {editingProject ? "Cập Nhật Thông Tin Dự Án" : "Thêm Dự Án Mới"}
                 </h3>
               </div>
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-450 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
+                className="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body / Form */}
-            <form onSubmit={submitForm} className="p-6 space-y-5 overflow-y-auto flex-1 font-mono text-xs">
-              
+            <form onSubmit={submitForm} className="p-6 sm:p-7 space-y-5 overflow-y-auto flex-1 font-sans text-xs sm:text-sm">
               {/* Form public visibility toggle */}
-              <div className="flex items-center gap-2 p-3 bg-slate-50 dark:bg-zinc-950 border border-slate-150 dark:border-zinc-900">
-                <label className="flex items-center cursor-pointer gap-3 select-none">
+              <div className="flex items-center gap-2 p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-black/5 dark:border-white/5">
+                <label className="flex items-center cursor-pointer gap-3 select-none w-full">
                   <input
                     type="checkbox"
                     checked={formData.isVisible}
                     onChange={(e) =>
                       setFormData({ ...formData, isVisible: e.target.checked })
                     }
-                    className="w-4 h-4 bg-slate-100 dark:bg-zinc-900 border-slate-200 dark:border-zinc-850 text-blue-655 focus:ring-0 focus:ring-offset-0 rounded-none cursor-pointer"
+                    className="w-4 h-4 rounded text-cyan-500 focus:ring-cyan-500/20 cursor-pointer"
                   />
-                  <span className="text-slate-700 dark:text-zinc-300 font-bold uppercase tracking-wider">CÔNG KHAI DỰ ÁN TRÊN PORTFOLIO</span>
+                  <span className="text-zinc-800 dark:text-zinc-200 font-semibold font-mono text-xs">
+                    Công khai dự án này trên trang Portfolio
+                  </span>
                 </label>
               </div>
 
               {/* Vietnamese Title */}
               <div className="space-y-1.5">
-                <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Tên dự án (Tiếng Việt) *</label>
+                <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  Tên dự án (Tiếng Việt) *
+                </label>
                 <input
                   required
-                  placeholder="Nhập tên dự án..."
-                  className="w-full px-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300"
+                  placeholder="Ví dụ: AI Real Estate Assistant..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono text-xs"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
@@ -461,10 +500,12 @@ const ProjectManager = () => {
 
               {/* English Title */}
               <div className="space-y-1.5">
-                <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Tên dự án (Tiếng Anh)</label>
+                <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  Tên dự án (Tiếng Anh)
+                </label>
                 <input
-                  placeholder="Enter project name in English..."
-                  className="w-full px-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300"
+                  placeholder="English title..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono text-xs"
                   value={formData.titleEn || ""}
                   onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
                 />
@@ -472,12 +513,14 @@ const ProjectManager = () => {
 
               {/* Vietnamese Description */}
               <div className="space-y-1.5">
-                <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Mô tả dự án (Tiếng Việt) *</label>
+                <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  Mô tả chi tiết (Tiếng Việt) *
+                </label>
                 <textarea
                   required
                   rows={3}
-                  placeholder="Nhập chi tiết mô tả dự án..."
-                  className="w-full px-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300 resize-none"
+                  placeholder="Mô tả công nghệ, tính năng cốt lõi của dự án..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono text-xs resize-none"
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -487,11 +530,13 @@ const ProjectManager = () => {
 
               {/* English Description */}
               <div className="space-y-1.5">
-                <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Mô tả dự án (Tiếng Anh)</label>
+                <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  Mô tả chi tiết (Tiếng Anh)
+                </label>
                 <textarea
                   rows={3}
-                  placeholder="Enter project description in English..."
-                  className="w-full px-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300 resize-none"
+                  placeholder="English description..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all font-mono text-xs resize-none"
                   value={formData.descriptionEn || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, descriptionEn: e.target.value })
@@ -503,65 +548,73 @@ const ProjectManager = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Image Link */}
                 <div className="space-y-1.5">
-                  <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">URL Hình ảnh dự án *</label>
+                  <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                    URL Ảnh bìa dự án *
+                  </label>
                   <div className="relative">
                     <input
                       required
                       placeholder="https://..."
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 font-mono text-xs transition-all"
                       value={formData.image}
                       onChange={(e) =>
                         setFormData({ ...formData, image: e.target.value })
                       }
                     />
-                    <Link2 className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-zinc-600" />
+                    <Link2 className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
                   </div>
                 </div>
 
                 {/* Demo URL */}
                 <div className="space-y-1.5">
-                  <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">URL Demo (Live Demo)</label>
+                  <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                    URL Trải nghiệm (Live Demo)
+                  </label>
                   <div className="relative">
                     <input
                       placeholder="https://..."
-                      className="w-full pl-9 pr-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300"
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 font-mono text-xs transition-all"
                       value={formData.liveDemo}
                       onChange={(e) =>
                         setFormData({ ...formData, liveDemo: e.target.value })
                       }
                     />
-                    <Link2 className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-zinc-600" />
+                    <Link2 className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
                   </div>
                 </div>
               </div>
 
               {/* Source Code */}
               <div className="space-y-1.5">
-                <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">URL Mã nguồn (Source Code GitHub)</label>
+                <label className="block text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                  URL Mã nguồn GitHub
+                </label>
                 <div className="relative">
                   <input
                     placeholder="https://github.com/..."
-                    className="w-full pl-9 pr-3 py-2.5 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 dark:focus:border-cyan-500 focus:ring-1 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 outline-none transition-all duration-300"
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 font-mono text-xs transition-all"
                     value={formData.sourceCode}
                     onChange={(e) =>
                       setFormData({ ...formData, sourceCode: e.target.value })
                     }
                   />
-                  <Code className="absolute left-3 top-3 w-4 h-4 text-slate-400 dark:text-zinc-600" />
+                  <Code className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
                 </div>
               </div>
 
               {/* Project duration settings */}
-              <div className="border-t border-slate-200 dark:border-zinc-800/80 pt-4">
-                <span className="block font-mono text-[10px] text-slate-500 dark:text-zinc-500 uppercase tracking-widest mb-3">DURATION SETTINGS</span>
+              <div className="pt-2">
+                <span className="block font-mono text-xs text-zinc-500 font-semibold mb-3 uppercase">
+                  Thời Gian Thực Hiện Dự Án
+                </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Start Date */}
                   <div className="space-y-1.5">
-                    <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Tháng bắt đầu *</label>
+                    <label className="block text-xs font-mono text-zinc-600 dark:text-zinc-400">Tháng bắt đầu *</label>
                     <input
                       type="month"
                       required
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 outline-none text-xs"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 font-mono text-xs"
                       value={formData.startDate || ""}
                       onChange={(e) =>
                         setFormData({ ...formData, startDate: e.target.value })
@@ -572,8 +625,8 @@ const ProjectManager = () => {
                   {/* End Date */}
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center">
-                      <label className="block text-slate-500 dark:text-zinc-500 uppercase tracking-wider">Tháng kết thúc *</label>
-                      <label className="flex items-center gap-1.5 cursor-pointer text-[10px] text-slate-500 dark:text-zinc-400 select-none">
+                      <label className="block text-xs font-mono text-zinc-600 dark:text-zinc-400">Tháng kết thúc *</label>
+                      <label className="flex items-center gap-1.5 cursor-pointer text-xs font-mono text-zinc-500 select-none">
                         <input
                           type="checkbox"
                           checked={formData.endDate === "Present"}
@@ -583,9 +636,9 @@ const ProjectManager = () => {
                               endDate: e.target.checked ? "Present" : "",
                             })
                           }
-                          className="w-3.5 h-3.5 bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 rounded-none cursor-pointer"
+                          className="w-3.5 h-3.5 rounded text-cyan-500 cursor-pointer"
                         />
-                        <span className="uppercase">Đang làm (Present)</span>
+                        <span>Đang làm (Hiện tại)</span>
                       </label>
                     </div>
 
@@ -593,7 +646,7 @@ const ProjectManager = () => {
                       <input
                         type="month"
                         required
-                        className="w-full px-3 py-2 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 outline-none text-xs"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 font-mono text-xs"
                         value={formData.endDate || ""}
                         onChange={(e) =>
                           setFormData({ ...formData, endDate: e.target.value })
@@ -605,15 +658,17 @@ const ProjectManager = () => {
               </div>
 
               {/* Tags Manager */}
-              <div className="border-t border-slate-200 dark:border-zinc-800/80 pt-4 space-y-3">
-                <span className="block font-mono text-[10px] text-slate-500 dark:text-zinc-500 uppercase tracking-widest">TAGS // TECHNOLOGIES</span>
+              <div className="pt-2 space-y-3">
+                <span className="block font-mono text-xs text-zinc-500 font-semibold uppercase">
+                  Nhãn Công Nghệ (Tags)
+                </span>
                 
                 <div className="flex gap-2">
                   <input
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
-                    placeholder="Thêm tag công nghệ (React, Node...)"
-                    className="flex-1 px-3 py-2 border border-slate-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-950 text-slate-900 dark:text-white rounded-none focus:border-blue-500 outline-none"
+                    placeholder="Nhập tên tag (React, FastAPI, Docker...)"
+                    className="flex-1 px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-900 dark:text-white outline-none focus:border-cyan-500 font-mono text-xs"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -625,53 +680,53 @@ const ProjectManager = () => {
                   <button
                     type="button"
                     onClick={addTag}
-                    className="px-4 py-2 border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900 hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-bold transition-all"
+                    className="px-4 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-mono text-xs font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-all cursor-pointer"
                   >
                     Thêm
                   </button>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 p-2 bg-slate-50 dark:bg-zinc-950 border border-slate-150 dark:border-zinc-900 min-h-[40px]">
+                <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-black/5 dark:border-white/5 min-h-[44px]">
                   {formData.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className="px-2 py-1 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/40 text-blue-650 dark:text-blue-400 font-mono text-[10px] uppercase flex items-center gap-1.5"
+                      className="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-mono text-xs flex items-center gap-1.5 border border-cyan-500/20"
                     >
                       {tag}
                       <button 
                         type="button" 
                         onClick={() => removeTag(i)}
-                        className="text-slate-400 hover:text-red-500 dark:text-zinc-500 dark:hover:text-red-400 transition-colors"
+                        className="text-zinc-400 hover:text-rose-500 transition-colors cursor-pointer"
                       >
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   ))}
                   {formData.tags.length === 0 && (
-                    <span className="text-slate-400 dark:text-zinc-600 italic">// Chưa có nhãn tag nào.</span>
+                    <span className="text-zinc-400 dark:text-zinc-600 font-mono text-xs italic">Chưa có tag nào được thêm.</span>
                   )}
                 </div>
               </div>
 
               {/* Submit / Cancel Footer buttons */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-zinc-800/80">
+              <div className="flex justify-end gap-3 pt-4 border-t border-black/5 dark:border-white/5">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 dark:border-zinc-800 bg-transparent hover:bg-slate-50 dark:hover:bg-zinc-900 text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors uppercase tracking-wider font-bold"
+                  className="px-5 py-2.5 rounded-full border border-black/10 dark:border-white/10 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs font-mono font-medium transition-colors cursor-pointer"
                 >
-                  Hủy
+                  Hủy bỏ
                 </button>
 
-                 <button
+                <button
                   type="submit"
                   disabled={submitLoading}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white uppercase tracking-wider font-bold transition-all disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-full bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-xs font-mono font-semibold transition-all shadow-md active:scale-95 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                 >
                   {submitLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      ĐANG LƯU...
+                      <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
+                      <span>Đang lưu...</span>
                     </>
                   ) : (
                     "Lưu dự án"
@@ -683,25 +738,19 @@ const ProjectManager = () => {
         </div>
       )}
 
-      {/* Cyber Confirm Dialog */}
+      {/* Modern Confirm Dialog */}
       {confirmDialog.isOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-[#000000bd] backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 p-6 max-w-md w-full relative select-none shadow-xl dark:shadow-none">
-            {/* Blueprint Frame corner indicators */}
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-slate-400 dark:border-zinc-650" />
-            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-slate-400 dark:border-zinc-650" />
-            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-slate-400 dark:border-zinc-650" />
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-slate-400 dark:border-zinc-650" />
-
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-950 border border-black/10 dark:border-white/10 p-6 sm:p-7 rounded-3xl max-w-md w-full relative select-none shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-start gap-4 mb-5">
-              <div className="p-3 border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-500 rounded-none">
-                <AlertCircle className="w-6 h-6 animate-pulse" />
+              <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500 shrink-0">
+                <AlertCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="font-mono text-sm font-bold uppercase tracking-wider text-red-605 dark:text-red-400">
+                <h3 className="text-base font-bold text-zinc-950 dark:text-white">
                   {confirmDialog.title}
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 font-sans leading-relaxed">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-mono leading-relaxed">
                   {confirmDialog.message}
                 </p>
               </div>
@@ -710,23 +759,23 @@ const ProjectManager = () => {
             <div className="flex items-center justify-end gap-3 font-mono text-xs">
               <button
                 onClick={() => setConfirmDialog((prev) => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-900 text-slate-500 dark:text-zinc-400 font-bold transition-all"
+                className="px-4 py-2 rounded-full border border-black/10 dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-medium transition-all cursor-pointer"
                 disabled={confirmDialog.loading}
               >
-                HỦY BỎ
+                Hủy bỏ
               </button>
               <button
                 onClick={confirmDialog.onConfirm}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold transition-all flex items-center gap-2"
+                className="px-5 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold transition-all flex items-center gap-2 shadow-md cursor-pointer"
                 disabled={confirmDialog.loading}
               >
                 {confirmDialog.loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    ĐANG XÓA...
+                    <span>Đang xóa...</span>
                   </>
                 ) : (
-                  "XÁC NHẬN XÓA"
+                  "Xác nhận xóa"
                 )}
               </button>
             </div>
@@ -734,32 +783,22 @@ const ProjectManager = () => {
         </div>
       )}
 
-      {/* Floating Cyber Toasts Container */}
-      <div className="fixed bottom-6 right-6 z-[9999] space-y-3 pointer-events-none">
+      {/* Floating Toasts Container */}
+      <div className="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`p-4 border font-mono text-xs uppercase tracking-wider backdrop-blur-md min-w-[280px] shadow-lg flex items-center gap-3 animate-fade-in pointer-events-auto rounded-none relative ${
+            className={`p-4 rounded-2xl border font-mono text-xs shadow-xl flex items-center gap-3 backdrop-blur-xl pointer-events-auto animate-in slide-in-from-bottom-5 duration-200 ${
               t.type === "success"
-                ? "bg-emerald-50/95 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500 text-emerald-700 dark:text-emerald-400"
+                ? "bg-emerald-50/95 dark:bg-emerald-950/90 border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
                 : t.type === "error"
-                ? "bg-red-50/95 dark:bg-red-950/80 border-red-300 dark:border-red-500 text-red-700 dark:text-red-400"
-                : "bg-amber-50/95 dark:bg-amber-950/80 border-amber-300 dark:border-amber-500 text-amber-700 dark:text-amber-400"
+                ? "bg-rose-50/95 dark:bg-rose-950/90 border-rose-500/30 text-rose-800 dark:text-rose-300"
+                : "bg-amber-50/95 dark:bg-amber-950/90 border-amber-500/30 text-amber-800 dark:text-amber-300"
             }`}
           >
-            {/* Vertical neon accent indicator */}
-            <div
-              className={`absolute left-0 top-0 bottom-0 w-1 ${
-                t.type === "success"
-                  ? "bg-emerald-500"
-                  : t.type === "error"
-                  ? "bg-red-500"
-                  : "bg-amber-500"
-              }`}
-            />
-            {t.type === "success" && <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce text-emerald-600 dark:text-emerald-400" />}
-            {t.type === "error" && <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-600 dark:text-red-400 animate-ping" />}
-            {t.type === "warning" && <HelpCircle className="w-5 h-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />}
+            {t.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />}
+            {t.type === "error" && <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />}
+            {t.type === "warning" && <HelpCircle className="w-5 h-5 text-amber-500 shrink-0" />}
             <span>{t.text}</span>
           </div>
         ))}
