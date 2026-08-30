@@ -78,16 +78,21 @@ const Skills: React.FC = () => {
       className="pt-4 sm:pt-6 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-300"
     >
       {/* Section Header */}
-      <div className="mb-8 text-center">
+      <div className="mb-10 sm:mb-12 text-center">
         <Reveal>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            <span>{t("skills.title.part1")}</span>{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">{t("skills.title.part2")}</span>
-          </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              <span>{t("skills.title.part1")}</span>{" "}
+              <span className="text-cyan-600 dark:text-cyan-400">{t("skills.title.part2")}</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              {t("skills.desc")}
+            </p>
+          </div>
         </Reveal>
       </div>
 
-      {/* Clean Minimal Tech Grid (Icon + Name Only) */}
+      {/* Clean Minimal Tech Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-3.5">
         {skills.map((skill) => (
           <Reveal key={skill.name} width="100%">

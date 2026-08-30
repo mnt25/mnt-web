@@ -1,18 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { Code2, Lightbulb, Users, Zap, ExternalLink } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
 import { Separator } from "../ui/Separator";
+import { CertificateModal, CertificateStarIcon, type CertificateItem } from "../ui/CertificateModal";
+
+// Import encrypted/bundled certificate images (Vite asset pipeline)
+import vinuniCert from "../../assets/certificates/vinuni-ai-certificate.png";
+import fptEnglishCert from "../../assets/certificates/fpt-english-certificate.jpg";
+import btecDiplomaCert from "../../assets/certificates/btec-hnd-diploma.png";
+import btecTranscriptCert from "../../assets/certificates/btec-hnd-transcript.png";
+
+interface TimelineItem {
+  year: string;
+  yearEn?: string;
+  title: string;
+  titleEn?: string;
+  institution: string;
+  institutionEn?: string;
+  link?: string;
+  domain?: string;
+  logoUrl?: string;
+  type: string;
+  description: string;
+  descriptionEn?: string;
+  tags: string[];
+  certificates?: CertificateItem[];
+}
 
 const About: React.FC = () => {
   const { t, language } = useLanguage();
+  const [selectedCertGroup, setSelectedCertGroup] = useState<{
+    title: string;
+    items: CertificateItem[];
+  } | null>(null);
 
-  const timelineItems = [
+  const timelineItems: TimelineItem[] = [
     {
       year: "2026",
       yearEn: "2026",
-      title: "Thực tập sinh AI / AI Engineer Intern",
-      titleEn: "AI Engineer Intern",
+      title: "Thực tập sinh AI / AI Engineer",
+      titleEn: "AI Engineer",
       institution: "VinSmart Future",
       institutionEn: "VinSmart Future",
       link: "https://www.facebook.com/CareersVSF/",
@@ -20,7 +48,7 @@ const About: React.FC = () => {
       type: "work",
       description: "Thực tập nghiên cứu và phát triển hệ sinh thái Trợ lý AI Bất động sản. Xây dựng kiến trúc phân tán gồm 3 thành phần cốt lõi: Giao diện tương tác người dùng (Frontend), Máy chủ giao thức Model Context Protocol (MCP Server), và Agent AI tự động phân tích nhu cầu, định giá và tra cứu dữ liệu thị trường theo thời gian thực.",
       descriptionEn: "Internship focused on researching and developing an end-to-end Real Estate AI Assistant ecosystem. Built a modular architecture comprising 3 core components: Interactive User Interface (Frontend), Model Context Protocol server (MCP Server), and an autonomous AI Agent for valuation, advisory, and real-time market queries.",
-      tags: ["AI Intern", "AI Agents", "MCP Protocol", "Real Estate AI", "Next.js", "Python"],
+      tags: ["AI Engineer", "AI Agents", "MCP Protocol", "Real Estate AI", "Next.js", "Python"],
     },
     {
       year: "2026",
@@ -35,12 +63,24 @@ const About: React.FC = () => {
       description: "Chuyên ngành chuyên sâu (Track): AI Applications (Ứng dụng AI). Đã hoàn thành chương trình đào tạo nền tảng, mô phỏng thực chiến và thực tập doanh nghiệp. Làm chủ tư duy AI, đạo đức AI, thiết lập luồng xử lý AI Agents và tích hợp các mô hình LLMs vào thực tế.",
       descriptionEn: "Specialized Track: AI Applications. Completed foundational training, hands-on simulations, and corporate internship. Mastered AI thinking, ethics, designing AI Agent workflows, and integrating LLMs into practical applications.",
       tags: ["AI Applications", "AI Agents", "LLMs", "VinUni", "Vingroup"],
+      certificates: [
+        {
+          title: "Chứng nhận Nhân tài AI Thực chiến",
+          titleEn: "Certificate of AI Talent Bootcamp",
+          subtitle: "Chương trình Đào tạo 20.000 Nhân tài AI Thực chiến của Tập đoàn Vingroup (Level 3 - Level 4 SFIA)",
+          subtitleEn: "Vingroup 20,000 Practical AI Talents Training Program (Level 3 - Level 4 SFIA)",
+          issuer: "Trường Đại học VinUni & Tập đoàn Vingroup",
+          issuerEn: "VinUniversity & Vingroup Group",
+          date: "08/2026",
+          image: vinuniCert,
+        },
+      ],
     },
     {
       year: "2025",
       yearEn: "2025",
-      title: "Thực tập sinh Lập trình phần mềm",
-      titleEn: "Software Development Intern",
+      title: "Lập trình viên phần mềm",
+      titleEn: "Software Developer",
       institution: "Công ty CP Công nghệ Quảng Ích",
       institutionEn: "Quang Ich Technology Joint Stock Company",
       link: "https://qig.vn/",
@@ -63,6 +103,34 @@ const About: React.FC = () => {
       description: "Chuyên ngành: Kỹ thuật phần mềm. Xếp loại tốt nghiệp: Pass (Hoàn thành toàn bộ chương trình đào tạo chuẩn Anh Quốc Pearson).",
       descriptionEn: "Major: Software Engineering. Graduation grade: Pass (Completed the UK Pearson standard curriculum).",
       tags: ["Software Engineering", "Pearson UK", "BTEC FPT"],
+      certificates: [
+        {
+          title: "Chứng chỉ Tiếng Anh Học thuật - Academic Preparatory English",
+          titleEn: "Academic Preparatory English Certificate (Level 5 - Summit 1)",
+          subtitle: "Trường Cao đẳng FPT Polytechnic xác nhận hoàn thành khóa học Level 5 - Summit 1",
+          subtitleEn: "FPT Polytechnic College certified completion of Level 5 - Summit 1",
+          issuer: "Trường Cao đẳng FPT Polytechnic",
+          issuerEn: "FPT Polytechnic College",
+          date: "07/2024",
+          image: fptEnglishCert,
+        },
+        {
+          title: "Bằng Cao đẳng Quốc gia Anh Quốc Pearson BTEC Level 5 (HND)",
+          titleEn: "Pearson BTEC Level 5 Higher National Diploma in Computing",
+          subtitle: "Chuyên ngành Computing (Kỹ thuật phần mềm) - Xếp loại Pass",
+          subtitleEn: "Major in Computing (Software Engineering) - Grade: Pass",
+          date: "08/2024",
+          image: btecDiplomaCert,
+        },
+        {
+          title: "Bảng điểm Quốc tế Pearson BTEC Level 5 (Notification of Performance)",
+          titleEn: "Notification of Performance - Pearson BTEC Level 5",
+          subtitle: "Bảng điểm 15 học phần chuyên ngành (Programming, Database, Security, Cloud, Data Structures, IoT...)",
+          subtitleEn: "15 Unit Transcript (Programming, Database, Security, Cloud, Data Structures, IoT...)",
+          date: "09/2024",
+          image: btecTranscriptCert,
+        },
+      ],
     },
   ];
 
@@ -72,12 +140,17 @@ const About: React.FC = () => {
       className="pt-4 sm:pt-6 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-300"
     >
       {/* Section Header */}
-      <div className="mb-8 text-center">
+      <div className="mb-10 sm:mb-12 text-center">
         <Reveal>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            <span>{t('about.title.part1')}</span>{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">{t('about.title.part2')}</span>
-          </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              <span>{t('about.title.part1')}</span>{" "}
+              <span className="text-cyan-600 dark:text-cyan-400">{t('about.title.part2')}</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              {t('about.desc')}
+            </p>
+          </div>
         </Reveal>
       </div>
 
@@ -139,11 +212,11 @@ const About: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Card 1: Clean Code */}
             <Reveal width="100%">
-              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500/40 transition-all duration-300 flex flex-col h-full group hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500 dark:hover:border-cyan-400 hover:ring-1 hover:ring-cyan-500/40 dark:hover:ring-cyan-400/40 hover:shadow-xl hover:shadow-cyan-500/15 dark:hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col h-full group cursor-default">
                 <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-500 group-hover:scale-110 transition-transform">
                   <Code2 className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2">
+                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                   {t('about.work.cleanCode.title')}
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -154,11 +227,11 @@ const About: React.FC = () => {
 
             {/* Card 2: Innovation */}
             <Reveal width="100%">
-              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-amber-500/40 transition-all duration-300 flex flex-col h-full group hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-500 group-hover:scale-110 transition-transform">
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500 dark:hover:border-cyan-400 hover:ring-1 hover:ring-cyan-500/40 dark:hover:ring-cyan-400/40 hover:shadow-xl hover:shadow-cyan-500/15 dark:hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col h-full group cursor-default">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-500 group-hover:scale-110 transition-transform">
                   <Lightbulb className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2">
+                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                   {t('about.work.innovation.title')}
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -169,11 +242,11 @@ const About: React.FC = () => {
 
             {/* Card 3: Collaboration */}
             <Reveal width="100%">
-              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-emerald-500/40 transition-all duration-300 flex flex-col h-full group hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-500 group-hover:scale-110 transition-transform">
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500 dark:hover:border-cyan-400 hover:ring-1 hover:ring-cyan-500/40 dark:hover:ring-cyan-400/40 hover:shadow-xl hover:shadow-cyan-500/15 dark:hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col h-full group cursor-default">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-500 group-hover:scale-110 transition-transform">
                   <Users className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2">
+                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                   {t('about.work.collaboration.title')}
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -184,11 +257,11 @@ const About: React.FC = () => {
 
             {/* Card 4: Performance */}
             <Reveal width="100%">
-              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-yellow-500/40 transition-all duration-300 flex flex-col h-full group hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
-                <div className="w-10 h-10 rounded-xl bg-yellow-500/10 dark:bg-yellow-500/15 border border-yellow-500/20 flex items-center justify-center mb-4 text-yellow-500 group-hover:scale-110 transition-transform">
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500 dark:hover:border-cyan-400 hover:ring-1 hover:ring-cyan-500/40 dark:hover:ring-cyan-400/40 hover:shadow-xl hover:shadow-cyan-500/15 dark:hover:shadow-cyan-500/20 transition-all duration-300 flex flex-col h-full group cursor-default">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-500 group-hover:scale-110 transition-transform">
                   <Zap className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2">
+                <h4 className="text-base font-bold text-zinc-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                   {t('about.work.performance.title')}
                 </h4>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -205,14 +278,19 @@ const About: React.FC = () => {
 
       {/* Education & Experience Roadmap Timeline */}
       <div id="experience" className="pt-4 sm:pt-6 scroll-mt-24">
-        <Reveal>
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
-              <span>{t('experience.title.part1')}</span>{" "}
-              <span className="text-cyan-600 dark:text-cyan-400">{t('experience.title.part2')}</span>
-            </h2>
-          </div>
-        </Reveal>
+        <div className="mb-10 sm:mb-12 text-center">
+          <Reveal>
+            <div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
+                <span>{t('experience.title.part1')}</span>{" "}
+                <span className="text-cyan-600 dark:text-cyan-400">{t('experience.title.part2')}</span>
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                {t('experience.desc')}
+              </p>
+            </div>
+          </Reveal>
+        </div>
 
         <div className="relative pl-6 sm:pl-8 border-l border-zinc-200 dark:border-zinc-800 space-y-10 max-w-4xl">
           {timelineItems.map((item, idx) => (
@@ -225,10 +303,31 @@ const About: React.FC = () => {
 
                 {/* Milestone Card */}
                 <div className="rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] p-6 sm:p-7 hover:border-cyan-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 dark:bg-zinc-800 text-cyan-600 dark:text-cyan-400 border border-black/5 dark:border-white/10">
-                      {language === 'en' && item.yearEn ? item.yearEn : item.year}
-                    </span>
+                  <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-mono font-semibold bg-zinc-100 dark:bg-zinc-800 text-cyan-600 dark:text-cyan-400 border border-black/5 dark:border-white/10">
+                        {language === 'en' && item.yearEn ? item.yearEn : item.year}
+                      </span>
+
+                      {/* Interactive Certificate View Button */}
+                      {item.certificates && item.certificates.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedCertGroup({
+                              title: language === 'en' && item.institutionEn ? item.institutionEn : item.institution,
+                              items: item.certificates || [],
+                            })
+                          }
+                          className="inline-flex items-center justify-center p-1.5 rounded-full bg-cyan-500/15 dark:bg-cyan-500/20 border border-cyan-500/50 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-zinc-950 dark:hover:bg-cyan-400 dark:hover:text-zinc-950 transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-cyan-500/40 hover:scale-115 active:scale-95 cursor-pointer group/cert"
+                          title={language === 'vi' ? `Xem chứng chỉ (${item.certificates.length})` : `View certificates (${item.certificates.length})`}
+                          aria-label={language === 'vi' ? `Xem chứng chỉ` : `View certificates`}
+                        >
+                          <CertificateStarIcon className="w-4 h-4 shrink-0 transition-transform group-hover/cert:scale-110 group-hover/cert:rotate-12" />
+                        </button>
+                      )}
+                    </div>
+
                     {item.link && (
                       <a
                         href={item.link}
@@ -287,6 +386,16 @@ const About: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Certificate Viewer Modal Dialog */}
+      {selectedCertGroup && (
+        <CertificateModal
+          isOpen={!!selectedCertGroup}
+          onClose={() => setSelectedCertGroup(null)}
+          title={selectedCertGroup.title}
+          certificates={selectedCertGroup.items}
+        />
+      )}
     </section>
   );
 };

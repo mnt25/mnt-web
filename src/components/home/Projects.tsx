@@ -103,80 +103,84 @@ const Projects: React.FC = () => {
       return dateStr;
     };
 
-    const start = formatMonthYear(startDate);
-    const end = endDate ? (endDate === "Present" && language === "en" ? "Present" : formatMonthYear(endDate)) : "Present";
+    const formattedStart = formatMonthYear(startDate);
+    const formattedEnd = endDate ? formatMonthYear(endDate) : "Hiện tại";
 
-    return (
-      <span className="inline-flex items-center gap-1 font-mono text-xs text-cyan-600 dark:text-cyan-400">
-        <span>{start}</span>
-        <span className="opacity-40">—</span>
-        <span>{end}</span>
-      </span>
-    );
+    return `${formattedStart} - ${formattedEnd}`;
   };
 
   return (
     <section
       id="projects"
-      className="pt-4 sm:pt-6 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-300"
+      className="pt-4 sm:pt-6 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-300"
     >
       {/* Section Header */}
-      <div className="mb-8 text-center">
+      <div className="mb-10 sm:mb-12 text-center">
         <Reveal>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            <span>{t('projects.title.part1')}</span>{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">{t('projects.title.part2')}</span>
-          </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              <span>{t('projects.title.part1')}</span>{" "}
+              <span className="text-cyan-600 dark:text-cyan-400">{t('projects.title.part2')}</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              {t('projects.desc')}
+            </p>
+          </div>
         </Reveal>
       </div>
 
+      {/* Projects Grid */}
       {loading ? (
-        <div className="py-20 text-center font-mono text-xs text-zinc-500">
-          {t('projects.loading')}
+        <div className="flex justify-center items-center py-20">
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project: Project) => {
-            const hasSourceCode = Boolean(project.sourceCode && project.sourceCode.trim() !== "" && project.sourceCode !== "#");
-            const hasLiveDemo = Boolean(project.liveDemo && project.liveDemo.trim() !== "" && project.liveDemo !== "#");
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          {projects.map((project) => {
+            const hasLiveDemo = project.liveDemo && project.liveDemo.trim() !== "" && project.liveDemo !== "#";
+            const hasSourceCode = project.sourceCode && project.sourceCode.trim() !== "";
+            const dateRange = formatDateRange(project.startDate, project.endDate);
 
             return (
               <Reveal key={project.id} width="100%">
-                <div className="group rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] hover:border-cyan-500/40 transition-all duration-300 flex flex-col h-full overflow-hidden hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30">
-                  {/* Image Showcase Frame */}
-                  <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-950 border-b border-black/[0.06] dark:border-white/[0.06]">
+                <div className="h-full rounded-2xl bg-white dark:bg-zinc-900/60 border border-black/[0.08] dark:border-white/[0.08] overflow-hidden hover:border-cyan-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/30 flex flex-col group">
+                  {/* Project Image */}
+                  <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      loading="lazy"
-                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
 
-                  {/* Body Content */}
-                  <div className="p-6 sm:p-7 flex flex-col flex-grow justify-between">
+                  {/* Project Content */}
+                  <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        {project.startDate && formatDateRange(project.startDate, project.endDate)}
-                      </div>
+                      {/* Date Range Badge */}
+                      {dateRange && (
+                        <div className="mb-2">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-black/5 dark:border-white/5">
+                            {dateRange}
+                          </span>
+                        </div>
+                      )}
 
-                      <h3 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-white group-hover:text-cyan-500 dark:group-hover:text-cyan-400 transition-colors mb-3">
+                      {/* Project Title */}
+                      <h3 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-white mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                         {language === 'en' && project.titleEn ? project.titleEn : project.title}
                       </h3>
 
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed line-clamp-3 mb-6">
+                      {/* Project Description */}
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-3">
                         {language === 'en' && project.descriptionEn ? project.descriptionEn : project.description}
                       </p>
-                    </div>
 
-                    <div>
-                      {/* Tags */}
+                      {/* Tech Stack Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-6">
-                        {project.tags.map((tag: string, idx: number) => (
+                        {project.tags.map((tag, tagIndex) => (
                           <span
-                            key={idx}
+                            key={tagIndex}
                             className="px-2 py-0.5 rounded-md text-[11px] font-mono bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-black/5 dark:border-white/5"
                           >
                             {tag}

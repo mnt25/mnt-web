@@ -104,12 +104,17 @@ const Contact: React.FC = () => {
       className="pt-4 sm:pt-6 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-300"
     >
       {/* Section Header */}
-      <div className="mb-8 text-center">
+      <div className="mb-10 sm:mb-12 text-center">
         <Reveal>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
-            <span>{t('contact.title.part1')}</span>{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">{t('contact.title.part2')}</span>
-          </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-zinc-950 dark:text-white">
+              <span>{t('contact.title.part1')}</span>{" "}
+              <span className="text-cyan-600 dark:text-cyan-400">{t('contact.title.part2')}</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+              {t('contact.desc')}
+            </p>
+          </div>
         </Reveal>
       </div>
 

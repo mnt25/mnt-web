@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Download, MapPin, Check, Copy, ArrowUpRight, Sparkles } from 'lucide-react';
+import { MapPin, Check, Copy, ArrowUpRight, Sparkles, FileText } from 'lucide-react';
 import { FaFacebookF, FaTelegramPlane, FaGithub } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { useLanguage } from "../../context/LanguageContext";
 import { Reveal } from "../ui/Reveal";
-import { Dialog } from "../ui/Dialog";
+import { CVModal } from "../ui/CVModal";
 import SnowEffect from "../ui/SnowEffect";
 import { api } from '../../../server/api';
 
@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
   const { t, language } = useLanguage();
   const [cvLink, setCvLink] = useState<string>('#');
   const [isCVEnabled, setIsCVEnabled] = useState(true);
-  const [showDialog, setShowDialog] = useState(false);
+  const [showCVModal, setShowCVModal] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   // Typewriter states
@@ -60,13 +60,13 @@ const Hero: React.FC = () => {
     fetchCVData();
   }, []);
 
-  // Smooth lightweight typewriter effect
+  // Typewriter effect
   useEffect(() => {
     const currentRole = roles[loopIndex % roles.length];
-    let speed = isDeleting ? 30 : 65;
+    const speed = isDeleting ? 40 : 80;
 
     if (!isDeleting && text === currentRole) {
-      const pauseTimer = setTimeout(() => setIsDeleting(true), 2000);
+      const pauseTimer = setTimeout(() => setIsDeleting(true), 1800);
       return () => clearTimeout(pauseTimer);
     }
 
@@ -86,13 +86,6 @@ const Hero: React.FC = () => {
 
     return () => clearTimeout(timer);
   }, [text, isDeleting, loopIndex, roles]);
-
-  const handleDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!isCVEnabled) {
-      e.preventDefault();
-      setShowDialog(true);
-    }
-  };
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("mnt250723@gmail.com");
@@ -122,7 +115,7 @@ const Hero: React.FC = () => {
           </div>
         </Reveal>
 
-        {/* Typewriter Dynamic Role Badge (Image 1 Style) */}
+        {/* Typewriter Dynamic Role Badge */}
         <Reveal>
           <div className="h-11 mb-10 flex items-center justify-center">
             <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-100/90 dark:bg-zinc-900/90 border border-black/10 dark:border-white/15 font-mono text-xs sm:text-sm text-cyan-600 dark:text-cyan-400 font-semibold shadow-sm backdrop-blur-sm">
@@ -133,26 +126,19 @@ const Hero: React.FC = () => {
           </div>
         </Reveal>
 
-        {/* Action Dock: Download CV + Copy Email (Image 2 Top Row) */}
+        {/* Action Dock: View Live CV + Copy Email */}
         <Reveal>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6">
-            {/* Download CV */}
-            <a
-              href={isCVEnabled ? cvLink : undefined}
-              download={isCVEnabled ? true : undefined}
-              target={isCVEnabled ? "_blank" : undefined}
-              rel={isCVEnabled ? "noopener noreferrer" : undefined}
-              onClick={handleDownload}
-              className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-mono font-semibold transition-all duration-200 ${
-                isCVEnabled
-                  ? "bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-lg shadow-black/10 dark:shadow-white/5 hover:scale-[1.02] active:scale-[0.98]"
-                  : "bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-75"
-              }`}
+            {/* View Live CV Button */}
+            <button
+              type="button"
+              onClick={() => setShowCVModal(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-mono font-semibold bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 shadow-lg shadow-black/10 dark:shadow-white/5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer"
             >
-              <Download className="w-4 h-4" />
+              <FileText className="w-4 h-4 text-cyan-400 dark:text-cyan-600" />
               <span>{t('hero.downloadCV')}</span>
               <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-            </a>
+            </button>
 
             {/* 1-Click Copy Email */}
             <button
@@ -175,7 +161,7 @@ const Hero: React.FC = () => {
           </div>
         </Reveal>
 
-        {/* Location & Social Unified Pill Dock (Image 2 Bottom Row) */}
+        {/* Location & Social Unified Pill Dock */}
         <Reveal>
           <div className="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-5 px-5 py-2.5 rounded-full bg-zinc-50/80 dark:bg-zinc-900/50 border border-black/[0.06] dark:border-white/[0.08] backdrop-blur-md text-xs font-mono text-zinc-500 dark:text-zinc-400">
             <div className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-300">
@@ -228,27 +214,13 @@ const Hero: React.FC = () => {
         </Reveal>
       </div>
 
-      {/* CV Locked Modal Dialog */}
-      <Dialog
-        isOpen={showDialog}
-        onClose={() => setShowDialog(false)}
-        title={t('common.notice')}
-      >
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-black/5 dark:border-white/10 font-mono text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
-            {t('hero.cvDisabled')}
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowDialog(false)}
-              className="px-4 py-2 rounded-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-mono text-xs uppercase tracking-wider font-semibold transition-all"
-            >
-              {t('common.close')}
-            </button>
-          </div>
-        </div>
-      </Dialog>
+      {/* Dedicated Interactive CV Modal Dialog */}
+      <CVModal
+        isOpen={showCVModal}
+        onClose={() => setShowCVModal(false)}
+        cvUrl={cvLink}
+        isCVEnabled={isCVEnabled}
+      />
     </section>
   );
 };
